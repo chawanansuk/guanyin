@@ -7,6 +7,7 @@ import VisitPanel from '../components/VisitPanel.astro';
 import ShrinePhoto from '../components/ShrinePhoto.astro';
 import VideoBand from '../components/VideoBand.astro';
 import Ornament from '../components/Ornament.astro';
+import ShrineFacade from '../components/ShrineFacade.astro';
 import photos from '../data/photos.json';
 import site from '../data/site.json';
 import { allPang, enshrinedCount } from '../lib/pang';
@@ -114,6 +115,10 @@ const schema = preOpening
         {site.couplet.map((c) => <span>{c.zh}</span>)}
       </p>
     </div>
+
+    {!hasFacade && (
+      <div class="hero__art" aria-hidden="true"><ShrineFacade /></div>
+    )}
   </section>
 
   <HoursBar />
@@ -252,9 +257,23 @@ const schema = preOpening
     background: linear-gradient(180deg, rgba(27,10,13,.74), rgba(11,7,8,.92));
   }
 
+  /* ภาพลายเส้นหน้าอาคาร วางเป็นแถบของตัวเองใต้เนื้อหา ไม่ทับตัวอักษร
+     ใช้ระหว่างที่ยังไม่มีภาพถ่ายจริง — มีภาพถ่ายแล้วจะสลับไปใช้ภาพแทน */
+  .hero__art {
+    position: relative;
+    width: min(1080px, 94%);
+    margin: 0 auto;
+    padding-bottom: 4px;
+    opacity: .5;
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 26%, #000 92%, transparent 100%);
+    mask-image: linear-gradient(180deg, transparent 0%, #000 26%, #000 92%, transparent 100%);
+    pointer-events: none;
+  }
+  @media (max-width: 700px) { .hero__art { width: 118%; opacity: .42; } }
+
   .hero__inner {
     position: relative;
-    padding-block: clamp(52px, 10vw, 104px) clamp(40px, 7vw, 72px);
+    padding-block: clamp(52px, 10vw, 100px) clamp(28px, 4vw, 44px);
     display: flex;
     flex-direction: column;
     align-items: center;
