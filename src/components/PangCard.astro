@@ -13,7 +13,7 @@ const primary = lang === 'zh' ? d.name_zh : displayName(pang);
 const secondary = lang === 'zh' ? '' : d.name_zh;
 ---
 <a
-  class:list={['pang-card', !d.enshrined && 'pang-card--pending']}
+  class:list={['pang-card sheen reveal', !d.enshrined && 'pang-card--pending']}
   href={withLang(`/33-pang/${d.slug}`, lang)}
   data-wishes={d.wishes.join(' ')}
   data-order={d.order}
@@ -40,22 +40,18 @@ const secondary = lang === 'zh' ? '' : d.name_zh;
     /* เส้นตารางมาจากตัวการ์ดเอง ไม่ใช่พื้นหลังของตาราง
        เพราะ ๓๓ ปางไม่ลงตัวกับจำนวนคอลัมน์ ช่องที่เหลือจะได้ไม่มีสีพื้นค้างไว้ */
     box-shadow: 0 0 0 1px var(--line);
-    transition: box-shadow .2s ease, transform .2s ease;
+    transition: box-shadow .45s var(--ease-lux), transform .45s var(--ease-lux);
     position: relative;
   }
-  /* เส้นทองบาง ๆ โผล่ขอบบนตอนชี้ — ให้รู้ว่ากดได้โดยไม่ต้องเปลี่ยนสีทั้งใบ */
-  .pang-card::after {
-    content: "";
-    position: absolute;
-    inset: 0 0 auto;
-    height: 2px;
-    background: var(--gold-bright);
-    transform: scaleX(0);
-    transform-origin: 50% 50%;
-    transition: transform .22s ease;
+  .pang-card:hover {
+    box-shadow:
+      0 0 0 1px var(--line-strong),
+      0 2px 3px rgba(0, 0, 0, .16),
+      0 8px 16px rgba(0, 0, 0, .12),
+      0 22px 44px rgba(0, 0, 0, .14);
+    transform: translateY(-4px);
+    z-index: 1;
   }
-  .pang-card:hover { box-shadow: 0 0 0 1px var(--line-strong), var(--shadow-lift); transform: translateY(-3px); z-index: 1; }
-  .pang-card:hover::after, .pang-card:focus-visible::after { transform: scaleX(1); }
   .pang-card:hover .pang-card__th { color: var(--lacquer); }
 
   .pang-card__body {
@@ -64,8 +60,8 @@ const secondary = lang === 'zh' ? '' : d.name_zh;
     gap: 3px;
     padding: 12px 14px 16px;
   }
-  .pang-card__no { font-size: 11.5px; color: var(--gold); letter-spacing: .18em; }
-  .pang-card__th { font-size: 16.5px; font-weight: 500; line-height: 1.4; }
+  .pang-card__no { font-size: 11.5px; color: var(--gold); letter-spacing: .24em; }
+  .pang-card__th { font-family: var(--display); font-size: 17px; font-weight: 500; line-height: 1.45; transition: color .3s var(--ease-lux); }
   .pang-card__zh { font-size: 14px; color: var(--ink-3); }
 
   .pang-card__tag {

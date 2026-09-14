@@ -27,10 +27,10 @@ const LINKS = lang === 'zh'
       { href: '/contact', label: 'ติดต่อตำหนัก' },
     ];
 ---
-<footer class="site-foot plaque">
+<footer class="site-foot zone-dark zone-dark--ox">
   <div class="wrap site-foot__inner">
     <div class="site-foot__brand">
-      <div class="site-foot__zh han">{site.name_zh}</div>
+      <div class="site-foot__zh han foil">{site.name_zh}</div>
       <div class="site-foot__th">{lang === 'zh' ? '佛城二段' : site.name_th}</div>
       <p class="site-foot__couplet han">
         {site.couplet.map((c) => <span>{c.zh}</span>)}
@@ -61,32 +61,37 @@ const LINKS = lang === 'zh'
 </footer>
 
 <style>
-  .site-foot { border: 0; border-top: 3px solid var(--gold-bright); margin-top: 0; }
+    /* ท้ายเว็บเข้าระบบเดียวกับหัวเว็บ — พื้นรักเข้ม ตัวอักษรทอง
+     พื้นแดงสดทำให้ชื่อทองคำเปลวจมหายไป เพราะคอนทราสต์ระหว่างทองกับแดงสดต่ำ */
+  .site-foot {
+    border: 0;
+    border-top: 1px solid var(--gold-line);
+    background: linear-gradient(180deg, #1B0A0D 0%, #0B0708 100%);
+    margin-top: 0;
+  }
+  .site-foot::before { display: none; }
   .site-foot__inner { padding-block: 48px 56px; display: flex; flex-direction: column; gap: 28px; }
 
-  .site-foot__zh { font-size: 26px; font-weight: 700; letter-spacing: .2em; line-height: 1.2; }
-  .site-foot__th { font-family: var(--serif); font-size: 17px; margin-top: 4px; }
+  .site-foot__zh { font-size: 30px; font-weight: 700; letter-spacing: .2em; padding-left: .2em; line-height: 1.2; }
+  .site-foot__th { font-family: var(--display); font-size: 17px; letter-spacing: .02em; color: var(--ink-2); margin-top: 6px; }
   .site-foot__couplet {
-    display: flex; flex-direction: column; gap: 2px;
-    margin: 14px 0 0; font-size: 14px; color: var(--plaque-ink-2); letter-spacing: .1em;
+    display: flex; flex-direction: column; gap: 4px;
+    margin: 16px 0 0; font-size: 14.5px; color: var(--ink-3); letter-spacing: .16em;
   }
 
   .site-foot__cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 28px 40px; }
   .site-foot__cols h2 {
-    font-family: var(--mono); font-size: 12px; font-weight: 600;
-    letter-spacing: .14em; text-transform: uppercase;
-    color: var(--plaque-ink-2); margin-bottom: 10px;
+    font-family: var(--sans); font-size: 11.5px; font-weight: 600;
+    letter-spacing: .3em; padding-right: .3em; text-transform: uppercase;
+    color: var(--gold-bright); margin-bottom: 12px;
   }
-  .site-foot__cols p, .site-foot__cols li { font-size: 16px; line-height: 1.7; color: var(--plaque-ink); }
+  .site-foot__cols p, .site-foot__cols li { font-size: 16px; line-height: 1.75; color: var(--ink-2); }
   .site-foot__cols p + p { margin-top: 6px; }
   .site-foot__cols ul { list-style: none; margin: 0; padding: 0; }
   .site-foot__cols li + li { margin-top: 4px; }
-  .site-foot a { color: var(--plaque-ink); text-decoration-color: var(--plaque-line); }
-  .site-foot a:hover { color: #fff; }
+  .site-foot a { color: var(--ink-2); text-decoration-color: var(--gold-line); text-underline-offset: 4px; transition: color .3s var(--ease-lux); }
+  .site-foot a:hover { color: var(--gold); text-decoration-color: var(--gold-bright); }
 
-  .site-foot__lang { padding-top: 18px; border-top: 1px solid var(--plaque-line); }
-  .site-foot__legal {
-    font-size: 14px; line-height: 1.65; color: var(--plaque-ink-2);
-    max-width: 62ch; margin: 0;
-  }
+  .site-foot__lang { padding-top: 22px; border-top: 1px solid var(--gold-line); }
+  .site-foot__legal { font-size: 14px; line-height: 1.7; color: var(--ink-3); max-width: 62ch; margin: 0; }
 </style>

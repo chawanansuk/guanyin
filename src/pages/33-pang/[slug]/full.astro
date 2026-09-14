@@ -37,7 +37,7 @@ const toc = headings.filter((h: any) => h.depth === 3);
     { label: 'ฉบับเต็ม', href: `${path}/full` },
   ]}
 >
-  <div class="full-head plaque">
+  <div class="full-head zone-dark zone-dark--ox">
     <div class="wrap full-head__inner">
       <a class="full-head__back" href={path}>‹ กลับหน้า{name}</a>
       <p class="full-head__no mono">{pangNo(d.order)} / ๓๓ · ฉบับเต็ม</p>
@@ -91,18 +91,18 @@ const toc = headings.filter((h: any) => h.depth === 3);
 </BaseLayout>
 
 <style>
-  .full-head { border: 0; border-bottom: 3px solid var(--gold-bright); }
-  .full-head__inner { padding-block: 30px 34px; display: flex; flex-direction: column; }
-  .full-head__back { color: var(--plaque-ink-2); font-size: 15.5px; text-decoration: none; margin-bottom: 18px; }
-  .full-head__back:hover { color: var(--plaque-ink); text-decoration: underline; }
-  .full-head__no { font-size: 12.5px; letter-spacing: .12em; color: var(--plaque-ink-2); margin: 0 0 8px; }
-  .full-head h1 { color: var(--plaque-ink); }
-  .full-head__zh { margin: 8px 0 0; font-size: 22px; font-weight: 700; color: var(--gold-bright); letter-spacing: .06em; }
-  .full-head__var { font-size: 16px; color: var(--plaque-ink-2); font-weight: 400; }
+  .full-head { border: 0; border-bottom: 1px solid var(--gold-line); }
+  .full-head__inner { padding-block: 28px 38px; display: flex; flex-direction: column; }
+  .full-head__back { color: var(--ink-3); font-size: 15.5px; text-decoration: none; margin-bottom: 22px; transition: color .3s var(--ease-lux); }
+  .full-head__back:hover { color: var(--gold); }
+  .full-head__no { font-size: 12px; letter-spacing: .3em; padding-right: .3em; text-transform: uppercase; color: var(--gold); margin: 0 0 10px; }
+  .full-head h1 { color: var(--ink); }
+  .full-head__zh { margin: 10px 0 0; font-size: 24px; font-weight: 700; color: var(--gold-pale); letter-spacing: .1em; padding-left: .1em; }
+  .full-head__var { font-size: 15.5px; color: var(--ink-3); font-weight: 400; letter-spacing: normal; }
   .full-head__essence {
-    margin: 16px 0 0; max-width: 56ch;
-    font-family: var(--serif); font-size: 18px; line-height: 1.7;
-    color: var(--plaque-ink); opacity: .92;
+    margin: 18px 0 0; max-width: 56ch;
+    font-family: var(--display); font-weight: 300; font-size: 18.5px; line-height: 1.8;
+    color: var(--ink-2);
   }
 
   .full-body {

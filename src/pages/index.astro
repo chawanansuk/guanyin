@@ -53,8 +53,9 @@ const schema = preOpening
   description={`${site.tagline} — ดูครบทั้ง ๓๓ ปาง พร้อมความหมาย วิธีไหว้ เวลาเปิด–ปิด และการเดินทาง`}
   schema={schema}
 >
-  <!-- ฮีโร่: ผนังปูนขาวแล้วมีป้ายแดงแขวนอยู่ ตามสัดส่วนของอาคารจริง -->
-  <section class:list={['hero', hasFacade && 'hero--photo']}>
+  <!-- ฮีโร่: พื้นรักแดงเข้ม ตัวอักษรทองคำเปลว
+       ตัวอักษรใหญ่บนพื้นมืดคือที่เดียวที่ทองโลหะทำงานได้เต็มที่ -->
+  <section class:list={['hero zone-dark zone-dark--ox', hasFacade && 'hero--photo']}>
     {hasFacade && (
       <div class="hero__photo">
         <ShrinePhoto
@@ -65,14 +66,19 @@ const schema = preOpening
       </div>
     )}
     <div class="wrap hero__inner">
-      <div class="plaque-board">
-        <span class="plaque-board__prefix han">{site.plaque_prefix_zh}</span>
-        <h1 class="plaque-board__zh han">{site.name_zh}</h1>
-        <span class="plaque-board__th">{site.name_th}</span>
-      </div>
+      <p class="eyebrow hero__eyebrow">
+        <span class="han">{site.plaque_prefix_zh}</span>
+        <span class="hero__eyebrow-sep" aria-hidden="true">·</span>
+        <span>พุทธมณฑลสาย ๒</span>
+      </p>
+
+      <h1 class="hero__name han foil foil--live">{site.name_zh}</h1>
+      <p class="hero__th">{site.name_th}</p>
+
+      <hr class="rule-gold hero__rule" />
 
       <p class="hero__motto">
-        <span class="han">{site.motto_zh}</span>
+        <span class="han carved">{site.motto_zh}</span>
         <span class="hero__motto-th">{site.motto_th}</span>
       </p>
 
@@ -81,7 +87,7 @@ const schema = preOpening
       <div class="hero__cta">
         {preOpening ? (
           <>
-            <a class="btn btn--primary" href="/opening">
+            <a class="btn btn--gold" href="/opening">
               พิธีเปิด {thaiDate(openingDate, 'short')}
               {daysToOpening > 0 && <span class="hero__count mono">อีก {daysToOpening} วัน</span>}
             </a>
@@ -89,13 +95,11 @@ const schema = preOpening
           </>
         ) : (
           <>
-            <a class="btn btn--primary" href="/33-pang">ดู ๓๓ ปางทั้งหมด</a>
+            <a class="btn btn--gold" href="/33-pang">ดู ๓๓ ปางทั้งหมด</a>
             <a class="btn btn--ghost" href="/worship/how-to">วิธีไหว้</a>
           </>
         )}
       </div>
-
-      <div class="hero__orn"><Ornament /></div>
 
       <p class="hero__couplet han">
         {site.couplet.map((c) => <span>{c.zh}</span>)}
@@ -215,78 +219,86 @@ const schema = preOpening
 </BaseLayout>
 
 <style>
-  /* ---------- hero: ผนังปูนขาว ป้ายแดงแขวน ---------- */
-  .hero {
-    position: relative;
-    overflow: hidden;
-    background: var(--ground);
-    border-bottom: 1px solid var(--line);
-  }
-  /* แสงอุ่นจาง ๆ หลังป้าย ให้ผนังไม่แบนสนิท */
-  .hero::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(120% 78% at 50% 8%, var(--surface-2) 0%, transparent 62%);
-    pointer-events: none;
-  }
-  .hero__photo { position: absolute; inset: 0; }
+  /* ---------- hero ---------- */
+  .hero { position: relative; overflow: hidden; }
+  .hero__photo { position: absolute; inset: 0; z-index: -1; }
   .hero__photo :global(.shrine-photo) { width: 100%; height: 100%; aspect-ratio: auto !important; }
-  .hero--photo::before { display: none; }
   .hero--photo .hero__photo::after {
     content: "";
     position: absolute; inset: 0;
-    background: linear-gradient(180deg,
-      color-mix(in srgb, var(--ground) 62%, transparent),
-      color-mix(in srgb, var(--ground) 90%, transparent));
+    background: linear-gradient(180deg, rgba(27,10,13,.74), rgba(11,7,8,.92));
   }
 
   .hero__inner {
     position: relative;
-    padding-block: clamp(44px, 8vw, 82px) clamp(36px, 6vw, 60px);
+    padding-block: clamp(52px, 10vw, 104px) clamp(40px, 7vw, 72px);
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
   }
 
-  .hero__motto {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: baseline;
-    gap: 4px 16px;
-    margin: 26px 0 0;
-    font-size: 15px;
-    letter-spacing: .28em;
-    padding-left: .28em;
+  .hero__eyebrow {
+    display: flex; align-items: center; gap: 10px;
     color: var(--gold);
+    letter-spacing: .34em;
+    padding-right: .34em;
+  }
+  .hero__eyebrow-sep { opacity: .55; }
+
+  .hero__name {
+    margin: 22px 0 0;
+    font-family: var(--han);
+    font-weight: 700;
+    font-size: clamp(46px, 12vw, 108px);
+    letter-spacing: .12em;
+    padding-left: .12em;
+    line-height: 1.1;
+  }
+
+  .hero__th {
+    margin: 14px 0 0;
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(17px, 2.6vw, 23px);
+    letter-spacing: .04em;
+    color: var(--ink-2);
+  }
+
+  .hero__rule { width: min(360px, 76%); margin: 30px 0 0; }
+
+  .hero__motto {
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline;
+    gap: 4px 18px;
+    margin: 24px 0 0;
+    font-size: 15.5px;
+    letter-spacing: .26em;
+    padding-left: .26em;
   }
   .hero__motto-th {
-    font-family: var(--serif);
+    font-family: var(--display);
     letter-spacing: normal;
     padding-left: 0;
-    color: var(--ink-2);
+    color: var(--ink-3);
   }
 
   .hero__lede {
-    margin: 18px 0 0;
-    max-width: 44ch;
-    font-family: var(--serif);
-    font-size: clamp(16.5px, 2.2vw, 19px);
-    line-height: 1.75;
+    margin: 20px 0 0;
+    max-width: 42ch;
+    font-family: var(--display);
+    font-weight: 300;
+    font-size: clamp(16.5px, 2.2vw, 19.5px);
+    line-height: 1.8;
     color: var(--ink-2);
   }
 
-  .hero__cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 28px; }
-  .hero__count { font-size: 14px; opacity: .85; margin-left: 2px; }
-
-  .hero__orn { width: 100%; max-width: 460px; margin-top: 34px; }
+  .hero__cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 32px; }
+  .hero__count { font-size: 14px; opacity: .78; margin-left: 4px; }
 
   .hero__couplet {
-    display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 26px;
-    margin: 18px 0 0;
-    font-size: 15px; letter-spacing: .14em; color: var(--ink-3);
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 28px;
+    margin: 40px 0 0;
+    font-size: 14.5px; letter-spacing: .2em; color: var(--ink-3);
   }
 
   /* ---------- bands ---------- */

@@ -30,20 +30,29 @@
   --lacquer-ink: #FFF5E2;
   --lacquer-soft: #FAE8E1;
 
-  /* --- ทอง: แยกสามระดับ เพราะทองที่อ่านได้บนขาวกับบนแดงไม่ใช่สีเดียวกัน --- */
-  --gold: #8E6A16;        /* ตัวอักษรบนพื้นสว่าง */
-  --gold-bright: #D8A93F; /* ทองคำเปลว — เส้นกรอบ ลวดลาย */
-  --gold-pale: #F2DCA6;   /* ตัวอักษรบนพื้นแดง */
-  --gold-soft: #F8EED6;   /* พื้นอ่อน */
+  /* --- ทองสี่บทบาท ---
+     ทองที่อ่านได้บนพื้นสว่างกับบนพื้นมืดคนละสีกัน ใช้โทเคนเดียวไม่พอ
+     เส้นขลิบ (gold-line) ห้ามใช้เป็นสีตัวอักษร คอนทราสต์ไม่ผ่าน */
+  --gold: #8E6A16;         /* ตัวอักษรบนพื้นสว่าง — 5.2:1 บนพื้นปูนขาว */
+  --gold-bright: #D8A93F;  /* ทองคำเปลวทึบ — ไอคอน เส้นหนา ปุ่ม */
+  --gold-pale: #F2DCA6;    /* ตัวอักษรบนพื้นแดง — 11.4:1 บนชาด */
+  --gold-soft: #F8EED6;    /* พื้นอ่อน */
+  --gold-line: rgba(216, 169, 63, .30);
+  --gold-glow: rgba(216, 169, 63, .16);
+  /* ทองโลหะ: ห้าจุดสีขึ้นไป ตาถึงจะอ่านเป็นผิวโค้งสะท้อนแสง
+     สองจุดสีจะได้แค่ "สีเหลืองแบน" */
+  --gold-metal: linear-gradient(100deg,
+    #8A6A1E 0%, #D8A93F 22%, #FBF3C4 38%,
+    #C99B34 52%, #F2DCA6 68%, #A87F22 85%, #D8A93F 100%);
 
   /* --- เขียวคิ้วหลังคา --- */
   --celadon: #2F6B55;
   --celadon-soft: #E5F0E9;
 
   /* --- แถบเวลาเปิด–ปิด --- */
-  --bar-bg: linear-gradient(180deg, var(--lacquer) 0%, var(--lacquer-deep) 100%);
-  --bar-ink: #FCEFD4;
-  --bar-line: rgba(242, 220, 166, .45);
+  --bar-bg: linear-gradient(180deg, #7C1512 0%, #4E0E0C 100%);
+  --bar-ink: #FBEBC8;
+  --bar-line: rgba(242, 220, 166, .4);
 
   /* --- ป้ายรักแดงอักษรทอง 匾額 --- */
   --plaque: #A0201C;
@@ -52,10 +61,30 @@
   --plaque-ink-2: #DCBA76;
   --plaque-line: rgba(246, 227, 176, .38);
 
-  --shadow: 0 1px 2px rgba(36, 24, 19, .05), 0 8px 22px rgba(36, 24, 19, .06);
-  --shadow-lift: 0 2px 4px rgba(36, 24, 19, .07), 0 16px 38px rgba(36, 24, 19, .13);
-  --shadow-plaque: 0 2px 0 rgba(124, 21, 18, .45), 0 14px 34px rgba(36, 24, 19, .22);
+  /* ความลึกมาจากเงาซ้อนสี่ชั้น แต่ละชั้นระยะเบลอเพิ่มเท่าตัว
+     บวกเส้นสว่างบางด้านบนซึ่งเป็นตัวทำให้ดูเป็นแผ่นวัตถุจริง ไม่ใช่สี่เหลี่ยม
+     เส้นสว่างต้องเป็นโทนอุ่น ไม่ใช่ขาว — ขาวเย็นข้างทองจะดูราคาถูกทันที */
+  --shadow:
+    0 1px 1px rgba(36, 24, 19, .10),
+    0 2px 4px rgba(36, 24, 19, .07),
+    0 8px 18px rgba(36, 24, 19, .07);
+  --shadow-lift:
+    0 2px 3px rgba(36, 24, 19, .12),
+    0 8px 16px rgba(36, 24, 19, .10),
+    0 22px 44px rgba(36, 24, 19, .12);
+  --shadow-plaque:
+    0 1px 1px rgba(0, 0, 0, .28),
+    0 4px 10px rgba(0, 0, 0, .22),
+    0 16px 36px rgba(0, 0, 0, .24),
+    inset 0 1px 0 rgba(242, 220, 166, .16),
+    inset 0 -1px 0 rgba(0, 0, 0, .38);
 
+  /* จังหวะแบบหรู: เข้าเร็ว คลายยาว */
+  --ease-lux: cubic-bezier(.16, 1, .3, 1);
+
+  /* Trirong เป็นเซอริฟไทยคอนทราสต์สูง เส้นบาง-หนาต่างกันชัด
+     ให้ความรู้สึกประณีตกว่า Noto Serif Thai ที่น้ำหนักสม่ำเสมอทั้งตัว */
+  --display: "Trirong", "Noto Serif Thai", Georgia, serif;
   --serif: "Noto Serif Thai", "Noto Serif", Georgia, serif;
   --sans: "IBM Plex Sans Thai", "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
@@ -81,7 +110,11 @@
     --lacquer-deep: #C96A55;
     --lacquer-ink: #200E0B;
     --lacquer-soft: #3A1C16;
-    --gold: #DDB05A;
+    --gold: #E8C86A;
+    --gold-line: rgba(216, 169, 63, .26);
+    --gold-glow: rgba(216, 169, 63, .18);
+    --gold-metal: linear-gradient(100deg, #8A6A1E 0%, #D8A93F 22%, #FBF3C4 38%, #C99B34 52%, #F2DCA6 68%, #A87F22 85%, #D8A93F 100%);
+    
     --gold-bright: #D8A93F;
     --gold-pale: #F2DCA6;
     --gold-soft: #322613;
@@ -115,7 +148,11 @@
   --lacquer-deep: #C96A55;
   --lacquer-ink: #200E0B;
   --lacquer-soft: #3A1C16;
-  --gold: #DDB05A;
+  --gold: #E8C86A;
+    --gold-line: rgba(216, 169, 63, .26);
+    --gold-glow: rgba(216, 169, 63, .18);
+    --gold-metal: linear-gradient(100deg, #8A6A1E 0%, #D8A93F 22%, #FBF3C4 38%, #C99B34 52%, #F2DCA6 68%, #A87F22 85%, #D8A93F 100%);
+    
   --gold-bright: #D8A93F;
   --gold-pale: #F2DCA6;
   --gold-soft: #322613;
@@ -153,19 +190,50 @@ img, svg, video { max-width: 100%; height: auto; display: block; }
 [hidden] { display: none !important; }
 
 /* ============================================================ typography */
+/* ลายเซ็นของงานหรูคือ "ความต่างสุดขั้ว" —
+   หัวเรื่องเซอริฟใหญ่น้ำหนักเบา คู่กับหัวข้อเล็กตัวพิมพ์ใหญ่ช่องไฟกว้างมาก
+   ข้อควรระวังของอักษรไทย: ช่องไฟติดลบและระยะบรรทัดต่ำกว่า 1.2
+   จะทำให้สระบน-ล่างและวรรณยุกต์ถูกตัด จึงใช้ช่องไฟปกติและระยะบรรทัด ≥ 1.22 */
 h1, h2, h3, h4 {
-  font-family: var(--serif);
-  font-weight: 600;
-  line-height: 1.3;
+  font-family: var(--display);
+  font-weight: 500;
+  line-height: 1.28;
+  letter-spacing: 0;
   text-wrap: balance;
   margin: 0;
 }
-h1 { font-size: clamp(28px, 5.6vw, 42px); font-weight: 700; letter-spacing: -.01em; }
-h2 { font-size: clamp(23px, 3.8vw, 30px); }
-h3 { font-size: clamp(19px, 2.6vw, 22px); }
-h4 { font-size: 18px; }
+h1 {
+  font-size: clamp(30px, 5.4vw, 50px);
+  font-weight: 500;
+  line-height: 1.22;
+}
+h2 { font-size: clamp(24px, 3.8vw, 33px); }
+h3 { font-size: clamp(19px, 2.6vw, 23px); }
+h4 { font-size: 18px; font-weight: 600; }
+/* อักษรจีนขนาดใหญ่ต้องการช่องไฟบวก ไม่ใช่ลบ */
+h1 .han, h2 .han, .display .han { letter-spacing: .08em; }
 
 p { margin: 0; max-width: var(--measure); }
+
+/* ขีดทองกวาดเข้าจากซ้ายตอนชี้ลิงก์ในเนื้อความ
+   แทนเส้นใต้ของเบราว์เซอร์ซึ่งอ่านเป็นเอกสารราชการ */
+.prose a, .link-gold {
+  position: relative;
+  text-decoration: none;
+  color: var(--lacquer);
+}
+.prose a::after, .link-gold::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -.16em;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%, var(--gold-bright) 12%, var(--gold-pale) 50%, var(--gold-bright) 88%, transparent 100%);
+  transform: scaleX(1);
+  transform-origin: left center;
+  transition: transform .5s var(--ease-lux);
+}
+.prose a:hover::after, .link-gold:hover::after { transform: scaleX(0); transform-origin: right center; }
 
 a { color: var(--lacquer); text-underline-offset: 3px; text-decoration-thickness: 1px; }
 a:hover { text-decoration-thickness: 2px; }
@@ -179,11 +247,14 @@ a:hover { text-decoration-thickness: 2px; }
 .han { font-family: var(--han); }
 .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 
-/* ป้ายหัวข้อเล็กสีทอง — ใช้บอก "นี่คือส่วนอะไร" */
+/* ป้ายหัวข้อเล็กสีทอง — ช่องไฟกว้างมากเพื่อให้ตัดกับหัวเรื่องใหญ่
+   padding-right ชดเชยช่องไฟตัวสุดท้ายที่ดันข้อความให้ดูเยื้องซ้าย */
 .eyebrow {
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: .14em;
+  font-family: var(--sans);
+  font-size: clamp(11px, .18vw + 10.4px, 12.5px);
+  font-weight: 600;
+  letter-spacing: .3em;
+  padding-right: .3em;
   text-transform: uppercase;
   color: var(--gold);
   margin: 0;
@@ -231,16 +302,34 @@ section.band + section.band { border-top: 1px solid var(--line); }
   font: 500 16.5px/1.3 var(--sans);
   text-decoration: none;
   cursor: pointer;
-  transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+  transition: background .25s var(--ease-lux), border-color .25s var(--ease-lux), color .25s var(--ease-lux), box-shadow .35s var(--ease-lux), transform .35s var(--ease-lux);
 }
 .btn--primary {
   background: linear-gradient(180deg, var(--lacquer) 0%, var(--lacquer-deep) 100%);
-  color: var(--lacquer-ink);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gold-bright) 42%, transparent);
+  color: #FFF5E2;
+  box-shadow:
+    inset 0 0 0 1px var(--gold-line),
+    inset 0 1px 0 rgba(242, 220, 166, .18),
+    0 1px 2px rgba(0, 0, 0, .2), 0 6px 16px rgba(0, 0, 0, .14);
 }
-.btn--primary:hover { background: var(--lacquer-deep); box-shadow: inset 0 0 0 1px var(--gold-bright); }
-.btn--ghost { background: var(--surface); color: var(--ink); border-color: var(--line-strong); }
-.btn--ghost:hover { border-color: var(--gold); color: var(--gold); }
+.btn--primary:hover {
+  box-shadow:
+    inset 0 0 0 1px var(--gold-bright),
+    inset 0 1px 0 rgba(242, 220, 166, .3),
+    0 2px 4px rgba(0, 0, 0, .24), 0 12px 26px rgba(0, 0, 0, .2);
+  transform: translateY(-1px);
+}
+/* ทองทึบ: ตัวอักษรต้องเกือบดำ ขาวบนทองคอนทราสต์ราว 1.9:1 ไม่ผ่านเลย */
+.btn--gold {
+  background: linear-gradient(180deg, #E4BC58 0%, var(--gold-bright) 58%, #B98F2C 100%);
+  color: #1A0F06;
+  border-color: transparent;
+  font-weight: 600;
+  box-shadow: inset 0 1px 0 rgba(255, 247, 220, .55), 0 2px 5px rgba(0, 0, 0, .18), 0 10px 24px rgba(0, 0, 0, .14);
+}
+.btn--gold:hover { background: linear-gradient(180deg, #EFCD72 0%, #DDB14A 58%, #C1963000 100%), var(--gold-bright); transform: translateY(-1px); }
+.btn--ghost { background: transparent; color: var(--ink); border-color: var(--line-strong); }
+.btn--ghost:hover { border-color: var(--gold); color: var(--gold); background: color-mix(in srgb, var(--gold-bright) 8%, transparent); }
 .btn--plaque { background: transparent; color: var(--plaque-ink); border-color: var(--plaque-line); }
 .btn--plaque:focus-visible { outline-color: var(--gold-bright); }
 .btn--plaque:hover { background: var(--plaque-2); }
@@ -322,9 +411,10 @@ section.band + section.band { border-top: 1px solid var(--line); }
 
 /* ============================================================ ป้ายรักดำ 匾額 */
 .plaque {
-  background: var(--plaque);
+  background: linear-gradient(175deg, var(--plaque) 0%, var(--plaque-2) 100%);
   color: var(--plaque-ink);
-  border: 1px solid var(--plaque-line);
+  border: 1px solid var(--gold-line);
+  box-shadow: var(--shadow-plaque);
 }
 
 /* ============================================================ skip link */
@@ -416,4 +506,194 @@ section.band + section.band { border-top: 1px solid var(--line); }
   height: 2px;
   background: var(--gold-bright);
   flex: none;
+}
+
+/* ============================================================
+   โซนมืด — "กล่องอัญมณี"
+   ส่วนหัว ฮีโร่ ตาราง ๓๓ ปาง และท้ายเว็บใช้พื้นเข้มตัดกับทอง
+   ส่วนที่ต้องอ่านยาว ๆ ยังเป็นพื้นสว่าง เพราะผู้ใช้หลักเป็นผู้สูงอายุ
+   อ่านบนมือถือกลางแดด พื้นมืดทั้งเว็บจะอ่านไม่ไหว
+
+   ทำเป็น "ขอบเขตของโทเคน" ไม่ใช่คลาสของแต่ละชิ้น
+   คอมโพเนนต์ที่อยู่ข้างในจึงเปลี่ยนสีตามเองโดยไม่ต้องแก้
+   ============================================================ */
+.zone-dark {
+  /* ดำอมแดง ไม่ใช่ดำสนิท — ดำสนิทข้างทองจะเหมือนใบประกาศนียบัตร */
+  --ground: #0B0708;
+  --surface: #1E0E12;
+  --surface-2: #14090C;
+  --surface-sunk: #070405;
+
+  --ink: #F7F3EC;      /* งาช้างอุ่น ไม่ใช่ขาวบริสุทธิ์ — 18:1 */
+  --ink-2: #E0D7C8;    /* 14:1 */
+  --ink-3: #A8998A;    /* 7.2:1 */
+
+  --line: rgba(216, 169, 63, .16);
+  --line-strong: rgba(242, 220, 166, .34);
+
+  --lacquer: #E0566A;
+  --lacquer-deep: #7A1420;
+  --lacquer-ink: #0B0708;
+  --lacquer-soft: #3B1117;
+
+  --gold: #E8C86A;         /* ทองที่อ่านได้บนพื้นมืด — 12.3:1 */
+  --gold-soft: #241503;
+  --celadon: #82BF9F;
+  --celadon-soft: #14231C;
+
+  --shadow: 0 1px 1px rgba(0,0,0,.34), 0 2px 4px rgba(0,0,0,.26), 0 8px 18px rgba(0,0,0,.26);
+  --shadow-lift: 0 2px 3px rgba(0,0,0,.4), 0 8px 16px rgba(0,0,0,.32), 0 22px 44px rgba(0,0,0,.34);
+
+  position: relative;
+  isolation: isolate;
+  background: var(--ground);
+  color: var(--ink);
+}
+/* แสงอุ่นเยื้องศูนย์ + ขอบมืด ทำให้พื้นเข้มดูเป็น "ที่ว่างที่มีแสง"
+   ไม่ใช่สี่เหลี่ยมสีเดียว จุดกำเนิดแสงต้องไม่อยู่กลางภาพ ไม่งั้นดูเป็นฟิลเตอร์ */
+.zone-dark::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(72% 58% at 22% 6%, var(--gold-glow) 0%, transparent 62%),
+    radial-gradient(62% 52% at 84% 82%, rgba(160, 32, 28, .20) 0%, transparent 66%),
+    radial-gradient(122% 92% at 50% 46%, transparent 44%, rgba(0, 0, 0, .5) 100%);
+}
+
+/* ============================================================
+   เกรนละเอียด — พื้นสีเรียบ ๆ กับไล่เฉดจะขึ้นแถบและดูเป็นเวกเตอร์
+   เกรน 4% ทำให้พื้นกว้างอ่านเป็นผิวรักหรือผิวกระดาษ
+   เกิน 7% เมื่อไรจะกลายเป็นสกปรก
+   ============================================================ */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: .04;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ============================================================
+   ทองโลหะบนตัวอักษร
+   ใช้ได้เฉพาะขนาด ≥ 28px และน้ำหนัก ≥ 500 เส้นบางกว่านั้นไล่เฉดไม่ติด
+   ห้ามใช้กับเนื้อความ
+   ============================================================ */
+.foil {
+  background: var(--gold-metal);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  /* ทองล้วนบนพื้นมืดไม่มีขอบ ต้องมีเงาบางคั่นไว้ */
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, .55));
+}
+@media (prefers-reduced-motion: no-preference) {
+  .foil--live { animation: foil-sheen 9s var(--ease-lux) infinite; }
+}
+/* แสงกวาดผ่านครั้งเดียวแล้วนิ่งยาว — วิ่งรัวต่อเนื่องคือสัญญาณของความถูก */
+@keyframes foil-sheen {
+  0%   { background-position: 118% 50%; }
+  52%  { background-position: -18% 50%; }
+  100% { background-position: -18% 50%; }
+}
+@media (forced-colors: active) {
+  .foil { -webkit-text-fill-color: currentColor; color: CanvasText; filter: none; }
+}
+
+/* ตัวอักษรแกะร่องปิดทอง — คำศัพท์ทางกายภาพของป้ายวัดจริง
+   ระยะต้อง 1px พอดี 2px ขึ้นไปจะกลายเป็นฟิลเตอร์นูนยุค 2005 */
+.carved {
+  color: var(--gold-pale);
+  text-shadow:
+    0 -1px 0 rgba(0, 0, 0, .55),
+    0 1px 0 rgba(255, 226, 168, .22),
+    0 0 22px rgba(216, 169, 63, .18);
+}
+
+/* ============================================================
+   เส้นขลิบทอง — ไล่เฉดตามมุมแสง สว่างมุมบนซ้าย จางลงตรงกลาง
+   ใช้ mask-composite เพราะ border-image ทำบนพื้นโปร่งไม่ได้
+   ============================================================ */
+.gilt { position: relative; }
+.gilt::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(145deg,
+    rgba(242, 220, 166, .85) 0%,
+    rgba(216, 169, 63, .38) 28%,
+    rgba(142, 106, 22, .12) 55%,
+    rgba(216, 169, 63, .45) 82%,
+    rgba(242, 220, 166, .70) 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* เส้นคั่นทอง — ปลายจางทั้งสองข้างจึงอ่านเป็นรอยแปรงปิดทอง ไม่ใช่เส้นขอบ */
+.rule-gold {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(90deg,
+    transparent 0%, var(--gold-bright) 14%, var(--gold-pale) 50%, var(--gold-bright) 86%, transparent 100%);
+  opacity: .75;
+}
+
+/* ============================================================
+   แสงกวาดตอนชี้การ์ด — แถบแคบ ๆ ไม่ใช่แสงล้างทั้งใบ
+   ============================================================ */
+.sheen { position: relative; overflow: hidden; isolation: isolate; }
+.sheen::after {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(100deg,
+    transparent 40%,
+    rgba(242, 220, 166, .10) 48%,
+    rgba(251, 243, 196, .20) 50%,
+    rgba(242, 220, 166, .10) 52%,
+    transparent 60%);
+  transform: translateX(-125%);
+  transition: transform .95s var(--ease-lux);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sheen:hover::after, .sheen:focus-visible::after { transform: translateX(125%); }
+}
+
+/* ============================================================
+   ค่อย ๆ ปรากฏตามการเลื่อนหน้า — ทำบน compositor ไม่ใช้ JavaScript
+   เบราว์เซอร์ที่ยังไม่รองรับจะแสดงเนื้อหาทันที ไม่หายไปไหน
+   ============================================================ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 6% cover 30%;
+    }
+    @keyframes reveal-rise {
+      from { opacity: 0; transform: translateY(24px) scale(.988); }
+      to { opacity: 1; transform: none; }
+    }
+  }
+}
+
+/* โซนมืดโทนรัก — ใช้กับฮีโร่ ให้ยังอ่านเป็นแดง ไม่ใช่ดำเฉย ๆ */
+.zone-dark--ox {
+  --ground: #1B0A0D;
+  --surface: #2A1015;
+  --surface-2: #210C10;
 }
