@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+
+const lang = 'zh' as const;
+const FAQ = [
+  { q: '普陀觀音堂幾點開放？', a: '每日開放。週一至週五 07:00–18:00，週六日 06:30–19:00。法會期間可能延長，請見節日曆公告。' },
+  { q: '本堂在哪裡？', a: '曼谷他威瓦他那區佛城二段路旁，門前懸有「普陀觀音堂」紅底金字匾額。' },
+  { q: '參拜要上幾支香？', a: '本堂每處供香三支，主尊與各尊皆同。重要日子有人用九支，亦無不可。' },
+  { q: '何謂三十三觀音？', a: '《法華經・普門品》說觀世音菩薩應以何身得度者即現何身。後世畫像依此數目與觀念集成三十三種法相，各有所持之物與意涵。' },
+  { q: '需要自備供品嗎？', a: '不必。香燭與供花堂前有售。未帶供品前來禮拜亦無不敬。' },
+  { q: '可以供葷食嗎？', a: '不可。觀音茹素，供品一律不用葷腥，包括蛋與用豬油烹製之物。' },
+  { q: '堂內可以拍照嗎？', a: '可一般拍照。法會進行中請先詢問執事人員，並請勿攀爬佛像台座。' },
+  { q: '有停車場嗎？', a: '堂內設有停車場。法會日可能不足，建議提早前往。' },
+  { q: '觀音的重要日子有哪些？', a: '三大紀念日為誕辰（農曆二月十九）、成道（六月十九）、出家（九月十九）。各年對應的西曆日期見節日曆。' },
+  { q: '網站有中文版嗎？', a: '中文版涵蓋本堂簡介、三十三觀音、參拜方式、交通與節日曆。各尊的長篇考釋、堂內公告與祈願分類目前僅有泰文版。' },
+];
+const schema = [{
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQ.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+}];
+---
+<BaseLayout
+  lang={lang}
+  title="常見問題"
+  description="開放時間、地點、上香數目、供品、拍照規定——來訪普陀觀音堂最常被問到的問題。"
+  schema={schema}
+  breadcrumbs={[{ label: '首頁', href: '/zh' }, { label: '常見問題', href: '/zh/faq' }]}
+>
+  <PageHero eyebrow="常見問題" title="常見問題" narrow />
+  <section class="band">
+    <div class="wrap wrap--narrow">
+      <dl class="faq">
+        {FAQ.map((f) => (<><dt>{f.q}</dt><dd>{f.a}</dd></>))}
+      </dl>
+      <p class="more">未找到答案？<a href="/zh/contact">聯絡本堂</a></p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .faq { margin: 0; }
+  .faq dt { font-size: 19px; font-weight: 600; padding-top: 24px; margin-top: 24px; border-top: 1px solid var(--line); }
+  .faq dt:first-of-type { padding-top: 0; margin-top: 0; border-top: 0; }
+  .faq dd { margin: 9px 0 0; color: var(--ink-2); line-height: 1.85; max-width: var(--measure); }
+  .more { margin-top: 44px; padding-top: 24px; border-top: 1px solid var(--line); color: var(--ink-2); }
+</style>

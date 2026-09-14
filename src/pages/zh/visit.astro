@@ -1,0 +1,66 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import HoursBar from '../../components/HoursBar.astro';
+import VisitPanel from '../../components/VisitPanel.astro';
+import site from '../../data/site.json';
+const lang = 'zh' as const;
+---
+<BaseLayout
+  lang={lang}
+  title="交通與開放時間"
+  description={`普陀觀音堂 ${site.address.full_zh}。開放時間、交通方式、停車、服裝與攝影規定。`}
+  breadcrumbs={[{ label: '首頁', href: '/zh' }, { label: '交通與開放時間', href: '/zh/visit' }]}
+>
+  <PageHero
+    eyebrow="交通"
+    title="如何前來 · 開放時間"
+    lede="本堂位於曼谷他威瓦他那區佛城二段路旁，自行開車最為方便。"
+  />
+  <HoursBar compact lang={lang} />
+
+  <section class="band">
+    <div class="wrap">
+      <VisitPanel lang={lang} />
+
+      <div class="cols">
+        <section>
+          <h2>自行開車</h2>
+          <p>由 Borommaratchachonnani 路轉入佛城二段路，本堂在左手邊，門前懸有「普陀觀音堂」紅底金字匾額。</p>
+          <p class="muted small">詳細路線與地標待堂方確認後補上。</p>
+        </section>
+        <section>
+          <h2>停車</h2>
+          <p>堂內設有停車場。法會或重要日子車位可能不足，建議提早前往。</p>
+          <p class="muted small">車位數量待堂方確認。</p>
+        </section>
+        <section>
+          <h2>服裝</h2>
+          <p>請著端莊服裝，遮蓋肩膀與膝蓋，勿穿細肩帶上衣或短褲。入殿禮拜前請脫帽與墨鏡。</p>
+        </section>
+        <section>
+          <h2>設施</h2>
+          <ul><li>洗手間</li><li>香燭與供花販售處</li><li>室內休息座位</li></ul>
+          <p class="muted small">此清單待堂方確認。</p>
+        </section>
+        <section>
+          <h2>攝影</h2>
+          <p>堂內可一般拍照。法會進行中或商業用途拍攝，請先詢問執事人員。請勿攀爬佛像台座取景。</p>
+        </section>
+        <section>
+          <h2>人潮較多的日子</h2>
+          <p>農曆初一、十五、九皇齋期，以及觀音三大紀念日人潮最多。出發前請先參考<a href="/zh/calendar">節日曆</a>。</p>
+        </section>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 34px 48px; margin-top: 44px; }
+  .cols h2 { font-size: 19px; padding-bottom: 7px; border-bottom: 1px solid var(--line); margin-bottom: 12px; }
+  .cols p { color: var(--ink-2); line-height: 1.85; }
+  .cols p + p { margin-top: 8px; }
+  .cols ul { margin: 0; padding-left: 1.3em; color: var(--ink-2); }
+  .cols li { margin-bottom: 5px; }
+</style>

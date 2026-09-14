@@ -2,26 +2,31 @@
 import PangArt from './PangArt.astro';
 import { pangNo } from '../lib/format';
 import { displayName, type Pang } from '../lib/pang';
+import { useT, withLang, type Lang } from '../i18n';
 
-interface Props { pang: Pang; priority?: boolean }
-const { pang, priority = false } = Astro.props;
+interface Props { pang: Pang; priority?: boolean; lang?: Lang }
+const { pang, priority = false, lang = 'th' } = Astro.props;
 const d = pang.data;
+const t = useT(lang);
+// ฝั่งจีนให้ชื่อจีนเป็นบรรทัดหลัก เพราะเป็นชื่อที่ผู้อ่านจีนใช้จริง
+const primary = lang === 'zh' ? d.name_zh : displayName(pang);
+const secondary = lang === 'zh' ? '' : d.name_zh;
 ---
 <a
   class:list={['pang-card', !d.enshrined && 'pang-card--pending']}
-  href={`/33-pang/${d.slug}`}
+  href={withLang(`/33-pang/${d.slug}`, lang)}
   data-wishes={d.wishes.join(' ')}
   data-order={d.order}
 >
   <PangArt
     photo={d.photo} order={d.order} nameTh={displayName(pang)} nameZh={d.name_zh}
-    enshrined={d.enshrined} priority={priority}
+    enshrined={d.enshrined} priority={priority} lang={lang}
   />
   <span class="pang-card__body">
     <span class="pang-card__no mono">{pangNo(d.order)}</span>
-    <span class="pang-card__th">{displayName(pang)}</span>
-    <span class="pang-card__zh han">{d.name_zh}</span>
-    {!d.enshrined && <span class="pang-card__tag">กำลังอัญเชิญ</span>}
+    <span class:list={['pang-card__th', lang === 'zh' && 'han']}>{primary}</span>
+    {secondary && <span class="pang-card__zh han">{secondary}</span>}
+    {!d.enshrined && <span class="pang-card__tag">{t('pang.pending')}</span>}
   </span>
 </a>
 

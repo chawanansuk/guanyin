@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HoursBar from '../../components/HoursBar.astro';
+import site from '../../data/site.json';
+import { daysFromToday, parseDay } from '../../lib/format';
+
+const lang = 'zh' as const;
+const o = site.opening_ceremony;
+const date = parseDay(o.date);
+const left = daysFromToday(date);
+const past = left < 0;
+const ZH_DAYS = ['日', '一', '二', '三', '四', '五', '六'];
+const zhDate = `${date.getUTCFullYear()}年${date.getUTCMonth() + 1}月${date.getUTCDate()}日（星期${ZH_DAYS[date.getUTCDay()]}）`;
+
+const schema = [{
+  '@context': 'https://schema.org',
+  '@type': 'Event',
+  name: o.headline_zh || o.headline,
+  startDate: o.date,
+  eventStatus: 'https://schema.org/EventScheduled',
+  location: { '@id': `${site.url}/#shrine` },
+  isAccessibleForFree: true,
+}];
+---
+<BaseLayout
+  lang={lang}
+  title={past ? '開光大典紀實' : '開光大典'}
+  description={`${o.headline_zh} ${zhDate}，於曼谷佛城二段路普陀觀音堂舉行。時間、停車與服裝說明。`}
+  schema={schema}
+  breadcrumbs={[{ label: '首頁', href: '/zh' }, { label: '開光大典', href: '/zh/opening' }]}
+>
+  <section class="hero plaque">
+    <div class="wrap hero__inner">
+      <p class="hero__eyebrow">{past ? '紀實' : '典禮資訊'}</p>
+      <h1 class="han">{o.headline_zh}</h1>
+      <p class="hero__date mono">{zhDate}</p>
+      {!past && left >= 0 && <p class="hero__count">{left === 0 ? '今日' : left === 1 ? '明日' : `尚餘 ${left} 天`}</p>}
+      <div class="hero__cta">
+        <a class="btn btn--primary" href={site.maps_url} target="_blank" rel="noopener">導航前往本堂</a>
+        <a class="btn btn--plaque" href="/zh/33-pang">先認識三十三觀音</a>
+      </div>
+    </div>
+  </section>
+
+  <HoursBar compact lang={lang} />
+
+  <section class="band">
+    <div class="wrap wrap--narrow">
+      <div class="note note--lacquer">
+        <p><strong>詳細流程尚待本堂公布</strong>——起始時間、儀程、開放隨喜參與的時段、停車安排與應備之物。本頁於取得資訊後隨即更新。</p>
+      </div>
+
+      <h2 class="sec">目前已知</h2>
+      <dl class="facts">
+        <dt>日期</dt><dd>{zhDate}</dd>
+        <dt>地點</dt><dd>{site.name_zh}　{site.address.full_zh}</dd>
+        <dt>服裝</dt><dd>端莊，遮蓋肩膀與膝蓋。典禮場合宜著白色或淺色。</dd>
+        <dt>費用</dt><dd>免費，一般民眾均可參加。</dd>
+      </dl>
+
+      <h2 class="sec">前來準備</h2>
+      <ul class="prep">
+        <li>當日人潮眾多，停車場可能不足，建議提早至少一小時抵達。</li>
+        <li>可先閱讀<a href="/zh/worship/how-to">參拜方式</a>，臨場便不必躊躇。</li>
+        <li>先看過<a href="/zh/33-pang">三十三觀音</a>，選定此行想禮拜的那一尊。</li>
+        <li>各尊台座設有掃碼標示，可即時查看該尊的名號與意涵。</li>
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero { border: 0; }
+  .hero__inner { padding-block: clamp(44px, 8vw, 76px) clamp(34px, 6vw, 56px); display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .hero__eyebrow { font: 600 12px/1.4 var(--mono); letter-spacing: .16em; color: var(--plaque-ink-2); margin: 0 0 16px; }
+  .hero h1 { color: var(--plaque-ink); letter-spacing: .06em; }
+  .hero__date { margin: 18px 0 0; font-size: clamp(17px, 2.6vw, 21px); color: var(--plaque-ink); }
+  .hero__count { margin: 8px 0 0; font-family: var(--mono); font-size: 15px; color: var(--gold-bright); }
+  .hero__cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 28px; }
+  .sec { font-size: 21px; margin: 44px 0 14px; }
+  .facts { margin: 0; display: grid; grid-template-columns: 110px 1fr; }
+  .facts dt { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; color: var(--ink-3); padding: 13px 0; border-top: 1px solid var(--line); }
+  .facts dd { margin: 0; padding: 13px 0; border-top: 1px solid var(--line); color: var(--ink-2); line-height: 1.8; }
+  .facts dd:last-of-type, .facts dt:last-of-type { border-bottom: 1px solid var(--line); }
+  @media (max-width: 520px) {
+    .facts { grid-template-columns: 1fr; }
+    .facts dt { padding-bottom: 0; border-bottom: 0 !important; }
+    .facts dd { padding-top: 4px; border-top: 0; }
+  }
+  .prep { margin: 0; padding-left: 1.3em; color: var(--ink-2); }
+  .prep li { margin-bottom: 9px; line-height: 1.85; }
+</style>

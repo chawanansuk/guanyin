@@ -1,0 +1,118 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import { getCollection } from 'astro:content';
+import { daysFromToday, isoDate } from '../../lib/format';
+import site from '../../data/site.json';
+
+const lang = 'zh' as const;
+const all = (await getCollection('events')).sort((a, b) => +a.data.date - +b.data.date);
+const upcoming = all.filter((e) => daysFromToday(e.data.end_date ?? e.data.date) >= 0);
+const past = all.filter((e) => daysFromToday(e.data.end_date ?? e.data.date) < 0).reverse();
+const hasApprox = all.some((e) => e.data.approx);
+
+const zhDate = (d: Date) => `${d.getUTCFullYear()}年${d.getUTCMonth() + 1}月${d.getUTCDate()}日`;
+const zhRange = (a: Date, b?: Date) =>
+  !b ? zhDate(a)
+  : a.getUTCMonth() === b.getUTCMonth()
+    ? `${a.getUTCFullYear()}年${a.getUTCMonth() + 1}月${a.getUTCDate()}–${b.getUTCDate()}日`
+    : `${zhDate(a)} – ${zhDate(b)}`;
+
+const schema = upcoming.map((e) => ({
+  '@context': 'https://schema.org',
+  '@type': 'Event',
+  name: e.data.title_zh || e.data.title,
+  startDate: isoDate(e.data.date),
+  ...(e.data.end_date ? { endDate: isoDate(e.data.end_date) } : {}),
+  eventStatus: 'https://schema.org/EventScheduled',
+  location: { '@id': `${site.url}/#shrine` },
+}));
+---
+<BaseLayout
+  lang={lang}
+  title="節日曆"
+  description="觀音誕辰、成道、出家三大紀念日，九皇齋期，以及普陀觀音堂的法會日期。"
+  schema={schema}
+  breadcrumbs={[{ label: '首頁', href: '/zh' }, { label: '節日曆', href: '/zh/calendar' }]}
+>
+  <PageHero
+    eyebrow="節日曆"
+    title="重要日子"
+    lede="觀音三大紀念日分別是：誕辰（二月十九）、成道（六月十九）、出家（九月十九），皆為農曆。"
+  />
+
+  <section class="band">
+    <div class="wrap">
+      <h2>近期</h2>
+      {upcoming.length > 0 ? (
+        <ol class="evt">
+          {upcoming.map((e) => {
+            const n = daysFromToday(e.data.date);
+            return (
+              <li class:list={['evt__row', e.data.featured && 'evt__row--hi']}>
+                <time class="evt__date mono" datetime={isoDate(e.data.date)}>
+                  {zhRange(e.data.date, e.data.end_date)}
+                  {e.data.approx && <abbr class="evt__approx" title="依農曆推算，尚待堂方核對">≈</abbr>}
+                </time>
+                <div class="evt__main">
+                  <span class="evt__title han">{e.data.title_zh || e.data.title}</span>
+                  {e.data.lunar && <span class="evt__lunar">{e.data.lunar}</span>}
+                </div>
+                <span class="evt__rel mono">{n <= 0 ? '進行中' : `尚餘 ${n} 天`}</span>
+              </li>
+            );
+          })}
+        </ol>
+      ) : <p class="muted">暫無登錄的近期日子</p>}
+
+      {past.length > 0 && (
+        <details class="past">
+          <summary>本年已過的日子（{past.length} 項）</summary>
+          <ol class="evt">
+            {past.map((e) => (
+              <li class="evt__row evt__row--past">
+                <time class="evt__date mono" datetime={isoDate(e.data.date)}>{zhRange(e.data.date, e.data.end_date)}</time>
+                <div class="evt__main"><span class="evt__title han">{e.data.title_zh || e.data.title}</span></div>
+                <span class="evt__rel mono">已過</span>
+              </li>
+            ))}
+          </ol>
+        </details>
+      )}
+
+      <h2 class="mt">每月齋日</h2>
+      <p>農曆初一與十五，全年共二十四次，是信眾固定前來禮拜的日子。本堂按平日時間開放。</p>
+
+      {hasApprox && (
+        <div class="note">
+          <p>
+            <strong>標示「≈」者為依農曆週期推算的日期，尚未與通勝核對</strong>，
+            可能有一日之差。重要日子前來之前，請再向本堂確認。
+          </p>
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  h2 { font-size: 21px; margin-bottom: 14px; }
+  .mt { margin-top: 48px; }
+  .evt { list-style: none; margin: 0; padding: 0; }
+  .evt__row { display: grid; grid-template-columns: 220px 1fr auto; gap: 6px 20px; align-items: baseline; padding: 15px 0; border-top: 1px solid var(--line); }
+  .evt__row:last-child { border-bottom: 1px solid var(--line); }
+  .evt__row--hi { border-top: 2px solid var(--lacquer); }
+  .evt__row--hi .evt__title { color: var(--lacquer); font-weight: 600; }
+  .evt__row--past, .evt__row--past .evt__title { color: var(--ink-3); }
+  .evt__date { font-size: 15.5px; white-space: nowrap; }
+  .evt__approx { color: var(--gold); text-decoration: none; margin-left: 4px; cursor: help; }
+  .evt__main { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+  .evt__title { font-size: 17px; }
+  .evt__lunar { font-family: var(--mono); font-size: 13px; color: var(--ink-3); }
+  .evt__rel { font-size: 13.5px; color: var(--ink-3); white-space: nowrap; }
+  @media (max-width: 640px) { .evt__row { grid-template-columns: 1fr auto; } .evt__date { grid-column: 1 / -1; } }
+  .past { margin-top: 28px; border-top: 1px solid var(--line); padding-top: 14px; }
+  .past summary { cursor: pointer; font-size: 16px; color: var(--ink-2); min-height: 44px; display: flex; align-items: center; }
+  .note { margin-top: 36px; }
+  .note p { line-height: 1.85; }
+</style>

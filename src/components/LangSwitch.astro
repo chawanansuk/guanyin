@@ -1,0 +1,63 @@
+---
+/**
+ * ปุ่มสลับภาษา ไทย / 中文
+ * หน้าที่ยังไม่มีคู่แปล ปุ่มจะยังกดได้แต่พาไปหน้าแรกของอีกภาษา
+ * พร้อมบอกตรง ๆ ว่าหน้านี้ยังไม่มีฉบับแปล ไม่ปล่อยให้ผู้อ่านกดแล้วงง
+ */
+import { LANGS, LANG_META, altPath, useT, type Lang } from '../i18n';
+
+interface Props { lang: Lang; path: string; variant?: 'plaque' | 'plain' }
+const { lang, path, variant = 'plaque' } = Astro.props;
+const t = useT(lang);
+---
+<nav class:list={['lang', `lang--${variant}`]} aria-label={t('lang.switch')}>
+  {LANGS.map((l) => {
+    const alt = altPath(path, l);
+    const href = alt ?? (l === 'th' ? '/' : '/zh');
+    const current = l === lang;
+    return (
+      <a
+        href={href}
+        class="lang__item"
+        lang={LANG_META[l].htmlLang}
+        hreflang={LANG_META[l].htmlLang}
+        aria-current={current ? 'true' : undefined}
+        title={!current && !alt ? t('lang.noTranslation') : undefined}
+      >
+        {LANG_META[l].label}
+        {!current && !alt && <span class="lang__partial" aria-hidden="true">·</span>}
+      </a>
+    );
+  })}
+</nav>
+
+<style>
+  .lang { display: inline-flex; align-items: center; gap: 2px; flex: none; }
+  .lang__item {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 4px 11px;
+    font-size: 15px;
+    text-decoration: none;
+    border-radius: 2px;
+  }
+  .lang__item + .lang__item { position: relative; }
+  .lang__item + .lang__item::before {
+    content: "";
+    position: absolute; left: -1px; top: 50%;
+    width: 1px; height: 15px; transform: translateY(-50%);
+    background: currentColor; opacity: .35;
+  }
+  .lang__partial { opacity: .6; margin-left: 2px; }
+
+  .lang--plaque .lang__item { color: var(--plaque-ink-2); }
+  .lang--plaque .lang__item:hover { color: var(--plaque-ink); }
+  .lang--plaque .lang__item[aria-current="true"] {
+    color: var(--plaque); background: var(--gold-bright); font-weight: 600;
+  }
+
+  .lang--plain .lang__item { color: var(--ink-2); }
+  .lang--plain .lang__item:hover { color: var(--ink); }
+  .lang--plain .lang__item[aria-current="true"] { color: var(--lacquer); font-weight: 600; }
+</style>

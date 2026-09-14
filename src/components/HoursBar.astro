@@ -9,20 +9,29 @@
  */
 import site from '../data/site.json';
 import { hoursSummary } from '../lib/hours';
+import { useT, type Lang } from '../i18n';
 
-interface Props { compact?: boolean }
-const { compact = false } = Astro.props;
+interface Props { compact?: boolean; lang?: Lang }
+const { compact = false, lang = 'th' } = Astro.props;
+const t = useT(lang);
 const weekly = JSON.stringify(site.hours.weekly);
+// ข้อความสถานะส่งไปกับ DOM เพราะสคริปต์เป็น inline ธรรมดา ไม่ได้ผ่าน bundler
+const labels = JSON.stringify({
+  open: t('hours.openNow'),
+  soon: t('hours.opensToday'),
+  shut: t('hours.closedNow'),
+  closed: t('hours.closedToday'),
+});
 ---
-<div class:list={['hours-bar', compact && 'hours-bar--compact']} data-hours={weekly}>
+<div class:list={['hours-bar', compact && 'hours-bar--compact']} data-hours={weekly} data-hours-labels={labels}>
   <div class="wrap hours-bar__inner">
     <p class="hours-bar__text">
       <span class="hours-bar__dot" data-dot aria-hidden="true"></span>
-      <span data-hours-label>เวลาทำการ</span>
+      <span data-hours-label>{t('hours.label')}</span>
       <span class="hours-bar__time mono" data-hours-time>{hoursSummary()}</span>
     </p>
     <a class="btn btn--ghost hours-bar__btn" href={site.maps_url} target="_blank" rel="noopener">
-      นำทางไปตำหนัก
+      {t('cta.directions')}
     </a>
   </div>
 </div>
@@ -30,9 +39,10 @@ const weekly = JSON.stringify(site.hours.weekly);
 <script is:inline>
   (function () {
     for (const el of document.querySelectorAll('[data-hours]')) {
-      var weekly, now;
+      var weekly, now, L;
       try {
         weekly = JSON.parse(el.dataset.hours);
+        L = JSON.parse(el.dataset.hoursLabels);
         // เวลาไทยเสมอ ไม่ว่าเครื่องผู้ใช้ตั้งเขตเวลาอะไรไว้
         now = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Bangkok' }));
       } catch (e) { continue; }
@@ -44,7 +54,7 @@ const weekly = JSON.stringify(site.hours.weekly);
       if (!label || !time) continue;
 
       if (!slot) {
-        label.textContent = 'วันนี้ปิด';
+        label.textContent = L.closed;
         time.textContent = '';
         el.dataset.state = 'closed';
         continue;
@@ -54,7 +64,7 @@ const weekly = JSON.stringify(site.hours.weekly);
       var toMin = function (t) { var p = t.split(':'); return +p[0] * 60 + +p[1]; };
       var open = mins >= toMin(slot.open) && mins < toMin(slot.close);
 
-      label.textContent = open ? 'เปิดอยู่ตอนนี้' : (mins < toMin(slot.open) ? 'วันนี้เปิด' : 'ปิดแล้ววันนี้ · พรุ่งนี้เปิด');
+      label.textContent = open ? L.open : (mins < toMin(slot.open) ? L.soon : L.shut);
       time.textContent = slot.open + '–' + slot.close;
       el.dataset.state = open ? 'open' : 'shut';
       if (dot) dot.dataset.on = open ? 'true' : 'false';

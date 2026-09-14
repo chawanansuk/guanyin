@@ -41,8 +41,9 @@ jobs:
         run: |
           pages=$(find dist -name '*.html' | wc -l)
           echo "สร้างได้ $pages หน้า"
-          test "$pages" -ge 55 || { echo "หน้าน้อยผิดปกติ — คาดว่าอย่างน้อย 55 หน้า"; exit 1; }
+          test "$pages" -ge 130 || { echo "หน้าน้อยผิดปกติ — คาดว่าอย่างน้อย 130 หน้า"; exit 1; }
           test -f dist/33-pang/yang-liu.html || { echo "ไม่พบหน้าปาง"; exit 1; }
+          test -f dist/zh/33-pang/yang-liu.html || { echo "ไม่พบหน้าปางฉบับภาษาจีน"; exit 1; }
           test -f dist/sitemap-index.xml || { echo "ไม่พบ sitemap"; exit 1; }
 
       - uses: actions/upload-artifact@v4

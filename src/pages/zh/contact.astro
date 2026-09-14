@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import VisitPanel from '../../components/VisitPanel.astro';
+import site from '../../data/site.json';
+
+const lang = 'zh' as const;
+const channels = [
+  site.phone && { label: '電話', value: site.phone, href: `tel:${site.phone.replace(/[^0-9+]/g, '')}` },
+  site.line_oa && { label: 'LINE', value: site.line_oa, href: site.line_oa },
+  site.facebook && { label: 'Facebook', value: '本堂專頁', href: site.facebook },
+  site.email && { label: '電子郵件', value: site.email, href: `mailto:${site.email}` },
+].filter(Boolean) as { label: string; value: string; href: string }[];
+---
+<BaseLayout
+  lang={lang}
+  title="聯絡本堂"
+  description="普陀觀音堂地址、開放時間與聯絡方式。位於曼谷佛城二段路。"
+  breadcrumbs={[{ label: '首頁', href: '/zh' }, { label: '聯絡本堂', href: '/zh/contact' }]}
+>
+  <PageHero eyebrow="聯絡" title="聯絡本堂" narrow />
+  <section class="band">
+    <div class="wrap">
+      <VisitPanel lang={lang} />
+      <div class="wrap--narrow ch-wrap">
+        {channels.length > 0 ? (
+          <dl class="ch">
+            {channels.map((c) => (<><dt>{c.label}</dt><dd><a href={c.href}>{c.value}</a></dd></>))}
+          </dl>
+        ) : (
+          <div class="note">
+            <p><strong>聯絡方式籌備中。</strong>本堂電話與官方 LINE 開通後將於此頁公布。在此之前，敬請於開放時間內直接至本堂洽詢。</p>
+          </div>
+        )}
+        <div class="note note--celadon">
+          <p>
+            <strong>若發現本站資訊有誤</strong>——尤其是名號、譯音或節日日期，敬請告知。
+            本站日後將成為他人引用的依據，正確比快速更為要緊。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .ch-wrap { margin: 40px auto 0; padding: 0; }
+  .ch { margin: 0 0 26px; display: grid; grid-template-columns: 110px 1fr; }
+  .ch dt { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; color: var(--ink-3); padding: 13px 0; border-top: 1px solid var(--line); }
+  .ch dd { margin: 0; padding: 13px 0; border-top: 1px solid var(--line); }
+  .note + .note { margin-top: 18px; }
+  .note p { line-height: 1.85; }
+</style>

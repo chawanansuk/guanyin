@@ -6,6 +6,7 @@
  */
 import photos from '../data/photos.json';
 import { pangNo } from '../lib/format';
+import type { Lang } from '../i18n';
 
 interface Props {
   photo: string;
@@ -16,12 +17,17 @@ interface Props {
   sizes?: string;
   loading?: 'lazy' | 'eager';
   priority?: boolean;
+  lang?: Lang;
 }
 const {
   photo, order, nameTh, nameZh,
   enshrined = true, sizes = '(max-width: 640px) 45vw, 300px',
-  loading = 'lazy', priority = false,
+  loading = 'lazy', priority = false, lang = 'th',
 } = Astro.props;
+
+const L = lang === 'zh'
+  ? { waiting: '尚無照片', pending: '尚待迎請', alt: (n: string) => `${n} 造像（普陀觀音堂）`, noPhoto: (n: string) => `${n} 尚無照片` }
+  : { waiting: 'รอภาพถ่าย', pending: 'กำลังอัญเชิญ', alt: (n: string) => `องค์${n} ${nameZh} ในตำหนักผู่โถวเจ้าแม่กวนอิม`, noPhoto: (n: string) => `ยังไม่มีภาพถ่ายองค์${n} ${nameZh}` };
 
 const entry = (photos.images as Record<string, { widths: number[]; ext: string }>)[photo];
 const srcset = entry
@@ -35,14 +41,14 @@ const srcset = entry
     srcset={srcset}
     sizes={sizes}
     width="900" height="1200"
-    alt={`องค์${nameTh} ${nameZh} ในตำหนักผู่โถวเจ้าแม่กวนอิม`}
+    alt={L.alt(nameTh)}
     loading={priority ? 'eager' : loading}
     fetchpriority={priority ? 'high' : undefined}
     decoding="async"
   />
 ) : (
   <svg class="pang-art pang-art--draft" viewBox="0 0 300 400" role="img"
-       aria-label={`ยังไม่มีภาพถ่ายองค์${nameTh} ${nameZh}`}>
+       aria-label={L.noPhoto(nameTh)}>
     <rect width="300" height="400" fill="var(--surface-2)" />
     {/* ซุ้มแท่นประดิษฐาน */}
     <path d="M60 340 L60 150 A90 90 0 0 1 240 150 L240 340 Z"
@@ -54,7 +60,7 @@ const srcset = entry
     <text x="150" y="196" text-anchor="middle" class="pang-art__no">{pangNo(order)}</text>
     <text x="150" y="248" text-anchor="middle" class="pang-art__zh">{nameZh.slice(0, 2)}</text>
     <text x="150" y="300" text-anchor="middle" class="pang-art__hint">
-      {enshrined ? 'รอภาพถ่าย' : 'กำลังอัญเชิญ'}
+      {enshrined ? L.waiting : L.pending}
     </text>
   </svg>
 )}

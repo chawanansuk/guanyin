@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import site from '../../data/site.json';
+import { allPang, enshrinedCount } from '../../lib/pang';
+const lang = 'zh' as const;
+const count = enshrinedCount(await allPang());
+---
+<BaseLayout
+  lang={lang}
+  title="關於本堂"
+  description="普陀觀音堂位於曼谷佛城二段路。堂名取自浙江普陀山，發願迎請觀音菩薩三十三法相俱全。"
+  breadcrumbs={[{ label: '首頁', href: '/zh' }, { label: '關於本堂', href: '/zh/about' }]}
+>
+  <PageHero eyebrow="關於本堂" title="普陀觀音堂" narrow>
+    <p class="zh-big han">{site.name_zh}</p>
+  </PageHero>
+
+  <section class="band">
+    <div class="wrap wrap--narrow">
+      <div class="prose">
+        <p class="lede">
+          「普陀」二字取自浙江舟山的普陀山——觀音菩薩的根本道場，
+          也是漢傳佛教四大名山之一。
+        </p>
+        <p>
+          相傳普陀山是觀世音菩薩示現說法之處。本堂以此為名，
+          所寄託的不只是一個地名，而是說明本堂何以發願依《法華經・普門品》的數目，
+          迎請三十三法相俱全。
+        </p>
+        <p>
+          現已安奉 {count.enshrined} 尊
+          {count.pending > 0 && <>，尚待迎請 {count.pending} 尊</>}。
+          本堂位於{site.address.full_zh}。
+        </p>
+        <p class="muted small">
+          本堂沿革、創建年代與造像來歷正在整理中，完成後將於此頁補上。
+        </p>
+      </div>
+
+      <div class="plaque couplet">
+        <p class="couplet__title han">{site.motto_zh}</p>
+        <ul class="couplet__lines">
+          {site.couplet.map((c) => <li class="han">{c.zh}</li>)}
+        </ul>
+        <p class="couplet__src">錄自本堂門前匾額與楹聯</p>
+      </div>
+
+      <ul class="sub">
+        <li><a href="/zh/33-pang"><span class="sub__t">三十三觀音</span><span class="sub__d">名號、辨識標記與本願要旨</span></a></li>
+        <li><a href="/zh/worship/how-to"><span class="sub__t">參拜方式</span><span class="sub__d">依本堂儀軌的參拜步驟與注意事項</span></a></li>
+        <li><a href="/zh/visit"><span class="sub__t">交通與開放時間</span><span class="sub__d">地址、開放時間、停車與服裝</span></a></li>
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .zh-big { font-size: clamp(30px, 6vw, 44px); font-weight: 700; letter-spacing: .18em; color: var(--lacquer); margin-top: 10px; }
+  .prose p { line-height: 1.9; }
+  .couplet { margin: 44px 0; padding: 30px 28px; text-align: center; }
+  .couplet__title { font-size: 26px; letter-spacing: .28em; padding-left: .28em; margin: 0; color: var(--plaque-ink); }
+  .couplet__lines { list-style: none; margin: 24px 0 0; padding: 22px 0 0; border-top: 1px solid var(--plaque-line); display: flex; flex-direction: column; gap: 12px; }
+  .couplet__lines li { font-size: 19px; letter-spacing: .16em; color: var(--plaque-ink); }
+  .couplet__src { margin: 22px 0 0; font-family: var(--mono); font-size: 12px; letter-spacing: .1em; color: var(--plaque-ink-2); }
+  .sub { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .sub a { display: flex; flex-direction: column; gap: 5px; padding: 20px 22px; background: var(--surface); text-decoration: none; color: inherit; }
+  .sub a:hover { background: var(--surface-2); }
+  .sub a:hover .sub__t { color: var(--lacquer); }
+  .sub__t { font-size: 19px; font-weight: 600; }
+  .sub__d { font-size: 15.5px; color: var(--ink-2); }
+</style>

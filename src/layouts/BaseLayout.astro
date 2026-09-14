@@ -4,6 +4,7 @@ import site from '../data/site.json';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import { schemaOpeningHours } from '../lib/hours';
+import { LANG_META, LANGS, altPath, useT, type Lang } from '../i18n';
 
 interface Props {
   title: string;
@@ -16,14 +17,23 @@ interface Props {
   schema?: unknown[];
   breadcrumbs?: { label: string; href: string }[];
   bodyClass?: string;
+  lang?: Lang;
 }
 const {
   title, description, suffix = true,
   ogImage = '/og/default.png', noindex = false,
-  schema = [], breadcrumbs = [], bodyClass,
+  schema = [], breadcrumbs = [], bodyClass, lang = 'th',
 } = Astro.props;
 
-const fullTitle = suffix ? `${title} · ${site.name_th}` : title;
+const t = useT(lang);
+const meta = LANG_META[lang];
+const here = Astro.url.pathname.replace(/\/$/, '') || '/';
+// hreflang ให้ Google รู้ว่าหน้านี้มีอีกภาษาอยู่ที่ไหน และหน้าไหนเป็นค่าตั้งต้น
+const alternates = LANGS
+  .map((l) => ({ l, p: altPath(here, l) }))
+  .filter((x): x is { l: Lang; p: string } => x.p !== null);
+
+const fullTitle = suffix ? `${title} · ${lang === 'zh' ? site.name_zh : site.name_th}` : title;
 const canonical = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', site.url).href;
 const ogUrl = new URL(ogImage, site.url).href;
 
@@ -71,7 +81,7 @@ const crumbs = breadcrumbs.length
 const graphs = [place, ...crumbs, ...schema];
 ---
 <!doctype html>
-<html lang="th">
+<html lang={meta.htmlLang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -82,8 +92,8 @@ const graphs = [place, ...crumbs, ...schema];
     {noindex && <meta name="robots" content="noindex, follow" />}
 
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content={site.name_th} />
-    <meta property="og:locale" content="th_TH" />
+    <meta property="og:site_name" content={lang === "zh" ? site.name_zh : site.name_th} />
+    <meta property="og:locale" content={meta.ogLocale} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -95,6 +105,12 @@ const graphs = [place, ...crumbs, ...schema];
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    {alternates.map((a) => (
+      <link rel="alternate" hreflang={LANG_META[a.l].htmlLang} href={new URL(a.p, site.url).href} />
+    ))}
+    {alternates.length > 1 && (
+      <link rel="alternate" hreflang="x-default" href={new URL(alternates.find((a) => a.l === 'th')!.p, site.url).href} />
+    )}
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -117,11 +133,11 @@ const graphs = [place, ...crumbs, ...schema];
     <slot name="head" />
   </head>
   <body class={bodyClass}>
-    <a class="skip" href="#main">ข้ามไปยังเนื้อหา</a>
-    <SiteHeader />
+    <a class="skip" href="#main">{t('skip')}</a>
+    <SiteHeader lang={lang} />
     <main id="main">
       <slot />
     </main>
-    <SiteFooter />
+    <SiteFooter lang={lang} />
   </body>
 </html>

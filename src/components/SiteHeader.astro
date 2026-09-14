@@ -1,31 +1,50 @@
 ---
 import site from '../data/site.json';
+import LangSwitch from './LangSwitch.astro';
+import { useT, withLang, type Lang } from '../i18n';
 
-/** เมนู ๕ ช่อง — ตัดเหลือเท่าที่คนใช้จริง เมนูยาวทำให้เลือกไม่ถูก */
-const NAV = [
-  { href: '/about', label: 'เกี่ยวกับตำหนัก' },
-  { href: '/33-pang', label: '๓๓ ปาง' },
-  { href: '/worship', label: 'การบูชา' },
-  { href: '/calendar', label: 'ปฏิทิน' },
-  { href: '/visit', label: 'การเดินทาง' },
-];
+interface Props { lang?: Lang }
+const { lang = 'th' } = Astro.props;
+const t = useT(lang);
+
+/** เมนู ๕ ช่อง — ตัดเหลือเท่าที่คนใช้จริง เมนูยาวทำให้เลือกไม่ถูก
+ *  ฝั่งจีนยังไม่มีหน้า /worship รวม จึงชี้ตรงไปหน้าวิธีไหว้ที่แปลแล้ว */
+const NAV = lang === 'zh'
+  ? [
+      { href: '/zh/about', label: t('nav.about') },
+      { href: '/zh/33-pang', label: t('nav.pang') },
+      { href: '/zh/worship/how-to', label: t('nav.worship') },
+      { href: '/zh/calendar', label: t('nav.calendar') },
+      { href: '/zh/visit', label: t('nav.visit') },
+    ]
+  : [
+      { href: '/about', label: t('nav.about') },
+      { href: '/33-pang', label: t('nav.pang') },
+      { href: '/worship', label: t('nav.worship') },
+      { href: '/calendar', label: t('nav.calendar') },
+      { href: '/visit', label: t('nav.visit') },
+    ];
+
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isOn = (href: string) => path === href || path.startsWith(href + '/');
 ---
 <header class="site-head">
   <div class="site-head__bar plaque">
     <div class="wrap site-head__bar-inner">
-      <a href="/" class="brand">
+      <a href={withLang('/', lang)} class="brand">
         <span class="brand__zh han">{site.name_zh}</span>
-        <span class="brand__th">{site.name_th}</span>
+        <span class="brand__th">{lang === 'zh' ? '佛城二段' : site.name_th}</span>
       </a>
-      <a class="btn btn--plaque site-head__nav-btn" href={site.maps_url} target="_blank" rel="noopener">
-        นำทางไปตำหนัก
-      </a>
+      <div class="site-head__right">
+        <LangSwitch lang={lang} path={path} />
+        <a class="btn btn--plaque site-head__nav-btn" href={site.maps_url} target="_blank" rel="noopener">
+          {t('cta.directions')}
+        </a>
+      </div>
     </div>
   </div>
 
-  <nav class="site-nav" aria-label="เมนูหลัก">
+  <nav class="site-nav" aria-label={t('nav.menu')}>
     <div class="wrap site-nav__inner">
       <ul class="site-nav__list">
         {NAV.map((item) => (
@@ -48,10 +67,12 @@ const isOn = (href: string) => path === href || path.startsWith(href + '/');
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    gap: 12px 16px;
     min-height: 64px;
     padding-block: 10px;
+    flex-wrap: wrap;
   }
+  .site-head__right { display: flex; align-items: center; gap: 6px 12px; flex: none; }
 
   .brand {
     display: flex;
@@ -102,7 +123,7 @@ const isOn = (href: string) => path === href || path.startsWith(href + '/');
     font-weight: 500;
   }
 
-  @media (max-width: 520px) {
+  @media (max-width: 560px) {
     .brand__zh { font-size: 18px; }
     .site-head__nav-btn { font-size: 14.5px; padding-inline: 13px; }
   }

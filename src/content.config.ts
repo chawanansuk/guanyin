@@ -135,4 +135,14 @@ const pangFull = defineCollection({
   }),
 });
 
-export const collections = { pang, wishes, events, news, prayers, pangFull };
+// ข้อความภาษาจีนของแต่ละปาง — แยกไฟล์เพื่อให้ผู้แปลแก้ได้โดยไม่ชนกับ import:book
+const pangZh = defineCollection({
+  loader: file('./src/content/pang-zh/pang-zh.yaml'),
+  schema: z.object({
+    id: z.string(),
+    marks: z.string(),
+    essence: z.string(),
+  }),
+});
+
+export const collections = { pang, wishes, events, news, prayers, pangFull, pangZh };

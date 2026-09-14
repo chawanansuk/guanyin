@@ -1,13 +1,37 @@
 ---
 import site from '../data/site.json';
 import { hoursSummary } from '../lib/hours';
-const year = new Date().getFullYear() + 543;
+import LangSwitch from './LangSwitch.astro';
+import { useT, withLang, type Lang } from '../i18n';
+
+interface Props { lang?: Lang }
+const { lang = 'th' } = Astro.props;
+const t = useT(lang);
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const year = lang === 'zh' ? new Date().getFullYear() : new Date().getFullYear() + 543;
+
+const LINKS = lang === 'zh'
+  ? [
+      { href: '/zh/33-pang', label: '三十三觀音' },
+      { href: '/zh/worship/how-to', label: '參拜方式' },
+      { href: '/zh/calendar', label: '節日曆' },
+      { href: '/zh/faq', label: '常見問題' },
+      { href: '/zh/contact', label: '聯絡本堂' },
+    ]
+  : [
+      { href: '/33-pang', label: '๓๓ ปางทั้งหมด' },
+      { href: '/worship/how-to', label: 'วิธีไหว้' },
+      { href: '/worship/by-wish', label: 'ขอพรเรื่องไหน ไหว้ปางใด' },
+      { href: '/calendar', label: 'ปฏิทินวันสำคัญ' },
+      { href: '/faq', label: 'คำถามที่พบบ่อย' },
+      { href: '/contact', label: 'ติดต่อตำหนัก' },
+    ];
 ---
 <footer class="site-foot plaque">
   <div class="wrap site-foot__inner">
     <div class="site-foot__brand">
       <div class="site-foot__zh han">{site.name_zh}</div>
-      <div class="site-foot__th">{site.name_th}</div>
+      <div class="site-foot__th">{lang === 'zh' ? '佛城二段' : site.name_th}</div>
       <p class="site-foot__couplet han">
         {site.couplet.map((c) => <span>{c.zh}</span>)}
       </p>
@@ -15,35 +39,30 @@ const year = new Date().getFullYear() + 543;
 
     <div class="site-foot__cols">
       <div>
-        <h2>ที่ตั้งและเวลา</h2>
-        <p>{site.address.full_th}</p>
+        <h2>{t('foot.place')}</h2>
+        <p>{lang === 'zh' ? site.address.full_zh : site.address.full_th}</p>
         <p class="mono">{hoursSummary()}</p>
-        <p><a href={site.maps_url} target="_blank" rel="noopener">เปิดใน Google Maps</a></p>
+        <p><a href={site.maps_url} target="_blank" rel="noopener">{t('cta.maps')}</a></p>
       </div>
       <div>
-        <h2>ทางลัด</h2>
+        <h2>{t('foot.links')}</h2>
         <ul>
-          <li><a href="/33-pang">๓๓ ปางทั้งหมด</a></li>
-          <li><a href="/worship/how-to">วิธีไหว้</a></li>
-          <li><a href="/worship/by-wish">ขอพรเรื่องไหน ไหว้ปางใด</a></li>
-          <li><a href="/calendar">ปฏิทินวันสำคัญ</a></li>
-          <li><a href="/faq">คำถามที่พบบ่อย</a></li>
-          <li><a href="/contact">ติดต่อตำหนัก</a></li>
+          {LINKS.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
         </ul>
       </div>
     </div>
 
-    <p class="site-foot__legal">
-      เนื้อหาเรื่อง ๓๓ ปางบนเว็บนี้ ตรวจสอบโดยผู้รู้ของตำหนักก่อนเผยแพร่
-      หากพบข้อผิดพลาดโปรดแจ้งทางหน้าติดต่อ เพื่อจะได้แก้ไขให้ถูกต้อง
-    </p>
-    <p class="site-foot__legal">© {year} {site.name_th}</p>
+    <div class="site-foot__lang">
+      <LangSwitch lang={lang} path={path} />
+    </div>
+    <p class="site-foot__legal">{t('foot.notice')}</p>
+    <p class="site-foot__legal">© {year} {lang === 'zh' ? site.name_zh : site.name_th}</p>
   </div>
 </footer>
 
 <style>
   .site-foot { border: 0; border-top: 3px solid var(--gold-bright); margin-top: 0; }
-  .site-foot__inner { padding-block: 48px 56px; display: flex; flex-direction: column; gap: 32px; }
+  .site-foot__inner { padding-block: 48px 56px; display: flex; flex-direction: column; gap: 28px; }
 
   .site-foot__zh { font-size: 26px; font-weight: 700; letter-spacing: .2em; line-height: 1.2; }
   .site-foot__th { font-family: var(--serif); font-size: 17px; margin-top: 4px; }
@@ -65,10 +84,9 @@ const year = new Date().getFullYear() + 543;
   .site-foot a { color: var(--plaque-ink); text-decoration-color: var(--plaque-line); }
   .site-foot a:hover { color: #fff; }
 
+  .site-foot__lang { padding-top: 18px; border-top: 1px solid var(--plaque-line); }
   .site-foot__legal {
     font-size: 14px; line-height: 1.65; color: var(--plaque-ink-2);
     max-width: 62ch; margin: 0;
-    padding-top: 20px; border-top: 1px solid var(--plaque-line);
   }
-  .site-foot__legal + .site-foot__legal { padding-top: 0; border-top: 0; margin-top: -22px; }
 </style>

@@ -1,0 +1,199 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HoursBar from '../../components/HoursBar.astro';
+import PangCard from '../../components/PangCard.astro';
+import VisitPanel from '../../components/VisitPanel.astro';
+import site from '../../data/site.json';
+import { allPang, enshrinedCount } from '../../lib/pang';
+import { getCollection } from 'astro:content';
+import { daysFromToday, parseDay, isoDate } from '../../lib/format';
+
+const lang = 'zh' as const;
+const pang = await allPang();
+const count = enshrinedCount(pang);
+
+const events = (await getCollection('events')).sort((a, b) => +a.data.date - +b.data.date);
+const upcoming = events.filter((e) => daysFromToday(e.data.end_date ?? e.data.date) >= 0).slice(0, 3);
+
+const o = site.opening_ceremony;
+const openingDate = parseDay(o.date);
+const daysToOpening = daysFromToday(openingDate);
+const preOpening = o.active && daysToOpening >= 0;
+const zhDate = (d: Date) => `${d.getUTCFullYear()}年${d.getUTCMonth() + 1}月${d.getUTCDate()}日`;
+---
+<BaseLayout
+  lang={lang}
+  title="普陀觀音堂 — 三十三觀音 · 曼谷佛城二段"
+  suffix={false}
+  description="供奉觀音菩薩三十三法相的道場，位於曼谷佛城二段路。三十三法相之名號、辨識標記與要旨，開放時間與交通資訊。"
+>
+  <section class="hero plaque">
+    <div class="wrap hero__inner">
+      <p class="hero__prefix han">佛城二段</p>
+      <p class="hero__zh han">{site.name_zh}</p>
+      <p class="hero__motto han">{site.motto_zh}</p>
+      <p class="hero__lede">{site.tagline_zh}</p>
+
+      <div class="hero__cta">
+        {preOpening ? (
+          <>
+            <a class="btn btn--primary" href="/zh/opening">
+              開光大典 {zhDate(openingDate)}
+              {daysToOpening > 0 && <span class="hero__count mono">尚餘 {daysToOpening} 天</span>}
+            </a>
+            <a class="btn btn--plaque" href="/zh/33-pang">三十三觀音</a>
+          </>
+        ) : (
+          <>
+            <a class="btn btn--primary" href="/zh/33-pang">瀏覽三十三觀音</a>
+            <a class="btn btn--plaque" href="/zh/worship/how-to">參拜方式</a>
+          </>
+        )}
+      </div>
+
+      <p class="hero__couplet han">
+        {site.couplet.map((c) => <span>{c.zh}</span>)}
+      </p>
+    </div>
+  </section>
+
+  <HoursBar lang={lang} />
+
+  <section class="band">
+    <div class="wrap">
+      <div class="intro">
+        <div class="intro__text">
+          <p class="eyebrow">本堂緣起</p>
+          <h2>何謂三十三觀音</h2>
+          <p>
+            《妙法蓮華經・觀世音菩薩普門品》說，觀世音菩薩應以何身得度者，即現何身而為說法。
+            此中要旨不在數目，而在<strong>慈悲隨眾生根機而調整接引之道</strong>。
+          </p>
+          <p>
+            後世畫像與造像依此數目與觀念，逐漸集成三十三種法相，各有所持之物、姿態與意涵。
+            「普陀」二字取自浙江普陀山——中國最大的觀音道場。本堂以此為名，
+            並發願迎請三十三法相俱全。
+          </p>
+          <p class="intro__status mono">
+            已安奉 {count.enshrined} 尊
+            {count.pending > 0 && <> · 尚待迎請 {count.pending} 尊</>}
+          </p>
+          <p><a class="btn btn--ghost" href="/zh/33-pang">瀏覽三十三觀音</a></p>
+        </div>
+
+        <aside class="intro__aside panel">
+          <h3>語言說明</h3>
+          <p class="small">
+            本站主體為泰文。中文版涵蓋來訪所需的資訊——本堂簡介、三十三法相、
+            參拜方式、開放時間與交通、節日曆。
+          </p>
+          <p class="small">
+            各尊的長篇考釋、堂內公告與祈願分類目前僅有泰文版，
+            頁面上會標示並附上泰文連結。
+          </p>
+          <p><a class="btn btn--ghost" href="/">切換至泰文版</a></p>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="band band--sunk">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">一 — 三十三</p>
+        <h2>堂內所奉觀音法相</h2>
+      </div>
+      <div class="pang-grid">
+        {pang.map((p, i) => <PangCard pang={p} priority={i < 6} lang={lang} />)}
+      </div>
+    </div>
+  </section>
+
+  {upcoming.length > 0 && (
+    <section class="band">
+      <div class="wrap">
+        <div class="section-head section-head--row">
+          <div>
+            <p class="eyebrow">節日曆</p>
+            <h2>近期重要日子</h2>
+          </div>
+          <a class="btn btn--ghost" href="/zh/calendar">完整節日曆</a>
+        </div>
+        <ol class="evt">
+          {upcoming.map((e) => {
+            const n = daysFromToday(e.data.date);
+            return (
+              <li class="evt__row">
+                <time class="evt__date mono" datetime={isoDate(e.data.date)}>
+                  {zhDate(e.data.date)}
+                  {e.data.approx && <abbr class="evt__approx" title="依農曆推算，尚待堂方核對">≈</abbr>}
+                </time>
+                <span class="evt__title han">{e.data.title_zh || e.data.title}</span>
+                <span class="evt__rel mono">{n === 0 ? '今日' : n === 1 ? '明日' : `尚餘 ${n} 天`}</span>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+    </section>
+  )}
+
+  <section class="band band--sunk">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">交通</p>
+        <h2>本堂位置</h2>
+      </div>
+      <VisitPanel lang={lang} />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero { border: 0; }
+  .hero__inner {
+    padding-block: clamp(48px, 9vw, 86px) clamp(40px, 7vw, 66px);
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+  }
+  .hero__prefix { margin: 0 0 10px; font-size: 15px; letter-spacing: .4em; padding-left: .4em; color: var(--plaque-ink-2); }
+  .hero__zh { margin: 0; font-size: clamp(40px, 11vw, 78px); font-weight: 700; letter-spacing: .2em; padding-left: .2em; line-height: 1.12; color: var(--plaque-ink); }
+  .hero__motto { margin: 14px 0 0; font-size: 17px; letter-spacing: .3em; padding-left: .3em; color: var(--plaque-ink-2); }
+  .hero__lede { margin: 22px 0 0; max-width: 40ch; font-size: clamp(16.5px, 2.2vw, 19px); line-height: 1.85; color: var(--plaque-ink); opacity: .92; }
+  .hero__cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 28px; }
+  .hero__count { font-size: 14px; opacity: .85; margin-left: 4px; }
+  .hero__couplet {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 22px;
+    margin: 34px 0 0; padding-top: 22px;
+    border-top: 1px solid var(--plaque-line);
+    width: 100%; max-width: 520px;
+    font-size: 15px; letter-spacing: .14em; color: var(--plaque-ink-2);
+  }
+
+  .band--sunk { background: var(--surface-2); }
+  .band--sunk + .band, .band + .band--sunk { border-top: 0; }
+  .section-head--row { flex-direction: row; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+
+  .intro { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(260px, 1fr); gap: 36px 48px; align-items: start; }
+  .intro__text > * + * { margin-top: 16px; }
+  .intro__text h2 { margin-top: 8px; }
+  .intro__text p { line-height: 1.9; }
+  .intro__status { font-size: 15px; color: var(--celadon); }
+  .intro__aside { padding: 22px; }
+  .intro__aside h3 { font-size: 19px; margin-bottom: 10px; }
+  .intro__aside .small { color: var(--ink-2); line-height: 1.85; }
+  .intro__aside .small + .small { margin-top: 10px; }
+  .intro__aside p:last-child { margin-top: 16px; }
+  @media (max-width: 780px) { .intro { grid-template-columns: 1fr; } }
+
+  .pang-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(178px, 1fr)); gap: 1px; background: transparent; }
+  @media (max-width: 420px) { .pang-grid { grid-template-columns: repeat(2, 1fr); } }
+
+  .evt { list-style: none; margin: 0; padding: 0; }
+  .evt__row { display: grid; grid-template-columns: 190px 1fr auto; gap: 6px 20px; align-items: baseline; padding: 15px 0; border-top: 1px solid var(--line); }
+  .evt__row:last-child { border-bottom: 1px solid var(--line); }
+  .evt__date { font-size: 15.5px; white-space: nowrap; }
+  .evt__approx { color: var(--gold); text-decoration: none; margin-left: 4px; cursor: help; }
+  .evt__title { font-size: 17px; }
+  .evt__rel { font-size: 13.5px; color: var(--ink-3); white-space: nowrap; }
+  @media (max-width: 620px) { .evt__row { grid-template-columns: 1fr auto; } .evt__date { grid-column: 1 / -1; } }
+</style>

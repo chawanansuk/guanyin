@@ -23,7 +23,8 @@
     "region": "กรุงเทพมหานคร",
     "postal_code": "10170",
     "country": "TH",
-    "full_th": "ถนนพุทธมณฑลสาย ๒ เขตทวีวัฒนา กรุงเทพมหานคร 10170"
+    "full_th": "ถนนพุทธมณฑลสาย ๒ เขตทวีวัฒนา กรุงเทพมหานคร 10170",
+    "full_zh": "泰國曼谷市 他威瓦他那區 佛城二段路"
   },
   "geo": {
     "lat": 13.7726,
@@ -73,19 +74,22 @@
         "close": "19:00"
       }
     ],
-    "closed_dates": []
+    "closed_dates": [],
+    "note_zh": "平日開放時間；法會期間可能延長，請見節日曆公告"
   },
   "opening_ceremony": {
     "date": "2026-10-25",
     "headline": "พิธีเปิดตำหนักผู่โถวเจ้าแม่กวนอิม",
-    "active": true
+    "active": true,
+    "headline_zh": "普陀觀音堂開光大典"
   },
   "video": {
     "file": "shrine.mp4",
     "title": "ตำหนักผู่โถวเจ้าแม่กวนอิม",
     "caption": "ภาพเคลื่อนไหวหน้าอาคารตำหนัก",
     "note": "",
-    "bytes": 7372072
+    "bytes": 7372072,
+    "title_zh": "普陀觀音堂"
   },
   "content": {
     "require_verified": true,
@@ -96,5 +100,7 @@
   "analytics": {
     "provider": "",
     "domain": ""
-  }
+  },
+  "name_th_zh_note": "普陀觀音堂",
+  "tagline_zh": "供奉觀音菩薩三十三法相的道場，位於曼谷佛城二段路"
 }
