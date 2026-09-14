@@ -61,7 +61,7 @@ const fitSize = (text, maxW, base) => {
   return Math.min(base, Math.floor((maxW / units) * 10) / 10);
 };
 
-function card({ no, th, zh, py, footer, accent = C.gold, photo = null }) {
+function card({ no, th, zh, py, footer, accent = C.gold, photo = null, photoNote = null }) {
   // มีภาพจริงเมื่อไร ให้ภาพทำหน้าที่แทนตัวอักษรจีนจาง ๆ ที่เคยใช้เป็นลาย
   const hasArt = Boolean(zh) && !photo;
   const PW = 470;              // ความกว้างช่องภาพด้านขวา
@@ -103,7 +103,9 @@ function card({ no, th, zh, py, footer, accent = C.gold, photo = null }) {
   <image clip-path="url(#pane)" x="${PX}" y="0" width="${PW}" height="${H}"
          preserveAspectRatio="xMidYMid slice" href="${photo}"/>
   <rect x="${PX}" y="0" width="180" height="${H}" fill="url(#seam)"/>
-  <rect x="${PX}" y="0" width="1.5" height="${H}" fill="${C.line}"/>` : ''}
+  <rect x="${PX}" y="0" width="1.5" height="${H}" fill="${C.line}"/>
+  ${photoNote ? `<rect x="${PX}" y="${H - 52}" width="${PW}" height="52" fill="rgba(11,7,8,.84)"/>
+  <text x="${PX + PW / 2}" y="${H - 20}" text-anchor="middle" font-family="${TH}" font-size="21" fill="${C.ink2}">${esc(photoNote)}</text>` : ''}` : ''}
   <rect x="30" y="30" width="${W - 60}" height="${H - 60}" fill="none" stroke="${C.line}" stroke-width="1.5"/>
   <rect x="39" y="39" width="${W - 78}" height="${H - 78}" fill="none" stroke="${C.line}" stroke-width="0.8" opacity=".55"/>
   ${no ? `<text x="84" y="136" font-family="${TH}" font-size="26" letter-spacing="7" fill="${C.gold}">${esc(no)}</text>` : ''}
@@ -155,6 +157,9 @@ const files = existsSync(pangDir)
   ? (await readdir(pangDir)).filter((f) => f.endsWith('.md')).sort()
   : [];
 
+const photoW = Object.fromEntries(Object.entries(JSON.parse(await readFile(join(root, 'src', 'data', 'photos.json'), 'utf8')).images).map(([k, v]) => [k, v.widths]));
+const ART = JSON.parse(await readFile(join(root, 'src', 'data', 'photo-meta.json'), 'utf8')).illustrations;
+
 let made = 0;
 for (const f of files) {
   const raw = await readFile(join(pangDir, f), 'utf8');
@@ -163,6 +168,15 @@ for (const f of files) {
   const order = Number(get('order'));
   if (!order) continue;
   const shrine = get('name_th_shrine');
+  // ภาพองค์ในการ์ดแชร์ — ถ้าเป็นภาพประกอบต้องเขียนกำกับไว้ในภาพด้วย
+  // เพราะการ์ดที่ส่งต่อในไลน์จะหลุดจากหน้าเว็บที่มีคำอธิบายอยู่
+  const key = get('photo') || `pang-${String(order).padStart(2, '0')}`;
+  const src = join(root, 'public', 'images', 'pang', `${key}-${(photoW[key] ?? [])[(photoW[key] ?? []).length - 1]}.webp`);
+  let pangUri = null;
+  if (photoW[key] && existsSync(src)) {
+    const jpg = await sharp(src).jpeg({ quality: 88 }).toBuffer();
+    pangUri = `data:image/jpeg;base64,${jpg.toString('base64')}`;
+  }
   await render(card({
     no: `${thaiNum(String(order).padStart(2, '0'))} / ๓๓`,
     th: shrine || get('name_th'),
@@ -170,7 +184,9 @@ for (const f of files) {
     py: get('name_pinyin'),
     footer: 'ตำหนักผู่โถวเจ้าแม่กวนอิม · พุทธมณฑลสาย ๒',
     accent: get('enshrined') === 'false' ? C.ink2 : C.gold,
-  }), `pang-${String(order).padStart(2, '0')}.png`);
+    photo: pangUri,
+    photoNote: pangUri && ART.includes(key) ? 'ภาพประกอบ ไม่ใช่องค์จริงในตำหนัก' : null,
+  }), `pang-${String(order).padStart(2, '0')}.jpg`);
   made++;
 }
 

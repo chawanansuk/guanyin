@@ -10,8 +10,9 @@ npm-debug.log*
 photos-src/**
 !photos-src/.gitkeep
 !photos-src/README.md
-# ยกเว้นภาพอาคารที่ตำหนักส่งมาแล้ว — ไฟล์ไม่ใหญ่ และเป็นภาพเดียวที่เว็บใช้อยู่ตอนนี้
+# ยกเว้นภาพที่ใช้อยู่จริงตอนนี้ — ไฟล์ไม่ใหญ่ และยังไม่มีคลังกลางให้ sync
 !photos-src/shrine-exterior.jpg
+!photos-src/pang-*.jpg
 
 # แผ่นพิมพ์ป้าย QR — สร้างใหม่ได้เสมอด้วย npm run qr
 dist-qr/
@@ -23,8 +24,9 @@ public/og/*.jpg
 # ภาพย่อที่สร้างจาก photos-src — สร้างใหม่ด้วย npm run images
 # เขียนเป็น */ ไม่ใช่ชื่อโฟลเดอร์เปล่า ๆ — ถ้าตัดทั้งโฟลเดอร์ git จะไม่ยอมให้ยกเว้นไฟล์ข้างในทีหลัง
 public/images/pang/*
-# ยกเว้นภาพอาคาร เพราะหน้าแรกต้องมีภาพนี้เสมอ แม้ผู้ deploy จะไม่มีต้นฉบับในเครื่อง
+# ยกเว้นภาพที่เว็บใช้อยู่ เพราะเครื่องที่ deploy อาจไม่มีต้นฉบับ
 !public/images/pang/shrine-exterior-*.webp
+!public/images/pang/pang-*.webp
 
 # ภาพปกวิดีโอ — สร้างอัตโนมัติพร้อมภาพแชร์
 public/video/poster.png

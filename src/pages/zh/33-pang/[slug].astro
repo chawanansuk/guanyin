@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import PangArt from '../../../components/PangArt.astro';
+import photoMeta from '../../../data/photo-meta.json';
 import ShareBar from '../../../components/ShareBar.astro';
 import { getCollection } from 'astro:content';
 import { allPang, displayName, prevPang, nextPang } from '../../../lib/pang';
@@ -60,6 +61,9 @@ const cn = (n: number) => (n <= 10 ? CN_NUM[n] : n < 20 ? `十${CN_NUM[n - 10]}`
           photo={d.photo} order={d.order} nameTh={d.name_zh} nameZh={d.name_zh}
           enshrined={d.enshrined} priority sizes="(max-width: 820px) 92vw, 420px" lang={lang}
         />
+        {(photoMeta.illustrations as string[]).includes(d.photo) && (
+          <p class="pang__artnote">此為示意圖，非本堂實際供奉之聖像，僅供辨識法相之用，正式照片尚待拍攝。</p>
+        )}
         {!d.enshrined && <p class="pang__pending">本尊尚待迎請安奉</p>}
       </div>
 
@@ -146,6 +150,7 @@ const cn = (n: number) => (n <= 10 ? CN_NUM[n] : n < 20 ? `十${CN_NUM[n - 10]}`
   .pang__art { position: sticky; top: 68px; }
   .pang__art :global(.pang-art) { box-shadow: var(--shadow-lift); }
   @media (max-width: 820px) { .pang__art { position: static; } }
+  .pang__artnote { margin: 10px 0 0; padding: 9px 12px; background: var(--surface-2); border-left: 3px solid var(--gold-line); font-size: 14px; line-height: 1.75; color: var(--ink-3); }
   .pang__pending { margin: 10px 0 0; padding: 9px 12px; background: var(--surface-2); border-left: 3px solid var(--line-strong); font-size: 15px; color: var(--ink-2); }
 
   .pang__no { font-size: 13px; color: var(--gold); letter-spacing: .12em; margin: 0 0 8px; }

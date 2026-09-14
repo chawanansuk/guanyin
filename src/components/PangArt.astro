@@ -8,6 +8,7 @@
  * (ดูสเปกถ่ายภาพในพิมพ์เขียว — 3:4 แนวตั้ง ชื่อไฟล์ pang-01 … pang-33)
  */
 import photos from '../data/photos.json';
+import photoMeta from '../data/photo-meta.json';
 import { pangNo } from '../lib/format';
 import type { Lang } from '../i18n';
 
@@ -29,36 +30,83 @@ const {
 } = Astro.props;
 
 const L = lang === 'zh'
-  ? { waiting: '尚無照片', pending: '尚待迎請', alt: (n: string) => `${n} 造像（普陀觀音堂）`, noPhoto: (n: string) => `${n} 尚無照片` }
-  : { waiting: 'รอภาพถ่าย', pending: 'กำลังอัญเชิญ', alt: (n: string) => `องค์${n} ${nameZh} ในตำหนักผู่โถวเจ้าแม่กวนอิม`, noPhoto: (n: string) => `ยังไม่มีภาพถ่ายองค์${n} ${nameZh}` };
+  ? {
+      waiting: '尚無照片', pending: '尚待迎請',
+      alt: (n: string) => `${n} 造像（普陀觀音堂）`,
+      artAlt: (n: string) => `${n} 示意圖（非本堂實際供奉之聖像）`,
+      artTag: '示意圖',
+      artNote: '示意圖，非本堂實際供奉之聖像',
+      noPhoto: (n: string) => `${n} 尚無照片`,
+    }
+  : {
+      waiting: 'รอภาพถ่าย', pending: 'กำลังอัญเชิญ',
+      alt: (n: string) => `องค์${n} ${nameZh} ในตำหนักผู่โถวเจ้าแม่กวนอิม`,
+      artAlt: (n: string) => `ภาพประกอบ${n} ${nameZh} — ไม่ใช่ภาพถ่ายองค์จริงในตำหนัก`,
+      artTag: 'ภาพประกอบ',
+      artNote: 'ภาพประกอบ ไม่ใช่ภาพถ่ายองค์จริงในตำหนัก',
+      noPhoto: (n: string) => `ยังไม่มีภาพถ่ายองค์${n} ${nameZh}`,
+    };
 
 const entry = (photos.images as Record<string, { widths: number[]; ext: string }>)[photo];
 const srcset = entry
   ? entry.widths.map((w) => `/images/pang/${photo}-${w}.webp ${w}w`).join(', ')
   : null;
+// ต้องหยิบขนาดที่ใหญ่ที่สุดเท่าที่สร้างได้จริง ไม่ใช่ตั้ง 960 ตายตัว
+// ภาพต้นฉบับบางภาพกว้างไม่ถึง 960 แล้ว src จะชี้ไปที่ไฟล์ที่ไม่มีอยู่
+const widest = entry ? entry.widths[entry.widths.length - 1] : null;
+
+// ภาพประกอบต้องบอกให้ชัดว่าไม่ใช่องค์จริง คนที่ดูแล้วเดินทางมาจะได้ไม่คาดหวังผิด
+const isArt = (photoMeta.illustrations as string[]).includes(photo);
 const uid = `pa${order}`;
 ---
-{srcset ? (
-  <img
-    class="pang-art"
-    src={`/images/pang/${photo}-960.webp`}
-    srcset={srcset}
-    sizes={sizes}
-    width="900" height="1200"
-    alt={L.alt(nameTh)}
-    loading={priority ? 'eager' : loading}
-    fetchpriority={priority ? 'high' : undefined}
-    decoding="async"
-  />
-) : (
-  <div class="pang-art pang-art--case" role="img" aria-label={L.noPhoto(nameTh)}>
-    <span class="pang-case__no mono" aria-hidden="true">{pangNo(order)}</span>
-    <span class="pang-case__zh han foil" aria-hidden="true">{nameZh.slice(0, 2)}</span>
-    <span class="pang-case__hint" aria-hidden="true">{enshrined ? L.waiting : L.pending}</span>
-  </div>
-)}
+<span class="pang-figure">
+  {srcset ? (
+    <img
+      class="pang-art"
+      src={`/images/pang/${photo}-${widest}.webp`}
+      srcset={srcset}
+      sizes={sizes}
+      width="900" height="1200"
+      alt={isArt ? L.artAlt(nameTh) : L.alt(nameTh)}
+      loading={priority ? 'eager' : loading}
+      fetchpriority={priority ? 'high' : undefined}
+      decoding="async"
+    />
+  ) : (
+    <span class="pang-art pang-art--case" role="img" aria-label={L.noPhoto(nameTh)}>
+      <span class="pang-case__no mono" aria-hidden="true">{pangNo(order)}</span>
+      <span class="pang-case__zh han foil" aria-hidden="true">{nameZh.slice(0, 2)}</span>
+      <span class="pang-case__hint" aria-hidden="true">{enshrined ? L.waiting : L.pending}</span>
+    </span>
+  )}
+  {isArt && srcset && (
+    <span class="pang-figure__tag" title={L.artNote} aria-hidden="true">{L.artTag}</span>
+  )}
+</span>
 
 <style>
+  .pang-figure { position: relative; display: block; }
+
+  /* ป้ายบอกว่าเป็นภาพประกอบ — วางทับมุมล่างซ้ายของภาพ
+     ต้องอ่านได้บนพื้นแดงสดของภาพ จึงใช้พื้นรักเข้มทึบ ไม่ใช่แค่ตัวอักษรลอย */
+  .pang-figure__tag {
+    position: absolute;
+    left: 8px;
+    bottom: 8px;
+    z-index: 1;
+    padding: 3px 8px 4px;
+    font-family: var(--sans);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    padding-right: calc(8px + .12em);
+    line-height: 1.45;
+    color: #F2DCA6;
+    background: rgba(11, 7, 8, .82);
+    box-shadow: inset 0 0 0 1px rgba(242, 220, 166, .28);
+    pointer-events: none;
+  }
+
   .pang-art {
     width: 100%;
     aspect-ratio: 3 / 4;

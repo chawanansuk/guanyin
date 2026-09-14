@@ -1,6 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
+import ShrinePhoto from '../components/ShrinePhoto.astro';
+import photos from '../data/photos.json';
+
+const hasFacade = 'shrine-exterior' in (photos.images as Record<string, unknown>);
 ---
 <BaseLayout
   title="ประมวลภาพ"
@@ -13,6 +17,21 @@ import PageHero from '../components/PageHero.astro';
     lede="ภาพองค์ ๓๓ ปาง บรรยากาศตำหนัก และภาพงานพิธี"
     narrow
   />
+  {hasFacade && (
+    <section class="band">
+      <div class="wrap wrap--narrow">
+        <figure class="shot">
+          <ShrinePhoto
+            name="shrine-exterior"
+            alt="หน้าอาคารตำหนักผู่โถวเจ้าแม่กวนอิม ถนนพุทธมณฑลสาย ๒"
+            ratio="1086 / 772" sizes="(max-width: 820px) 92vw, 760px" priority
+          />
+          <figcaption>หน้าอาคารตำหนัก ถนนพุทธมณฑลสาย ๒</figcaption>
+        </figure>
+      </div>
+    </section>
+  )}
+
   <section class="band">
     <div class="wrap wrap--narrow">
       <div class="note">
@@ -26,3 +45,16 @@ import PageHero from '../components/PageHero.astro';
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .shot { margin: 0; }
+  .shot :global(.shrine-photo) {
+    border-radius: 2px;
+    box-shadow: 0 0 0 1px var(--gold-line), var(--shadow-lift);
+  }
+  .shot figcaption {
+    margin-top: 12px;
+    font-size: 14.5px;
+    color: var(--ink-3);
+  }
+</style>

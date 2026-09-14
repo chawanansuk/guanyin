@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PangArt from '../../components/PangArt.astro';
+import photoMeta from '../../data/photo-meta.json';
 import ShareBar from '../../components/ShareBar.astro';
 import site from '../../data/site.json';
 import { getCollection, render } from 'astro:content';
@@ -38,7 +39,7 @@ const description =
   title={`${name} ${d.name_zh}`}
   description={description}
   noindex={!verified}
-  ogImage={`/og/pang-${String(d.order).padStart(2, '0')}.png`}
+  ogImage={`/og/pang-${String(d.order).padStart(2, '0')}.jpg`}
   breadcrumbs={[
     { label: 'หน้าแรก', href: '/' },
     { label: '๓๓ ปาง', href: '/33-pang' },
@@ -64,6 +65,12 @@ const description =
           photo={d.photo} order={d.order} nameTh={name} nameZh={d.name_zh}
           enshrined={d.enshrined} priority sizes="(max-width: 820px) 92vw, 420px"
         />
+        {(photoMeta.illustrations as string[]).includes(d.photo) && (
+          <p class="pang__artnote">
+            ภาพประกอบ ไม่ใช่ภาพถ่ายองค์จริงที่ประดิษฐานในตำหนัก
+            ใช้แสดงลักษณะของปางไว้ก่อนระหว่างรอภาพถ่ายจริง
+          </p>
+        )}
         {!d.enshrined && (
           <p class="pang__pending">องค์นี้ยังอยู่ระหว่างการอัญเชิญมาประดิษฐาน</p>
         )}
@@ -195,6 +202,13 @@ const description =
   .pang__art { position: sticky; top: 68px; }
   .pang__art :global(.pang-art) { box-shadow: var(--shadow-lift); }
   @media (max-width: 820px) { .pang__art { position: static; } }
+  /* หน้าปางคือหน้าที่คนดูภาพนานที่สุด ป้ายเล็กมุมภาพอย่างเดียวไม่พอ
+     ต้องบอกเป็นประโยคเต็มใต้ภาพด้วยว่าไม่ใช่องค์จริง */
+  .pang__artnote {
+    margin: 10px 0 0; padding: 9px 12px;
+    background: var(--surface-2); border-left: 3px solid var(--gold-line);
+    font-size: 14px; line-height: 1.65; color: var(--ink-3);
+  }
   .pang__pending {
     margin: 10px 0 0; padding: 9px 12px;
     background: var(--surface-2); border-left: 3px solid var(--line-strong);
