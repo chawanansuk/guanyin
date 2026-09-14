@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import HoursBar from '../../components/HoursBar.astro';
 import PangCard from '../../components/PangCard.astro';
 import VisitPanel from '../../components/VisitPanel.astro';
+import Ornament from '../../components/Ornament.astro';
 import site from '../../data/site.json';
 import { allPang, enshrinedCount } from '../../lib/pang';
 import { getCollection } from 'astro:content';
@@ -27,10 +28,14 @@ const zhDate = (d: Date) => `${d.getUTCFullYear()}年${d.getUTCMonth() + 1}月${
   suffix={false}
   description="供奉觀音菩薩三十三法相的道場，位於曼谷佛城二段路。三十三法相之名號、辨識標記與要旨，開放時間與交通資訊。"
 >
-  <section class="hero plaque">
+  <section class="hero">
     <div class="wrap hero__inner">
-      <p class="hero__prefix han">佛城二段</p>
-      <p class="hero__zh han">{site.name_zh}</p>
+      <div class="plaque-board">
+        <span class="plaque-board__prefix han">佛城二段</span>
+        <h1 class="plaque-board__zh han">{site.name_zh}</h1>
+        <span class="plaque-board__th han">觀音菩薩三十三法相</span>
+      </div>
+
       <p class="hero__motto han">{site.motto_zh}</p>
       <p class="hero__lede">{site.tagline_zh}</p>
 
@@ -41,15 +46,17 @@ const zhDate = (d: Date) => `${d.getUTCFullYear()}年${d.getUTCMonth() + 1}月${
               開光大典 {zhDate(openingDate)}
               {daysToOpening > 0 && <span class="hero__count mono">尚餘 {daysToOpening} 天</span>}
             </a>
-            <a class="btn btn--plaque" href="/zh/33-pang">三十三觀音</a>
+            <a class="btn btn--ghost" href="/zh/33-pang">三十三觀音</a>
           </>
         ) : (
           <>
             <a class="btn btn--primary" href="/zh/33-pang">瀏覽三十三觀音</a>
-            <a class="btn btn--plaque" href="/zh/worship/how-to">參拜方式</a>
+            <a class="btn btn--ghost" href="/zh/worship/how-to">參拜方式</a>
           </>
         )}
       </div>
+
+      <div class="hero__orn"><Ornament /></div>
 
       <p class="hero__couplet han">
         {site.couplet.map((c) => <span>{c.zh}</span>)}
@@ -63,7 +70,7 @@ const zhDate = (d: Date) => `${d.getUTCFullYear()}年${d.getUTCMonth() + 1}月${
     <div class="wrap">
       <div class="intro">
         <div class="intro__text">
-          <p class="eyebrow">本堂緣起</p>
+          <p class="eyebrow eyebrow--marked">本堂緣起</p>
           <h2>何謂三十三觀音</h2>
           <p>
             《妙法蓮華經・觀世音菩薩普門品》說，觀世音菩薩應以何身得度者，即現何身而為說法。
@@ -100,7 +107,7 @@ const zhDate = (d: Date) => `${d.getUTCFullYear()}年${d.getUTCMonth() + 1}月${
   <section class="band band--sunk">
     <div class="wrap">
       <div class="section-head">
-        <p class="eyebrow">一 — 三十三</p>
+        <p class="eyebrow eyebrow--marked">一 — 三十三</p>
         <h2>堂內所奉觀音法相</h2>
       </div>
       <div class="pang-grid">
@@ -114,7 +121,7 @@ const zhDate = (d: Date) => `${d.getUTCFullYear()}年${d.getUTCMonth() + 1}月${
       <div class="wrap">
         <div class="section-head section-head--row">
           <div>
-            <p class="eyebrow">節日曆</p>
+            <p class="eyebrow eyebrow--marked">節日曆</p>
             <h2>近期重要日子</h2>
           </div>
           <a class="btn btn--ghost" href="/zh/calendar">完整節日曆</a>
@@ -141,7 +148,7 @@ const zhDate = (d: Date) => `${d.getUTCFullYear()}年${d.getUTCMonth() + 1}月${
   <section class="band band--sunk">
     <div class="wrap">
       <div class="section-head">
-        <p class="eyebrow">交通</p>
+        <p class="eyebrow eyebrow--marked">交通</p>
         <h2>本堂位置</h2>
       </div>
       <VisitPanel lang={lang} />
@@ -150,24 +157,28 @@ const zhDate = (d: Date) => `${d.getUTCFullYear()}年${d.getUTCMonth() + 1}月${
 </BaseLayout>
 
 <style>
-  .hero { border: 0; }
+  .hero {
+    position: relative;
+    background: var(--ground);
+    border-bottom: 1px solid var(--line);
+  }
+  .hero::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: radial-gradient(120% 78% at 50% 8%, var(--surface-2) 0%, transparent 62%);
+    pointer-events: none;
+  }
   .hero__inner {
-    padding-block: clamp(48px, 9vw, 86px) clamp(40px, 7vw, 66px);
+    position: relative;
+    padding-block: clamp(44px, 8vw, 82px) clamp(36px, 6vw, 60px);
     display: flex; flex-direction: column; align-items: center; text-align: center;
   }
-  .hero__prefix { margin: 0 0 10px; font-size: 15px; letter-spacing: .4em; padding-left: .4em; color: var(--plaque-ink-2); }
-  .hero__zh { margin: 0; font-size: clamp(40px, 11vw, 78px); font-weight: 700; letter-spacing: .2em; padding-left: .2em; line-height: 1.12; color: var(--plaque-ink); }
-  .hero__motto { margin: 14px 0 0; font-size: 17px; letter-spacing: .3em; padding-left: .3em; color: var(--plaque-ink-2); }
-  .hero__lede { margin: 22px 0 0; max-width: 40ch; font-size: clamp(16.5px, 2.2vw, 19px); line-height: 1.85; color: var(--plaque-ink); opacity: .92; }
+  .hero__motto { margin: 26px 0 0; font-size: 16px; letter-spacing: .3em; padding-left: .3em; color: var(--gold); }
+  .hero__lede { margin: 18px 0 0; max-width: 38ch; font-size: clamp(16.5px, 2.2vw, 19px); line-height: 1.85; color: var(--ink-2); }
   .hero__cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 28px; }
   .hero__count { font-size: 14px; opacity: .85; margin-left: 4px; }
-  .hero__couplet {
-    display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 22px;
-    margin: 34px 0 0; padding-top: 22px;
-    border-top: 1px solid var(--plaque-line);
-    width: 100%; max-width: 520px;
-    font-size: 15px; letter-spacing: .14em; color: var(--plaque-ink-2);
-  }
+  .hero__orn { width: 100%; max-width: 460px; margin-top: 34px; }
+  .hero__couplet { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 26px; margin: 18px 0 0; font-size: 15.5px; letter-spacing: .16em; color: var(--ink-3); }
 
   .band--sunk { background: var(--surface-2); }
   .band--sunk + .band, .band + .band--sunk { border-top: 0; }
@@ -178,7 +189,7 @@ const zhDate = (d: Date) => `${d.getUTCFullYear()}年${d.getUTCMonth() + 1}月${
   .intro__text h2 { margin-top: 8px; }
   .intro__text p { line-height: 1.9; }
   .intro__status { font-size: 15px; color: var(--celadon); }
-  .intro__aside { padding: 22px; }
+  .intro__aside { padding: 22px; border-top: 3px solid var(--gold-bright); }
   .intro__aside h3 { font-size: 19px; margin-bottom: 10px; }
   .intro__aside .small { color: var(--ink-2); line-height: 1.85; }
   .intro__aside .small + .small { margin-top: 10px; }

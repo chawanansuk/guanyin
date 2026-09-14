@@ -31,9 +31,14 @@ export function langFromUrl(url: URL): Lang {
   return url.pathname.startsWith('/zh') ? 'zh' : 'th';
 }
 
-/** ตัด prefix ภาษาออก เหลือ path กลางที่ใช้เทียบสองฝั่ง */
+/**
+ * ตัด prefix ภาษาออก เหลือ path กลางที่ใช้เทียบสองฝั่ง
+ * รองรับทั้ง /a/b, /a/b/, /a/b.html และ /index.html
+ * เพราะ build.format: 'file' ทำให้ pathname ที่เห็นตอน build ไม่ได้อยู่ในรูปเดียวเสมอ
+ */
 export function basePath(pathname: string): string {
-  const p = pathname.replace(/\/$/, '') || '/';
+  let p = pathname.replace(/index\.html$/, '').replace(/\.html$/, '');
+  p = p.replace(/\/+$/, '') || '/';
   if (p === '/zh') return '/';
   return p.startsWith('/zh/') ? p.slice(3) : p;
 }

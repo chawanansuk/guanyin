@@ -9,7 +9,7 @@ const { eyebrow, title, lede, narrow = false } = Astro.props;
 ---
 <div class="page-hero">
   <div class:list={['wrap', narrow && 'wrap--narrow']}>
-    {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+    {eyebrow && <p class="eyebrow eyebrow--marked">{eyebrow}</p>}
     <h1>{title}</h1>
     {lede && <p class="lede">{lede}</p>}
     <slot />
@@ -18,9 +18,10 @@ const { eyebrow, title, lede, narrow = false } = Astro.props;
 
 <style>
   .page-hero {
-    padding-block: clamp(32px, 6vw, 56px) clamp(26px, 4vw, 40px);
+    padding-block: clamp(34px, 6vw, 58px) clamp(28px, 4vw, 42px);
     border-bottom: 1px solid var(--line);
     background: var(--surface);
+    box-shadow: inset 0 3px 0 -1px var(--gold-bright);
   }
   .page-hero .eyebrow { margin-bottom: 10px; }
   .page-hero h1 + .lede { margin-top: 14px; }

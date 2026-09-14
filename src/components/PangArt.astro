@@ -49,17 +49,27 @@ const srcset = entry
 ) : (
   <svg class="pang-art pang-art--draft" viewBox="0 0 300 400" role="img"
        aria-label={L.noPhoto(nameTh)}>
+    <defs>
+      <linearGradient id={`niche-${order}`} x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="var(--surface)" />
+        <stop offset="100%" stop-color="var(--surface-2)" />
+      </linearGradient>
+    </defs>
     <rect width="300" height="400" fill="var(--surface-2)" />
-    {/* ซุ้มแท่นประดิษฐาน */}
-    <path d="M60 340 L60 150 A90 90 0 0 1 240 150 L240 340 Z"
-          fill="var(--surface)" stroke="var(--line-strong)" stroke-width="1.5" />
+    {/* ซุ้มประดิษฐาน */}
+    <path d="M58 348 L58 148 A92 92 0 0 1 242 148 L242 348 Z" fill={`url(#niche-${order})`} />
+    <path d="M58 348 L58 148 A92 92 0 0 1 242 148 L242 348"
+          fill="none" stroke="var(--gold-bright)" stroke-width="1.6" opacity=".75" />
+    <path d="M68 348 L68 152 A82 82 0 0 1 232 152 L232 348"
+          fill="none" stroke="var(--line-strong)" stroke-width="1" opacity=".8" />
     {/* ฐานบัว */}
-    <path d="M96 340 q54 26 108 0 q-14 22 -54 22 q-40 0 -54 -22 Z"
-          fill="var(--gold-soft)" stroke="var(--line-strong)" stroke-width="1.2" />
-    <line x1="60" y1="340" x2="240" y2="340" stroke="var(--line-strong)" stroke-width="1.5" />
+    <path d="M92 348 q58 24 116 0 q-16 20 -58 20 q-42 0 -58 -20 Z"
+          fill="var(--gold-soft)" stroke="var(--gold-bright)" stroke-width="1.1" opacity=".95" />
+    <line x1="58" y1="348" x2="242" y2="348" stroke="var(--gold-bright)" stroke-width="1.6" opacity=".75" />
+    {/* ลำดับปาง + อักษรจีน */}
     <text x="150" y="196" text-anchor="middle" class="pang-art__no">{pangNo(order)}</text>
-    <text x="150" y="248" text-anchor="middle" class="pang-art__zh">{nameZh.slice(0, 2)}</text>
-    <text x="150" y="300" text-anchor="middle" class="pang-art__hint">
+    <text x="150" y="262" text-anchor="middle" class="pang-art__zh">{nameZh.slice(0, 2)}</text>
+    <text x="150" y="316" text-anchor="middle" class="pang-art__hint">
       {enshrined ? L.waiting : L.pending}
     </text>
   </svg>
@@ -73,22 +83,24 @@ const srcset = entry
     background: var(--surface-2);
     display: block;
   }
-  .pang-art--draft { border: 1px solid var(--line); }
+
   .pang-art__no {
     font-family: var(--mono);
-    font-size: 30px;
+    font-size: 22px;
     fill: var(--gold);
-    letter-spacing: .1em;
+    letter-spacing: .22em;
   }
   .pang-art__zh {
     font-family: var(--han);
-    font-size: 46px;
+    font-size: 54px;
     font-weight: 700;
-    fill: var(--line-strong);
+    fill: var(--gold);
+    opacity: .42;
+    letter-spacing: .04em;
   }
   .pang-art__hint {
     font-family: var(--sans);
-    font-size: 15px;
+    font-size: 14px;
     fill: var(--ink-3);
   }
 </style>

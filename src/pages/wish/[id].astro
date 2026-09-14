@@ -62,7 +62,7 @@ const others = wishes.filter((x: any) => x.data.id !== w.id);
       <div class="bottom-note"><WishNotice /></div>
 
       <div class="others">
-        <p class="eyebrow">หมวดอื่น</p>
+        <p class="eyebrow eyebrow--marked">หมวดอื่น</p>
         <ul class="chips">
           {others.map((o: any) => (
             <li><a class="chip" href={`/wish/${o.data.id}`}>{o.data.short}</a></li>

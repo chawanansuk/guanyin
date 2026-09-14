@@ -1,0 +1,54 @@
+---
+/**
+ * ลายวงกลมบนผนังตำหนัก — วงกลมทองล้อมลายกลีบบัว
+ * ถอดจากลายที่ติดอยู่บนผนังปูนขาวสองข้างประตูของอาคารจริง
+ * ใช้เป็นเครื่องหมายคั่นส่วน แทนการขีดเส้นเปล่า ๆ
+ */
+interface Props {
+  variant?: 'rule' | 'mark';
+  size?: number;
+  class?: string;
+}
+const { variant = 'rule', size = 34, class: cls } = Astro.props;
+
+// กลีบบัวแปดกลีบ วางรอบจุดศูนย์กลาง
+const PETALS = Array.from({ length: 8 }, (_, i) => i * 45);
+---
+<div class:list={[variant === 'rule' ? 'orn-rule' : 'orn-mark', cls]}>
+  {variant === 'rule' && <span class="orn-rule__line" aria-hidden="true"></span>}
+  <svg
+    class="orn__medallion"
+    width={size} height={size} viewBox="0 0 48 48"
+    role="presentation" aria-hidden="true" focusable="false"
+  >
+    <circle cx="24" cy="24" r="22.5" fill="none" stroke="currentColor" stroke-width="1" opacity=".55" />
+    <circle cx="24" cy="24" r="18.5" fill="none" stroke="currentColor" stroke-width="2" />
+    {PETALS.map((deg) => (
+      <path
+        d="M24 8.5 C27.4 12.6 27.4 16.6 24 20.4 C20.6 16.6 20.6 12.6 24 8.5 Z"
+        fill="currentColor" opacity=".9"
+        transform={`rotate(${deg} 24 24)`}
+      />
+    ))}
+    <circle cx="24" cy="24" r="3.2" fill="none" stroke="currentColor" stroke-width="1.6" />
+  </svg>
+  {variant === 'rule' && <span class="orn-rule__line" aria-hidden="true"></span>}
+</div>
+
+<style>
+  .orn-rule {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    color: var(--gold-bright);
+  }
+  .orn-rule__line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, currentColor 22%, currentColor 78%, transparent);
+    opacity: .5;
+  }
+  .orn-mark { display: inline-flex; color: var(--gold-bright); }
+  .orn__medallion { flex: none; display: block; }
+</style>
