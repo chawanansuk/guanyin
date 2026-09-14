@@ -19,3 +19,6 @@ public/og/*.png
 
 # ภาพย่อที่สร้างจาก photos-src — สร้างใหม่ด้วย npm run images
 public/images/pang/
+
+# ภาพปกวิดีโอ — สร้างอัตโนมัติพร้อมภาพแชร์
+public/video/poster.png

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
+import WishNotice from '../../components/WishNotice.astro';
 import { getCollection } from 'astro:content';
 import { displayName } from '../../lib/pang';
 import { pangNo } from '../../lib/format';
@@ -25,7 +26,7 @@ const byWish = wishes.map((w) => ({
   <PageHero
     eyebrow="การบูชา"
     title="ขอพรเรื่องไหน ไหว้ปางใด"
-    lede="ใน ๓๓ ปาง แต่ละปางมีสิ่งที่ทรงถือและความหมายต่างกัน คนจึงนิยมกราบปางที่ตรงกับเรื่องที่กำลังขอ เลือกหมวดด้านล่างเพื่อดูรายละเอียดของแต่ละปาง"
+    lede="ใน ๓๓ ปาง แต่ละปางมีสิ่งที่ทรงถือและความหมายต่างกัน ตำหนักผู่โถวจึงจัดหมวดไว้ให้ผู้ที่มาครั้งแรกเริ่มต้นได้ง่ายขึ้น เลือกหมวดด้านล่างเพื่อดูว่าปางใดอยู่ในหมวดนั้นและเพราะเหตุใด"
   >
     <ul class="chips jump">
       {byWish.map(({ wish }) => (
@@ -36,6 +37,7 @@ const byWish = wishes.map((w) => ({
 
   <section class="band">
     <div class="wrap">
+      <div class="top-note"><WishNotice /></div>
       {byWish.map(({ wish, list }) => (
         <section class="wsec" id={wish.id}>
           <div class="wsec__head">
@@ -63,6 +65,7 @@ const byWish = wishes.map((w) => ({
 
 <style>
   .jump { margin-top: 20px; }
+  .top-note { margin-bottom: 36px; }
   .wsec { padding-block: 30px; border-top: 1px solid var(--line); scroll-margin-top: 70px; }
   .wsec:first-child { border-top: 0; padding-top: 0; }
   .wsec__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 20px; }

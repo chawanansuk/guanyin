@@ -1,0 +1,56 @@
+---
+/**
+ * วิดีโอแนะนำตำหนัก
+ *
+ * ตั้ง preload="none" และไม่เล่นอัตโนมัติ เพราะไฟล์ใหญ่กว่างบทั้งหน้าหลายเท่า
+ * คนที่เปิดจาก 4G จึงไม่ต้องจ่ายค่าเน็ตให้วิดีโอที่ไม่ได้ตั้งใจดู
+ * เบราว์เซอร์จะโหลดเฉพาะภาพปกจนกว่าผู้ใช้จะกดเล่น
+ */
+import site from '../data/site.json';
+const v = (site as any).video as
+  | { file: string; title: string; caption: string; note?: string; bytes?: number }
+  | undefined;
+const mb = v?.bytes ? (v.bytes / 1_048_576).toFixed(1) : null;
+---
+{v?.file && (
+  <section class="band band--sunk">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">ภาพเคลื่อนไหว</p>
+        <h2>{v.title}</h2>
+      </div>
+      <figure class="vid">
+        <video
+          controls
+          preload="none"
+          playsinline
+          poster="/video/poster.png"
+          width="1280" height="720"
+        >
+          <source src={`/video/${v.file}`} type="video/mp4" />
+          เบราว์เซอร์นี้เล่นวิดีโอไม่ได้ — <a href={`/video/${v.file}`}>เปิดไฟล์วิดีโอโดยตรง</a>
+        </video>
+        <figcaption>
+          {v.caption}
+          {mb && <span class="vid__size mono"> · ไฟล์ {mb} MB กดเพื่อเริ่มเล่น</span>}
+          {v.note && <span class="vid__note">{v.note}</span>}
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+)}
+
+<style>
+  .vid { margin: 0; display: flex; flex-direction: column; gap: 12px; }
+  .vid video {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    background: var(--plaque);
+    border: 1px solid var(--line);
+    display: block;
+  }
+  .vid figcaption { font-size: 15.5px; color: var(--ink-2); line-height: 1.65; }
+  .vid__size { color: var(--ink-3); font-size: 13.5px; }
+  .vid__note { display: block; color: var(--ink-3); font-size: 14.5px; margin-top: 4px; }
+</style>

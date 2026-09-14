@@ -104,6 +104,19 @@ for (const f of files) {
   made++;
 }
 
+// ภาพปกวิดีโอ — ใช้การ์ดชุดเดียวกัน จะได้กลมกลืนกับทั้งเว็บ
+const VID = join(root, 'public', 'video');
+await mkdir(VID, { recursive: true });
+await sharp(Buffer.from(card({
+  th: 'ตำหนักผู่โถวเจ้าแม่กวนอิม',
+  zh: '普陀觀音堂',
+  py: 'กดเพื่อเล่นวิดีโอ',
+  footer: 'ถนนพุทธมณฑลสาย ๒',
+})))
+  .resize(1280, 720, { fit: 'cover' })
+  .png({ compressionLevel: 9 })
+  .toFile(join(VID, 'poster.png'));
+
 await writeFile(join(OUT, '.gitkeep'), '', 'utf8');
 console.log(`ภาพแชร์: สร้าง ${made + 1} ไฟล์ที่ public/og/`);
 console.log('ก่อนขึ้นเว็บจริง — ส่งลิงก์หน้าปางในไลน์บนมือถือ ต้องเห็นภาพนี้ ไม่ใช่กล่องเปล่า');

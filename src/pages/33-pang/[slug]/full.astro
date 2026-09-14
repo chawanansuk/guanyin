@@ -1,0 +1,154 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ShareBar from '../../../components/ShareBar.astro';
+import PangArt from '../../../components/PangArt.astro';
+import { getCollection, render } from 'astro:content';
+import { displayName, altNames } from '../../../lib/pang';
+import { pangNo } from '../../../lib/format';
+
+export async function getStaticPaths() {
+  const pang = (await getCollection('pang')).sort((a, b) => a.data.order - b.data.order);
+  const full = await getCollection('pangFull');
+  return pang
+    .map((entry) => ({ entry, chapter: full.find((f) => f.data.slug === entry.data.slug) }))
+    .filter((x) => x.chapter)
+    .map(({ entry, chapter }) => ({
+      params: { slug: entry.data.slug },
+      props: { entry, chapter },
+    }));
+}
+
+const { entry, chapter } = Astro.props;
+const d = entry.data;
+const name = displayName(entry);
+const { Content, headings } = await render(chapter!);
+const alts = altNames(entry);
+const path = `/33-pang/${d.slug}`;
+// สารบัญในหน้า — เอาเฉพาะหัวข้อระดับ ๓ ที่เป็นโครงของบท
+const toc = headings.filter((h: any) => h.depth === 3);
+---
+<BaseLayout
+  title={`${name} ${d.name_zh} — ฉบับเต็ม`}
+  description={`${d.essence} — ประวัติ พระสูตร ตำนาน และความหมายทางศิลปกรรมของ${name} (${d.name_zh}) ฉบับเต็มพร้อมแหล่งอ้างอิง`}
+  breadcrumbs={[
+    { label: 'หน้าแรก', href: '/' },
+    { label: '๓๓ ปาง', href: '/33-pang' },
+    { label: name, href: path },
+    { label: 'ฉบับเต็ม', href: `${path}/full` },
+  ]}
+>
+  <div class="full-head plaque">
+    <div class="wrap full-head__inner">
+      <a class="full-head__back" href={path}>‹ กลับหน้า{name}</a>
+      <p class="full-head__no mono">{pangNo(d.order)} / ๓๓ · ฉบับเต็ม</p>
+      <h1>{name}</h1>
+      <p class="full-head__zh han">{d.name_zh}{d.name_zh_variants.length > 0 && <span class="full-head__var"> / {d.name_zh_variants.join(' / ')}</span>}</p>
+      {d.essence && <p class="full-head__essence">{d.essence}</p>}
+    </div>
+  </div>
+
+  <div class="wrap full-body">
+    <aside class="full-toc">
+      <div class="full-toc__inner">
+        <PangArt
+          photo={d.photo} order={d.order} nameTh={name} nameZh={d.name_zh}
+          enshrined={d.enshrined} sizes="220px"
+        />
+        <nav aria-label="หัวข้อในบทนี้">
+          <p class="full-toc__label eyebrow">หัวข้อในบทนี้</p>
+          <ol>
+            {toc.map((h: any) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}
+          </ol>
+        </nav>
+        <p class="full-toc__meta mono">{chapter!.data.words.toLocaleString('th-TH')} คำ</p>
+      </div>
+    </aside>
+
+    <article class="full-article">
+      <div class="note evidence">
+        <p><strong>เนื้อหาในบทนี้แยกเป็นสามระดับ</strong> — <em>หลักฐาน</em> คือสิ่งที่ตรวจย้อนได้จากพระสูตร
+        จารึก หรือทะเบียนวัตถุ · <em>คติและตำนาน</em> คือสิ่งที่ผู้ศรัทธาเล่าสืบต่อกันมา ·
+        <em>คำอธิบายเชิงตีความ</em> คือความหมายที่ผู้เรียบเรียงเสนอ
+        สังเกตได้จากถ้อยคำที่ใช้ เช่น “คัมภีร์ระบุว่า…” “ตามตำนานเล่าว่า…” “อาจตีความได้ว่า…”</p>
+      </div>
+
+      <div class="prose"><Content /></div>
+
+      {alts.length > 0 && (
+        <p class="full-alts small">
+          <span class="full-alts__label">ชื่ออื่นที่พบ</span> {alts.join(' · ')}
+        </p>
+      )}
+
+      <p class="full-source small">เรียบเรียงจาก {chapter!.data.source}</p>
+
+      <div class="full-share">
+        <ShareBar title={`${name} ${d.name_zh} ฉบับเต็ม`} path={`${path}/full`} />
+      </div>
+      <p class="full-back"><a href={path}>‹ กลับหน้า{name}</a> · <a href="/33-pang">ดูทั้ง ๓๓ ปาง</a></p>
+    </article>
+  </div>
+</BaseLayout>
+
+<style>
+  .full-head { border: 0; border-bottom: 3px solid var(--gold-bright); }
+  .full-head__inner { padding-block: 30px 34px; display: flex; flex-direction: column; }
+  .full-head__back { color: var(--plaque-ink-2); font-size: 15.5px; text-decoration: none; margin-bottom: 18px; }
+  .full-head__back:hover { color: var(--plaque-ink); text-decoration: underline; }
+  .full-head__no { font-size: 12.5px; letter-spacing: .12em; color: var(--plaque-ink-2); margin: 0 0 8px; }
+  .full-head h1 { color: var(--plaque-ink); }
+  .full-head__zh { margin: 8px 0 0; font-size: 22px; font-weight: 700; color: var(--gold-bright); letter-spacing: .06em; }
+  .full-head__var { font-size: 16px; color: var(--plaque-ink-2); font-weight: 400; }
+  .full-head__essence {
+    margin: 16px 0 0; max-width: 56ch;
+    font-family: var(--serif); font-size: 18px; line-height: 1.7;
+    color: var(--plaque-ink); opacity: .92;
+  }
+
+  .full-body {
+    display: grid;
+    grid-template-columns: 250px minmax(0, 1fr);
+    gap: 48px;
+    align-items: start;
+    padding-block: clamp(28px, 5vw, 48px);
+  }
+  @media (max-width: 900px) { .full-body { grid-template-columns: 1fr; gap: 28px; } }
+
+  .full-toc__inner { position: sticky; top: 68px; display: flex; flex-direction: column; gap: 18px; }
+  @media (max-width: 900px) {
+    .full-toc__inner { position: static; }
+    .full-toc__inner :global(.pang-art) { max-width: 180px; }
+  }
+  .full-toc__label { margin: 0 0 8px; }
+  .full-toc ol { list-style: none; margin: 0; padding: 0; counter-reset: t; }
+  .full-toc li { counter-increment: t; padding: 5px 0; border-top: 1px solid var(--line); }
+  .full-toc li:first-child { border-top: 0; }
+  .full-toc a { font-size: 15px; line-height: 1.5; color: var(--ink-2); text-decoration: none; display: block; }
+  .full-toc a:hover { color: var(--lacquer); }
+  .full-toc__meta { font-size: 12.5px; color: var(--ink-3); margin: 0; }
+
+  .evidence { margin-bottom: 30px; }
+  .evidence em { font-style: normal; font-weight: 600; color: var(--ink); }
+
+  .full-article :global(.prose h3) {
+    font-size: 21px;
+    margin-top: 2em;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+    scroll-margin-top: 70px;
+  }
+  .full-article :global(.prose h4) { font-size: 18px; margin-top: 1.6em; }
+  .full-article :global(.prose p) { font-size: 17px; line-height: 1.82; }
+  .full-article :global(.prose sup a) { font-size: 12px; text-decoration: none; padding: 0 2px; }
+  .full-article :global(.prose ol li), .full-article :global(.prose ul li) { line-height: 1.75; }
+  .full-article :global(.prose a) { word-break: break-word; }
+
+  .full-alts, .full-source { margin-top: 26px; color: var(--ink-2); }
+  .full-alts__label {
+    font-family: var(--mono); font-size: 11.5px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--ink-3); margin-right: 8px;
+  }
+  .full-source { color: var(--ink-3); padding-top: 20px; border-top: 1px solid var(--line); }
+  .full-share { margin-top: 30px; }
+  .full-back { margin-top: 26px; }
+</style>

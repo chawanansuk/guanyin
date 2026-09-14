@@ -20,6 +20,15 @@ const pang = defineCollection({
     name_pinyin: z.string(),
     name_thai_reading: z.string(),
     name_sanskrit: z.string().default(''),
+    /** ชื่อไทยสายแปลศัพท์ธรรม (นีลกัณฐอวโลกิเตศวร ฯลฯ) — ใช้เป็น "ชื่ออื่นที่พบ" */
+    name_th_scholarly: z.string().default(''),
+    /** รูปอักษรจีนทางเลือกที่พบตามป้ายและเอกสาร เช่น 巖戶觀音 */
+    name_zh_variants: z.array(z.string()).default([]),
+    /** แก่นของปางหนึ่งประโยค — เป็นคำอธิบายเชิงตีความ ไม่ใช่ถ้อยคำจากพระสูตร */
+    essence: z.string().default(''),
+    /** เอกสารต้นทางของเนื้อหา — ต่างจาก verified_by ที่เป็นผู้รู้ของตำหนัก */
+    source_doc: z.string().default(''),
+    has_full: z.boolean().default(false),
     /** false = ยังไม่ได้อัญเชิญมาประดิษฐาน แสดงในหน้ารวมเป็น "กำลังอัญเชิญ" */
     enshrined: z.boolean().default(true),
     shrine_point: z.number().int().nullable().default(null),
@@ -114,4 +123,16 @@ const prayers = defineCollection({
   }),
 });
 
-export const collections = { pang, wishes, events, news, prayers };
+// บทเต็มจากต้นฉบับหนังสือ — หนึ่งบทต่อหนึ่งปาง สร้างด้วย npm run import:book
+const pangFull = defineCollection({
+  loader: glob({ base: './src/content/pang-full', pattern: '**/*.md' }),
+  schema: z.object({
+    order: z.number().int().min(1).max(33),
+    slug: z.string(),
+    title: z.string(),
+    source: z.string(),
+    words: z.number().int(),
+  }),
+});
+
+export const collections = { pang, wishes, events, news, prayers, pangFull };

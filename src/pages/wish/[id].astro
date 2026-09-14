@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
 import PangCard from '../../components/PangCard.astro';
+import WishNotice from '../../components/WishNotice.astro';
 import { getCollection } from 'astro:content';
 import { displayName } from '../../lib/pang';
 import site from '../../data/site.json';
@@ -22,7 +23,7 @@ const others = wishes.filter((x: any) => x.data.id !== w.id);
 <BaseLayout
   title={`ขอพร${w.short} ไหว้กวนอิมปางใด`}
   suffix={false}
-  description={`${w.lede} — ปางที่คนนิยมกราบไหว้เรื่อง${w.short} ที่ตำหนักผู่โถวเจ้าแม่กวนอิม พุทธมณฑลสาย ๒ พร้อมความหมายของแต่ละปาง`}
+  description={`${w.lede} — ปางที่ตำหนักผู่โถวเจ้าแม่กวนอิม พุทธมณฑลสาย ๒ จัดไว้ในหมวด${w.short} พร้อมความหมายของแต่ละปาง`}
   breadcrumbs={[
     { label: 'หน้าแรก', href: '/' },
     { label: 'ขอพรเรื่องไหน ไหว้ปางใด', href: '/worship/by-wish' },
@@ -58,13 +59,7 @@ const others = wishes.filter((x: any) => x.data.id !== w.id);
         ))}
       </ul>
 
-      <div class="note">
-        <p>
-          <strong>การจับคู่ปางกับพรเป็นธรรมเนียมที่สืบต่อกันมา ไม่ใช่กฎตายตัว</strong>{' '}
-          ผู้ที่ศรัทธาปางใดเป็นพิเศษ ย่อมกราบไหว้ปางนั้นในทุกเรื่องได้
-          ที่จัดหมวดไว้นี้เพื่อช่วยผู้ที่มาครั้งแรกให้เริ่มต้นได้ง่ายขึ้น
-        </p>
-      </div>
+      <div class="bottom-note"><WishNotice /></div>
 
       <div class="others">
         <p class="eyebrow">หมวดอื่น</p>
@@ -99,6 +94,6 @@ const others = wishes.filter((x: any) => x.data.id !== w.id);
   .reasons__why { margin: 8px 0 0; color: var(--ink-2); }
   .reasons__pray { margin: 6px 0 0; font-family: var(--serif); color: var(--ink-3); }
 
-  .note { margin-top: 32px; }
+  .bottom-note { margin-top: 32px; }
   .others { margin-top: 40px; display: flex; flex-direction: column; gap: 10px; }
 </style>

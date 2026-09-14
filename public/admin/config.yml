@@ -136,7 +136,8 @@ collections:
             label: การแสดงเนื้อหา
             widget: object
             fields:
-              - { name: require_verified, label: ซ่อนเนื้อหาปางที่ผู้รู้ยังไม่ได้ตรวจ, widget: boolean, default: true }
+              - { name: require_verified, label: ซ่อนเนื้อหาปางที่ยังไม่มีแหล่งอ้างอิง, widget: boolean, default: true }
+              - { name: wishes_verified, label: ผู้ดูแลตำหนักยืนยันการจับคู่ปางกับหมวดพรแล้ว, widget: boolean, default: false }
               - { name: pang_total, label: จำนวนปางทั้งหมด, widget: hidden, default: 33 }
               - { name: news_stale_months, label: ซ่อนส่วนข่าวบนหน้าแรกเมื่อข่าวเก่ากว่ากี่เดือน, widget: number, value_type: int, default: 6 }
           - name: analytics

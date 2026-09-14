@@ -5,6 +5,7 @@ import PangCard from '../components/PangCard.astro';
 import EventList from '../components/EventList.astro';
 import VisitPanel from '../components/VisitPanel.astro';
 import ShrinePhoto from '../components/ShrinePhoto.astro';
+import VideoBand from '../components/VideoBand.astro';
 import photos from '../data/photos.json';
 import site from '../data/site.json';
 import { allPang, enshrinedCount } from '../lib/pang';
@@ -146,6 +147,8 @@ const schema = preOpening
       </div>
     </div>
   </section>
+
+  <VideoBand />
 
   <!-- วันสำคัญ -->
   {upcoming.length > 0 && (

@@ -80,8 +80,16 @@
     "headline": "พิธีเปิดตำหนักผู่โถวเจ้าแม่กวนอิม",
     "active": true
   },
+  "video": {
+    "file": "shrine.mp4",
+    "title": "ตำหนักผู่โถวเจ้าแม่กวนอิม",
+    "caption": "ภาพเคลื่อนไหวหน้าอาคารตำหนัก",
+    "note": "",
+    "bytes": 7372072
+  },
   "content": {
     "require_verified": true,
+    "wishes_verified": false,
     "pang_total": 33,
     "news_stale_months": 6
   },

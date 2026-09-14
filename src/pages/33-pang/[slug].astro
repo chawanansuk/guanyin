@@ -77,6 +77,13 @@ const description =
           <span class="pang__py">{d.name_pinyin}</span>
         </p>
 
+        {d.essence && (
+          <p class="pang__essence">
+            <span class="pang__essence-label">แก่นของปาง</span>
+            {d.essence}
+          </p>
+        )}
+
         <ul class="chips pang__wishes">
           {myWishes.map((w: any) => (
             <li><a class="chip" href={`/wish/${w.data.id}`}>{w.data.short}</a></li>
@@ -91,7 +98,14 @@ const description =
         <section class="pang__sec">
           <h2>ความหมายและเรื่องเล่า</h2>
           {verified ? (
-            <div class="prose"><Content /></div>
+            <>
+              <div class="prose"><Content /></div>
+              {d.has_full && (
+                <a class="pang__more" href={`${path}/full`}>
+                  อ่านฉบับเต็มของปางนี้ ›
+                </a>
+              )}
+            </>
           ) : (
             <div class="note note--lacquer">
               <p>
@@ -113,7 +127,7 @@ const description =
           </section>
         )}
 
-        {(alts.length > 0 || d.sources.length > 0) && (
+        {(alts.length > 0 || d.sources.length > 0 || d.source_doc) && (
           <section class="pang__sec pang__meta">
             {alts.length > 0 && (
               <p class="small"><span class="pang__metalabel">ชื่ออื่นที่พบ</span> {alts.join(' · ')}</p>
@@ -121,8 +135,11 @@ const description =
             {d.sources.length > 0 && (
               <p class="small"><span class="pang__metalabel">อ้างอิง</span> {d.sources.join(' · ')}</p>
             )}
+            {d.source_doc && (
+              <p class="small"><span class="pang__metalabel">เรียบเรียงจาก</span> {d.source_doc}</p>
+            )}
             {d.verified_by && (
-              <p class="small"><span class="pang__metalabel">ตรวจสอบโดย</span> {d.verified_by}</p>
+              <p class="small"><span class="pang__metalabel">ผู้รู้ของตำหนักตรวจแล้ว</span> {d.verified_by}</p>
             )}
           </section>
         )}
@@ -186,6 +203,36 @@ const description =
   .pang__zh { font-size: 22px; font-weight: 700; color: var(--lacquer); }
   .pang__py { font-size: 16px; color: var(--ink-3); font-style: italic; }
   .pang__wishes { margin-top: 18px; }
+
+  /* แก่นของปาง — เป็นคำอธิบายเชิงตีความ ไม่ใช่ถ้อยคำจากพระสูตร
+     จึงใช้ป้ายกำกับให้ผู้อ่านรู้ว่ากำลังอ่านข้อมูลระดับใดอยู่ */
+  .pang__essence {
+    margin: 20px 0 0;
+    padding: 14px 16px;
+    background: var(--gold-soft);
+    border-left: 3px solid var(--gold);
+    font-family: var(--serif);
+    font-size: 17.5px;
+    line-height: 1.7;
+  }
+  .pang__essence-label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+
+  .pang__more {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-top: 14px;
+    font-size: 16.5px;
+    font-weight: 500;
+  }
 
   .pang__sec { margin-top: 34px; }
   .pang__sec h2 {
