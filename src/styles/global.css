@@ -1,48 +1,58 @@
 /* ============================================================
    ระบบสีและตัวอักษร — ตำหนักผู่โถวเจ้าแม่กวนอิม
-   สีมาจากวัสดุในตำหนัก: กระดาษสา · หมึก · ชาด · ทองคำเปลว · ศิลาดล · รักดำ
-   ชาดใช้ให้น้อยที่สุด เฉพาะจุดที่ต้องการให้มือกด ที่เหลือให้ภาพองค์พระเป็นพระเอก
+   สีถอดมาจากป้ายหน้าตำหนักของจริง:
+     แดงชาดของป้าย 普陀觀音堂 · ทองของตัวอักษรและบานประตู
+     ปูนขาวของผนัง · เขียวของคิ้วหลังคา
+   แดงใช้กับ "ป้าย" (หัวเว็บ ฮีโร่ ท้ายเว็บ) และปุ่มหลัก
+   ทองใช้กับหัวข้อเล็ก เส้นคั่น และแถบเวลาเปิด–ปิด
+   พื้นที่อ่านเนื้อหาปล่อยให้เป็นปูนขาว ให้ภาพองค์พระเป็นพระเอก
    ============================================================ */
 
 :root {
-  /* --- พื้นผิว --- */
-  --ground: #F4EFE4;          /* กระดาษสา 宣紙 */
-  --surface: #FBF8F1;
-  --surface-2: #ECE4D4;
-  --surface-sunk: #E7DDC9;
+  /* --- พื้นผิว: ผนังปูนขาวกลางแดด --- */
+  --ground: #FDF7EC;
+  --surface: #FFFFFF;
+  --surface-2: #F8EDD8;
+  --surface-sunk: #F2E4C9;
 
-  /* --- ตัวอักษร --- */
-  --ink: #1F1A16;             /* หมึก 墨 */
-  --ink-2: #5A4D44;
-  --ink-3: #837366;
+  /* --- ตัวอักษร: หมึกอมน้ำตาลอุ่น ไม่ใช่ดำสนิท --- */
+  --ink: #2A1A12;
+  --ink-2: #6B5442;
+  --ink-3: #94795F;
 
   /* --- เส้น --- */
-  --line: #DED4C2;
-  --line-strong: #C2B29B;
+  --line: #E9DBBF;
+  --line-strong: #CDB489;
 
-  /* --- สีเน้น --- */
-  --lacquer: #9E2B25;         /* ชาด 朱砂 */
-  --lacquer-ink: #FBF8F1;     /* ตัวอักษรบนพื้นชาด */
-  --lacquer-soft: #F0E0DC;
-  /* แถบเวลาเปิด–ปิดกินพื้นที่กว้าง จึงแยกโทนออกมา
-     โหมดมืดใช้แดงเข้มแทนแดงสด ไม่งั้นจะจ้าเกินไปเต็มความกว้างจอ */
-  --bar-bg: var(--lacquer);
-  --bar-ink: var(--lacquer-ink);
-  --bar-line: rgba(255, 255, 255, .5);
-  --gold: #8A6C28;            /* ทองคำเปลว 金箔 */
-  --gold-soft: #EFE6CF;
-  --celadon: #3F6D5A;         /* ศิลาดล 青瓷 */
-  --celadon-soft: #E1EBE5;
+  /* --- แดงชาดจากป้ายหน้าตำหนัก 普陀觀音堂 --- */
+  --lacquer: #B5171A;
+  --lacquer-ink: #FFF7E8;
+  --lacquer-soft: #FBE6E0;
 
-  /* --- ป้ายรักดำ 匾額 --- */
-  --plaque: #2B1714;
-  --plaque-2: #3A211C;
-  --plaque-ink: #F1E3C4;
-  --plaque-ink-2: #C3AC84;
-  --plaque-line: rgba(241, 227, 196, .22);
+  /* --- ทองจากตัวอักษรบนป้ายและบานประตู --- */
+  --gold: #8A6A12;          /* ทองเข้ม — ใช้เป็นตัวอักษรบนพื้นสว่าง */
+  --gold-bright: #E3B23C;   /* ทองสด — ใช้เป็นพื้นหรือบนพื้นแดงเท่านั้น */
+  --gold-soft: #F6E7C2;
 
-  --shadow: 0 1px 2px rgba(31, 26, 22, .05), 0 10px 28px rgba(31, 26, 22, .06);
-  --shadow-lift: 0 2px 4px rgba(31, 26, 22, .07), 0 14px 34px rgba(31, 26, 22, .1);
+  /* --- เขียวจากคิ้วหลังคาและลายกระเบื้อง --- */
+  --celadon: #2E7057;
+  --celadon-soft: #E2EFE7;
+
+  /* --- แถบเวลาเปิด–ปิด: ทองอย่างบานประตูทองเหลือง
+         แยกโทนจากแดงของป้าย ไม่ให้แดงสองแถบซ้อนกัน --- */
+  --bar-bg: var(--gold-bright);
+  --bar-ink: #2A1A12;
+  --bar-line: rgba(42, 26, 18, .38);
+
+  /* --- ป้ายหน้าตำหนัก: ทองบนแดง --- */
+  --plaque: #B5171A;
+  --plaque-2: #9C1316;
+  --plaque-ink: #F8E1A4;
+  --plaque-ink-2: #E0BC6B;
+  --plaque-line: rgba(248, 225, 164, .34);
+
+  --shadow: 0 1px 2px rgba(42, 26, 18, .06), 0 10px 28px rgba(42, 26, 18, .07);
+  --shadow-lift: 0 2px 4px rgba(42, 26, 18, .08), 0 14px 34px rgba(42, 26, 18, .12);
 
   /* --- ตัวอักษร --- */
   --serif: "Noto Serif Thai", "Noto Serif", Georgia, serif;
@@ -56,64 +66,68 @@
   --radius: 3px;
 }
 
+/* โหมดมืด: ป้ายยังเป็นแดง-ทองเหมือนเดิม เพราะเป็นตัวตนของตำหนัก
+   แต่ลดความสว่างของพื้นแดงลง ไม่ให้แสบตาบนจอมืด */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --ground: #15100E;
-    --surface: #1E1714;
-    --surface-2: #29201B;
-    --surface-sunk: #120D0C;
-    --ink: #F0E7DB;
-    --ink-2: #B8A897;
-    --ink-3: #8A7A6B;
-    --line: #362A24;
-    --line-strong: #4D3D34;
-    --lacquer: #E8796A;
-    --lacquer-ink: #1A0F0D;
-    --lacquer-soft: #3A211E;
-    --bar-bg: #4A1B18;
-    --bar-ink: #F7DED9;
-    --bar-line: rgba(247, 222, 217, .4);
-    --gold: #D3AC61;
-    --gold-soft: #322718;
-    --celadon: #83B79F;
-    --celadon-soft: #1D2B25;
-    --plaque: #0E0A09;
-    --plaque-2: #1A1210;
-    --plaque-ink: #EBD5A6;
-    --plaque-ink-2: #A79070;
-    --plaque-line: rgba(235, 213, 166, .2);
-    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px rgba(0, 0, 0, .34);
-    --shadow-lift: 0 2px 4px rgba(0, 0, 0, .45), 0 14px 34px rgba(0, 0, 0, .4);
+    --ground: #170F0B;
+    --surface: #211711;
+    --surface-2: #2D2017;
+    --surface-sunk: #120C08;
+    --ink: #F5E9D6;
+    --ink-2: #C0A98D;
+    --ink-3: #92795C;
+    --line: #3A2A1C;
+    --line-strong: #543E28;
+    --lacquer: #F08A6E;
+    --lacquer-ink: #23100C;
+    --lacquer-soft: #3B1D17;
+    --gold: #E0B355;
+    --gold-bright: #E3B23C;
+    --gold-soft: #33280F;
+    --celadon: #7FC0A0;
+    --celadon-soft: #1C2C23;
+    --bar-bg: #6E5111;
+    --bar-ink: #FBECC4;
+    --bar-line: rgba(251, 236, 196, .4);
+    --plaque: #8C1216;
+    --plaque-2: #731013;
+    --plaque-ink: #F8E1A4;
+    --plaque-ink-2: #D9B163;
+    --plaque-line: rgba(248, 225, 164, .3);
+    --shadow: 0 1px 2px rgba(0, 0, 0, .42), 0 10px 28px rgba(0, 0, 0, .36);
+    --shadow-lift: 0 2px 4px rgba(0, 0, 0, .48), 0 14px 34px rgba(0, 0, 0, .42);
   }
 }
 
 :root[data-theme="dark"] {
-  --ground: #15100E;
-  --surface: #1E1714;
-  --surface-2: #29201B;
-  --surface-sunk: #120D0C;
-  --ink: #F0E7DB;
-  --ink-2: #B8A897;
-  --ink-3: #8A7A6B;
-  --line: #362A24;
-  --line-strong: #4D3D34;
-  --lacquer: #E8796A;
-  --lacquer-ink: #1A0F0D;
-  --lacquer-soft: #3A211E;
-  --bar-bg: #4A1B18;
-  --bar-ink: #F7DED9;
-  --bar-line: rgba(247, 222, 217, .4);
-  --gold: #D3AC61;
-  --gold-soft: #322718;
-  --celadon: #83B79F;
-  --celadon-soft: #1D2B25;
-  --plaque: #0E0A09;
-  --plaque-2: #1A1210;
-  --plaque-ink: #EBD5A6;
-  --plaque-ink-2: #A79070;
-  --plaque-line: rgba(235, 213, 166, .2);
-  --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px rgba(0, 0, 0, .34);
-  --shadow-lift: 0 2px 4px rgba(0, 0, 0, .45), 0 14px 34px rgba(0, 0, 0, .4);
+  --ground: #170F0B;
+  --surface: #211711;
+  --surface-2: #2D2017;
+  --surface-sunk: #120C08;
+  --ink: #F5E9D6;
+  --ink-2: #C0A98D;
+  --ink-3: #92795C;
+  --line: #3A2A1C;
+  --line-strong: #543E28;
+  --lacquer: #F08A6E;
+  --lacquer-ink: #23100C;
+  --lacquer-soft: #3B1D17;
+  --gold: #E0B355;
+  --gold-bright: #E3B23C;
+  --gold-soft: #33280F;
+  --celadon: #7FC0A0;
+  --celadon-soft: #1C2C23;
+  --bar-bg: #6E5111;
+  --bar-ink: #FBECC4;
+  --bar-line: rgba(251, 236, 196, .4);
+  --plaque: #8C1216;
+  --plaque-2: #731013;
+  --plaque-ink: #F8E1A4;
+  --plaque-ink-2: #D9B163;
+  --plaque-line: rgba(248, 225, 164, .3);
+  --shadow: 0 1px 2px rgba(0, 0, 0, .42), 0 10px 28px rgba(0, 0, 0, .36);
+  --shadow-lift: 0 2px 4px rgba(0, 0, 0, .48), 0 14px 34px rgba(0, 0, 0, .42);
 }
 
 /* ============================================================ reset */

@@ -1,0 +1,53 @@
+---
+/**
+ * ภาพของตำหนัก (หน้าอาคาร องค์ประธาน มุมกว้าง)
+ * ใช้ภาพจริงถ้ามีในคลัง ถ้ายังไม่มีจะไม่แสดงอะไรเลย
+ * เพื่อให้หน้าเว็บไม่พังระหว่างรอภาพ และขึ้นเองทันทีที่ไฟล์มา
+ *
+ * วางไฟล์ที่ photos-src/<name>.jpg แล้วรัน npm run images
+ */
+import photos from '../data/photos.json';
+
+interface Props {
+  name: string;
+  alt: string;
+  ratio?: string;
+  sizes?: string;
+  priority?: boolean;
+  className?: string;
+}
+const {
+  name, alt, ratio = '4 / 3',
+  sizes = '(max-width: 900px) 100vw, 900px',
+  priority = false, className,
+} = Astro.props;
+
+const entry = (photos.images as Record<string, { widths: number[] }>)[name];
+const srcset = entry
+  ? entry.widths.map((w) => `/images/pang/${name}-${w}.webp ${w}w`).join(', ')
+  : null;
+const widest = entry ? entry.widths[entry.widths.length - 1] : null;
+---
+{srcset && (
+  <img
+    class:list={['shrine-photo', className]}
+    src={`/images/pang/${name}-${widest}.webp`}
+    srcset={srcset}
+    sizes={sizes}
+    alt={alt}
+    style={`aspect-ratio:${ratio}`}
+    loading={priority ? 'eager' : 'lazy'}
+    fetchpriority={priority ? 'high' : undefined}
+    decoding="async"
+  />
+)}
+
+<style>
+  .shrine-photo {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    display: block;
+    background: var(--surface-2);
+  }
+</style>

@@ -4,6 +4,8 @@ import HoursBar from '../components/HoursBar.astro';
 import PangCard from '../components/PangCard.astro';
 import EventList from '../components/EventList.astro';
 import VisitPanel from '../components/VisitPanel.astro';
+import ShrinePhoto from '../components/ShrinePhoto.astro';
+import photos from '../data/photos.json';
 import site from '../data/site.json';
 import { allPang, enshrinedCount } from '../lib/pang';
 import { getCollection } from 'astro:content';
@@ -26,6 +28,9 @@ const daysToOpening = daysFromToday(openingDate);
 // ก่อนวันงาน หน้าแรกพูดเรื่องพิธีเปิดเป็นอย่างแรก — หลังวันงานสลับกลับเองตอน rebuild รายวัน
 const preOpening = opening.active && daysToOpening >= 0;
 
+// มีภาพหน้าอาคารแล้วหรือยัง — ถ้ามี ฮีโร่จะเป็นภาพจริง ถ้ายังไม่มีก็เป็นป้ายแดงทองแทน
+const hasFacade = 'shrine-exterior' in (photos.images as Record<string, unknown>);
+
 const schema = preOpening
   ? [{
       '@context': 'https://schema.org',
@@ -46,9 +51,21 @@ const schema = preOpening
   description={`${site.tagline} — ดูครบทั้ง ๓๓ ปาง พร้อมความหมาย วิธีไหว้ เวลาเปิด–ปิด และการเดินทาง`}
   schema={schema}
 >
-  <!-- ฮีโร่: ป้ายรักดำอย่างป้ายหน้าตำหนัก -->
-  <section class="hero plaque">
+  <!-- ฮีโร่: ป้ายแดง–ทอง ตามป้ายจริงหน้าตำหนัก -->
+  <section class:list={['hero plaque', hasFacade && 'hero--photo']}>
+    {hasFacade && (
+      <div class="hero__photo">
+        <ShrinePhoto
+          name="shrine-exterior"
+          alt={`หน้าอาคาร${site.name_th} ${site.name_zh}`}
+          ratio="16 / 10"
+          sizes="100vw"
+          priority
+        />
+      </div>
+    )}
     <div class="wrap hero__inner">
+      <p class="hero__prefix han">{site.plaque_prefix_zh}</p>
       <p class="hero__zh han">{site.name_zh}</p>
       <h1 class="hero__th">{site.name_th}</h1>
       <p class="hero__motto han">{site.motto_zh} <span class="hero__motto-th">{site.motto_th}</span></p>
@@ -187,13 +204,33 @@ const schema = preOpening
 <style>
   /* ---------- hero ---------- */
   .hero { border: 0; }
+  .hero { position: relative; overflow: hidden; }
+  /* ภาพหน้าอาคารเป็นฉากหลัง ตัวอักษรยังอ่านได้เพราะมีชั้นแดงทับ */
+  .hero__photo { position: absolute; inset: 0; }
+  .hero__photo :global(.shrine-photo) { width: 100%; height: 100%; aspect-ratio: auto !important; }
+  .hero--photo .hero__photo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,
+      color-mix(in srgb, var(--plaque) 72%, transparent),
+      color-mix(in srgb, var(--plaque) 92%, transparent));
+  }
   .hero__inner {
+    position: relative;
     padding-block: clamp(48px, 9vw, 86px) clamp(40px, 7vw, 66px);
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     gap: 0;
+  }
+  .hero__prefix {
+    margin: 0 0 10px;
+    font-size: 15px;
+    letter-spacing: .4em;
+    padding-left: .4em;
+    color: var(--plaque-ink-2);
   }
   .hero__zh {
     margin: 0;

@@ -20,9 +20,10 @@ const root = fileURLToPath(new URL('..', import.meta.url));
 const OUT = join(root, 'public', 'og');
 const W = 1200, H = 630;
 
+// สีเดียวกับป้ายหน้าตำหนัก: ทองบนแดงชาด
 const C = {
-  plaque: '#2B1714', line: 'rgba(241,227,196,.28)',
-  ink: '#F1E3C4', ink2: '#B79A6E', gold: '#D3AC61', lacquer: '#E8796A',
+  plaque: '#B5171A', plaque2: '#9C1316', line: 'rgba(248,225,164,.42)',
+  ink: '#FFF3D6', ink2: '#EFCE86', gold: '#F1C75C', lacquer: '#FFD9A8',
 };
 // ระบุหลายตัวเพราะแต่ละเครื่อง/แต่ละ CI มีฟอนต์ไม่เหมือนกัน
 const TH = 'Noto Serif Thai, Noto Sans Thai, Loma, Garuda, TH Sarabun New, sans-serif';
@@ -49,14 +50,17 @@ function card({ no, th, zh, py, footer, accent = C.gold }) {
   const hasArt = Boolean(zh);
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
   <rect width="${W}" height="${H}" fill="${C.plaque}"/>
-  <rect x="26" y="26" width="${W - 52}" height="${H - 52}" fill="none" stroke="${C.line}" stroke-width="2"/>
-  ${hasArt ? `<g opacity=".17"><text x="${W - 96}" y="430" text-anchor="end" font-family="${ZH}" font-size="300" font-weight="700" fill="${accent}">${esc(zh[0])}</text></g>` : ''}
+  <rect x="0" y="0" width="${W}" height="14" fill="${C.gold}"/>
+  <rect x="0" y="${H - 14}" width="${W}" height="14" fill="${C.gold}"/>
+  <rect x="30" y="30" width="${W - 60}" height="${H - 60}" fill="none" stroke="${C.line}" stroke-width="2"/>
+  <rect x="38" y="38" width="${W - 76}" height="${H - 76}" fill="none" stroke="${C.line}" stroke-width="1" opacity=".6"/>
+  ${hasArt ? `<g opacity=".15"><text x="${W - 96}" y="430" text-anchor="end" font-family="${ZH}" font-size="300" font-weight="700" fill="${accent}">${esc(zh[0])}</text></g>` : ''}
   ${no ? `<text x="86" y="132" font-family="monospace" font-size="34" letter-spacing="10" fill="${C.ink2}">${esc(no)}</text>` : ''}
   <text x="86" y="${no ? 268 : 250}" font-family="${TH}" font-size="76" font-weight="700" fill="${C.ink}">${esc(th)}</text>
   ${zh ? `<text x="86" y="${no ? 356 : 338}" font-family="${ZH}" font-size="54" font-weight="700" fill="${accent}">${esc(zh)}</text>` : ''}
   ${py ? `<text x="86" y="${no ? 410 : 392}" font-family="serif" font-size="30" font-style="italic" fill="${C.ink2}">${esc(py)}</text>` : ''}
   <line x1="86" y1="${H - 132}" x2="${W - 86}" y2="${H - 132}" stroke="${C.line}" stroke-width="1.5"/>
-  <text x="86" y="${H - 86}" font-family="${ZH}" font-size="30" font-weight="700" letter-spacing="6" fill="${C.ink}">普陀觀音堂</text>
+  <text x="86" y="${H - 86}" font-family="${ZH}" font-size="30" font-weight="700" letter-spacing="6" fill="${C.gold}">普陀觀音堂</text>
   <text x="86" y="${H - 48}" font-family="${TH}" font-size="25" fill="${C.ink2}">${esc(footer)}</text>
 </svg>`;
 }
