@@ -48,9 +48,13 @@ for (const file of files.sort()) {
   const input = join(SRC, file);
   const srcStat = await stat(input);
   const meta = await sharp(input).metadata();
-  const widths = SIZES.filter((w) => w <= (meta.width ?? 0)).concat(
-    SIZES.every((w) => w > (meta.width ?? 0)) ? [meta.width] : [],
-  );
+  const native = meta.width ?? 0;
+  const widths = SIZES.filter((w) => w <= native);
+  // ภาพที่ส่งมาบางภาพกว้างไม่ถึง 1600 แต่กว้างกว่า 960 อยู่พอควร
+  // ถ้าไม่เก็บขนาดจริงไว้ด้วย จอใหญ่จะขยาย 960 ขึ้นมาแล้วเห็นเป็นภาพเบลอ
+  if (native > 0 && (widths.length === 0 || native > widths[widths.length - 1] * 1.05)) {
+    widths.push(native);
+  }
 
   for (const w of widths) {
     const out = join(OUT, `${name}-${w}.webp`);

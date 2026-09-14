@@ -1,0 +1,56 @@
+---
+/**
+ * ตราสัญลักษณ์ของตำหนัก — ศาลาในวงกลม
+ *
+ * ย่ออาคารจริงให้เหลือเฉพาะรูปทรงที่จำได้: ดวงแก้วบนสันหลังคา
+ * หลังคาปลายงอน ป้ายกลาง เสาคู่ ประตูสองบาน และบันได
+ * วาดใหม่สำหรับขนาดเล็กโดยเฉพาะ ไม่ใช่ย่อภาพลายเส้นหน้าอาคารลงมา
+ * — ที่ ๓๒ px เส้นบางกว่า ๑.๖ จะหายไปกับจอความละเอียดต่ำ
+ *
+ * ใช้ currentColor ทั้งหมด จะได้วางบนพื้นมืดหรือพื้นสว่างก็ได้
+ */
+interface Props { class?: string; title?: string }
+const { class: cls, title = 'ตราตำหนักผู่โถวเจ้าแม่กวนอิม' } = Astro.props;
+---
+<svg
+  class:list={['mark', cls]}
+  viewBox="0 0 96 96"
+  role="img"
+  aria-label={title}
+>
+  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <!-- วงตรา -->
+    <circle cx="48" cy="48" r="45" stroke-width="2" />
+    <circle cx="48" cy="48" r="40.5" stroke-width="1" opacity=".45" />
+
+    <!-- ดวงแก้วเปลวไฟบนสันหลังคา -->
+    <circle cx="48" cy="22.4" r="2.5" stroke-width="1.8" />
+    <path d="M48 16.4q2.7 3.1 0 3.6q-2.7-.5 0-3.6" stroke-width="1.5" />
+
+    <!-- หลังคา: สันแอ่นกลาง ชายคาสองข้างสะบัดขึ้น — รูปทรงที่จำอาคารนี้ได้ -->
+    <path d="M14 37q4.4 4.6 11 4Q33 37.4 48 33.4Q63 37.4 71 41q6.6.6 11-4" stroke-width="2.4" />
+    <path d="M18.5 42.4q4 3.4 9.6 2.8Q35 42 48 38.4Q61 42 67.9 45.2q5.6.6 9.6-2.8" stroke-width="1.5" opacity=".72" />
+
+    <!-- ป้ายชื่อใต้สันหลังคา -->
+    <rect x="35" y="45" width="26" height="10" rx="1.2" stroke-width="1.9" />
+
+    <!-- ตัวอาคาร เสาคู่จารึก และลายวงกลมบนผนัง -->
+    <path d="M24 57.5h48" stroke-width="1.9" />
+    <path d="M24 57.5v20M72 57.5v20" stroke-width="1.9" />
+    <path d="M36.5 58.5v19M59.5 58.5v19" stroke-width="1.5" opacity=".8" />
+    <circle cx="30" cy="66" r="3" stroke-width="1.4" opacity=".7" />
+    <circle cx="66" cy="66" r="3" stroke-width="1.4" opacity=".7" />
+
+    <!-- ประตูสองบาน -->
+    <path d="M42 62h12v15.5H42z" stroke-width="1.9" />
+    <path d="M48 62v15.5" stroke-width="1.2" opacity=".8" />
+
+    <!-- บันได -->
+    <path d="M30 77.5h36" stroke-width="1.9" />
+    <path d="M25.5 81h45" stroke-width="1.5" opacity=".65" />
+  </g>
+</svg>
+
+<style>
+  .mark { display: block; width: 100%; height: auto; }
+</style>

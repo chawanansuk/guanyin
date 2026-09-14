@@ -1,6 +1,21 @@
 {
   "note": "สร้างอัตโนมัติโดย scripts/build-images.mjs — อย่าแก้ด้วยมือ",
-  "generated": null,
-  "sizes": [480, 960, 1600],
-  "images": {}
+  "generated": "2026-09-14T13:43:02.561Z",
+  "sizes": [
+    480,
+    960,
+    1600
+  ],
+  "images": {
+    "shrine-exterior": {
+      "widths": [
+        480,
+        960,
+        1086
+      ],
+      "ext": "webp",
+      "w": 1086,
+      "h": 772
+    }
+  }
 }

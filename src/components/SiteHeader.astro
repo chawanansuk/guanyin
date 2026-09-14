@@ -1,6 +1,7 @@
 ---
 import site from '../data/site.json';
 import LangSwitch from './LangSwitch.astro';
+import ShrineMark from './ShrineMark.astro';
 import { useT, withLang, type Lang } from '../i18n';
 
 interface Props { lang?: Lang }
@@ -32,8 +33,11 @@ const isOn = (href: string) => path === href || path.startsWith(href + '/');
   <div class="site-head__bar">
     <div class="wrap site-head__bar-inner">
       <a href={withLang('/', lang)} class="brand">
-        <span class="brand__zh han foil">{site.name_zh}</span>
-        <span class="brand__th">{lang === 'zh' ? '佛城二段' : site.name_th}</span>
+        <ShrineMark class="brand__mark" title={site.name_th} />
+        <span class="brand__text">
+          <span class="brand__zh han foil">{site.name_zh}</span>
+          <span class="brand__th">{lang === 'zh' ? '佛城二段' : site.name_th}</span>
+        </span>
       </a>
       <div class="site-head__right">
         <LangSwitch lang={lang} path={path} />
@@ -79,11 +83,15 @@ const isOn = (href: string) => path === href || path.startsWith(href + '/');
 
   .brand {
     display: flex;
-    flex-direction: column;
-    gap: 1px;
+    align-items: center;
+    gap: 11px;
     text-decoration: none;
     color: var(--plaque-ink);
   }
+  .brand__text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  /* ตราศาลา — ขนาดเท่าความสูงของชื่อสองบรรทัดรวมกัน จะได้อ่านเป็นชิ้นเดียว */
+  .brand :global(.brand__mark) { width: 42px; flex: none; color: var(--gold); transition: color .3s var(--ease-lux); }
+  .brand:hover :global(.brand__mark) { color: var(--gold-bright); }
   .brand__zh { font-size: 21px; font-weight: 700; letter-spacing: .16em; padding-left: .16em; line-height: 1.25; }
   .brand__th { font-family: var(--display); font-size: 13.5px; letter-spacing: .02em; color: var(--ink-3); line-height: 1.35; }
 

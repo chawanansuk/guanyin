@@ -46,8 +46,32 @@ const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 const THAI_DIGITS = ['๐','๑','๒','๓','๔','๕','๖','๗','๘','๙'];
 const thaiNum = (n) => String(n).replace(/\d/g, (d) => THAI_DIGITS[+d]);
 
-function card({ no, th, zh, py, footer, accent = C.gold }) {
-  const hasArt = Boolean(zh);
+/** ความกว้างโดยประมาณของข้อความต่อ ๑ หน่วย font-size
+ *  ใช้กะขนาดให้พอดีช่อง ไม่ใช่ค่าที่แม่นยำ — แค่กันไม่ให้ชื่อยาวล้นไปทับภาพ
+ *  (วัดจากการเรนเดอร์จริงด้วยฟอนต์ Noto Serif Thai / Noto Serif TC) */
+const advance = (ch) => {
+  const c = ch.codePointAt(0);
+  if (c >= 0x0e30 && c <= 0x0e4e && ![0x0e30, 0x0e32, 0x0e33, 0x0e40, 0x0e41, 0x0e42, 0x0e43, 0x0e44].includes(c)) return 0; // สระบน–ล่าง วรรณยุกต์ ไม่กินความกว้าง
+  if (c >= 0x0e00 && c <= 0x0e7f) return 0.52;   // ไทย
+  if (c >= 0x3000) return 1.05;                   // จีน
+  return 0.5;                                     // ละติน
+};
+const fitSize = (text, maxW, base) => {
+  const units = [...String(text)].reduce((a, ch) => a + advance(ch), 0) || 1;
+  return Math.min(base, Math.floor((maxW / units) * 10) / 10);
+};
+
+function card({ no, th, zh, py, footer, accent = C.gold, photo = null }) {
+  // มีภาพจริงเมื่อไร ให้ภาพทำหน้าที่แทนตัวอักษรจีนจาง ๆ ที่เคยใช้เป็นลาย
+  const hasArt = Boolean(zh) && !photo;
+  const PW = 470;              // ความกว้างช่องภาพด้านขวา
+  const PX = W - PW;           // ขอบซ้ายของช่องภาพ
+  const textRight = photo ? PX - 44 : W - 84;
+  const textW = textRight - 84;
+  const thSize = fitSize(th, textW, 74);
+  const zhSize = fitSize(zh, textW, 58);
+  const pySize = fitSize(py, textW, 28);
+  const ftSize = fitSize(footer, textW, 24);
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
@@ -66,25 +90,53 @@ function card({ no, th, zh, py, footer, accent = C.gold }) {
       <stop offset="85%" stop-color="#A87F22"/>
       <stop offset="100%" stop-color="#D8A93F"/>
     </linearGradient>
+    <!-- ขอบซ้ายของภาพต้องจมเข้าพื้นรัก ไม่งั้นจะเห็นเป็นภาพแปะทับการ์ด -->
+    <linearGradient id="seam" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="${C.plaque}"/>
+      <stop offset="100%" stop-color="rgba(42,16,21,0)"/>
+    </linearGradient>
   </defs>
   <rect width="${W}" height="${H}" fill="url(#bg)"/>
   <rect width="${W}" height="${H}" fill="url(#glow)"/>
   ${hasArt ? `<g opacity=".10"><text x="${W - 76}" y="452" text-anchor="end" font-family="${ZH}" font-size="330" font-weight="700" fill="${C.gold}">${esc(zh[0])}</text></g>` : ''}
+  ${photo ? `<clipPath id="pane"><rect x="${PX}" y="0" width="${PW}" height="${H}"/></clipPath>
+  <image clip-path="url(#pane)" x="${PX}" y="0" width="${PW}" height="${H}"
+         preserveAspectRatio="xMidYMid slice" href="${photo}"/>
+  <rect x="${PX}" y="0" width="180" height="${H}" fill="url(#seam)"/>
+  <rect x="${PX}" y="0" width="1.5" height="${H}" fill="${C.line}"/>` : ''}
   <rect x="30" y="30" width="${W - 60}" height="${H - 60}" fill="none" stroke="${C.line}" stroke-width="1.5"/>
   <rect x="39" y="39" width="${W - 78}" height="${H - 78}" fill="none" stroke="${C.line}" stroke-width="0.8" opacity=".55"/>
   ${no ? `<text x="84" y="136" font-family="${TH}" font-size="26" letter-spacing="7" fill="${C.gold}">${esc(no)}</text>` : ''}
-  <text x="84" y="${no ? 278 : 262}" font-family="${TH}" font-size="74" font-weight="600" fill="${C.ink}">${esc(th)}</text>
-  ${zh ? `<text x="84" y="${no ? 372 : 356}" font-family="${ZH}" font-size="58" font-weight="700" fill="url(#foil)">${esc(zh)}</text>` : ''}
-  ${py ? `<text x="84" y="${no ? 424 : 408}" font-family="serif" font-size="28" font-style="italic" fill="${C.ink2}">${esc(py)}</text>` : ''}
-  <line x1="84" y1="${H - 134}" x2="${W - 84}" y2="${H - 134}" stroke="${C.line}" stroke-width="1"/>
+  <text x="84" y="${no ? 278 : 262}" font-family="${TH}" font-size="${thSize}" font-weight="600" fill="${C.ink}">${esc(th)}</text>
+  ${zh ? `<text x="84" y="${no ? 372 : 356}" font-family="${ZH}" font-size="${zhSize}" font-weight="700" fill="url(#foil)">${esc(zh)}</text>` : ''}
+  ${py ? `<text x="84" y="${no ? 424 : 408}" font-family="serif" font-size="${pySize}" font-style="italic" fill="${C.ink2}">${esc(py)}</text>` : ''}
+  <line x1="84" y1="${H - 134}" x2="${textRight}" y2="${H - 134}" stroke="${C.line}" stroke-width="1"/>
   <text x="84" y="${H - 88}" font-family="${ZH}" font-size="30" font-weight="700" letter-spacing="7" fill="url(#foil)">普陀觀音堂</text>
-  <text x="84" y="${H - 48}" font-family="${TH}" font-size="24" fill="${C.ink2}">${esc(footer)}</text>
+  <text x="84" y="${H - 48}" font-family="${TH}" font-size="${ftSize}" fill="${C.ink2}">${esc(footer)}</text>
 </svg>`;
 }
 
 await mkdir(OUT, { recursive: true });
+
+// ภาพหน้าอาคาร ถ้ามีในคลังจะถูกฝังลงการ์ดแชร์และภาพปกวิดีโอ
+// ไลน์กับเฟซบุ๊กดึงเฉพาะภาพนี้ไปแสดง คนส่วนใหญ่เห็นภาพนี้ก่อนเห็นเว็บ
+const FACADE = join(root, 'public', 'images', 'pang', 'shrine-exterior-1086.webp');
+let facadeUri = null;
+if (existsSync(FACADE)) {
+  const jpg = await sharp(FACADE).jpeg({ quality: 86 }).toBuffer();
+  facadeUri = `data:image/jpeg;base64,${jpg.toString('base64')}`;
+} else {
+  console.warn('! ยังไม่มีภาพหน้าอาคาร — การ์ดแชร์จะใช้ลายตัวอักษรจีนแทน (รัน npm run images ก่อน)');
+}
+
 const render = async (svg, file) => {
-  await sharp(Buffer.from(svg)).png({ compressionLevel: 9 }).toFile(join(OUT, file));
+  const img = sharp(Buffer.from(svg));
+  // การ์ดที่มีภาพถ่ายอยู่ข้างในเก็บเป็น PNG แล้วจะโตเป็นเมกะไบต์
+  // ไลน์กับเฟซบุ๊กข้ามภาพพรีวิวที่ใหญ่เกินไป — หน้านั้นจะกลายเป็นกล่องเปล่า
+  await (file.endsWith('.jpg')
+    ? img.jpeg({ quality: 84, chromaSubsampling: '4:4:4' })
+    : img.png({ compressionLevel: 9 })
+  ).toFile(join(OUT, file));
 };
 
 // ภาพรวมของเว็บ
@@ -93,7 +145,8 @@ await render(card({
   zh: '普陀觀音堂',
   py: 'Putuo Guanyin Shrine',
   footer: 'เจ้าแม่กวนอิม ๓๓ ปาง · ถนนพุทธมณฑลสาย ๒',
-}), 'default.png');
+  photo: facadeUri,
+}), 'default.jpg');
 
 // หน้าปางละหนึ่งภาพ
 const pangDir = join(root, 'src', 'content', 'pang');
@@ -121,18 +174,63 @@ for (const f of files) {
   made++;
 }
 
-// ภาพปกวิดีโอ — ใช้การ์ดชุดเดียวกัน จะได้กลมกลืนกับทั้งเว็บ
+// ภาพปกวิดีโอ — ถ้ามีภาพหน้าอาคารให้ใช้ภาพจริง คนจะได้รู้ว่ากดแล้วจะเห็นอะไร
 const VID = join(root, 'public', 'video');
+const PW2 = 1280, PH2 = 720;
 await mkdir(VID, { recursive: true });
-await sharp(Buffer.from(card({
-  th: 'ตำหนักผู่โถวเจ้าแม่กวนอิม',
-  zh: '普陀觀音堂',
-  py: 'กดเพื่อเล่นวิดีโอ',
-  footer: 'ถนนพุทธมณฑลสาย ๒',
-})))
-  .resize(1280, 720, { fit: 'cover' })
-  .png({ compressionLevel: 9 })
-  .toFile(join(VID, 'poster.png'));
+
+if (facadeUri) {
+  // ครอปจากขอบบน — อาคารสูงเกือบเต็มเฟรม ถ้าครอปกลางจะตัดสันหลังคามังกรทิ้ง
+  const base = await sharp(FACADE)
+    .resize(PW2, PH2, { fit: 'cover', position: 'north' })
+    .toBuffer();
+  const veil = `<svg xmlns="http://www.w3.org/2000/svg" width="${PW2}" height="${PH2}">
+  <defs>
+    <linearGradient id="v" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(11,7,8,0)"/>
+      <stop offset="54%" stop-color="rgba(11,7,8,.24)"/>
+      <stop offset="100%" stop-color="rgba(11,7,8,.90)"/>
+    </linearGradient>
+    <linearGradient id="foil2" x1="0" y1="0" x2="1" y2="0.25">
+      <stop offset="0%" stop-color="#8A6A1E"/><stop offset="22%" stop-color="#D8A93F"/>
+      <stop offset="38%" stop-color="#FBF3C4"/><stop offset="52%" stop-color="#C99B34"/>
+      <stop offset="68%" stop-color="#F2DCA6"/><stop offset="85%" stop-color="#A87F22"/>
+      <stop offset="100%" stop-color="#D8A93F"/>
+    </linearGradient>
+  </defs>
+  <rect width="${PW2}" height="${PH2}" fill="url(#v)"/>
+  <!-- ปุ่มเล่นทับอยู่บนป้ายแดง ถ้าวงกลมจางไปตัวอักษรบนป้ายจะทะลุขึ้นมาอ่านปนกัน -->
+  <circle cx="${PW2 / 2}" cy="${PH2 / 2 - 10}" r="78" fill="rgba(11,7,8,.34)"/>
+  <circle cx="${PW2 / 2}" cy="${PH2 / 2 - 10}" r="56" fill="rgba(11,7,8,.80)" stroke="${C.line}" stroke-width="2"/>
+  <path d="M ${PW2 / 2 - 16} ${PH2 / 2 - 36} L ${PW2 / 2 + 30} ${PH2 / 2 - 10} L ${PW2 / 2 - 16} ${PH2 / 2 + 16} Z" fill="url(#foil2)"/>
+  <text x="${PW2 / 2}" y="${PH2 - 96}" text-anchor="middle" font-family="${ZH}" font-size="40" font-weight="700" letter-spacing="10" fill="url(#foil2)">普陀觀音堂</text>
+  <text x="${PW2 / 2}" y="${PH2 - 50}" text-anchor="middle" font-family="${TH}" font-size="26" fill="${C.ink}">ตำหนักผู่โถวเจ้าแม่กวนอิม · ถนนพุทธมณฑลสาย ๒</text>
+</svg>`;
+  await sharp(base)
+    .composite([{ input: Buffer.from(veil), top: 0, left: 0 }])
+    .jpeg({ quality: 82 })
+    .toFile(join(VID, 'poster.jpg'));
+} else {
+  await sharp(Buffer.from(card({
+    th: 'ตำหนักผู่โถวเจ้าแม่กวนอิม',
+    zh: '普陀觀音堂',
+    py: 'กดเพื่อเล่นวิดีโอ',
+    footer: 'ถนนพุทธมณฑลสาย ๒',
+  })))
+    .resize(PW2, PH2, { fit: 'cover' })
+    .jpeg({ quality: 82 })
+    .toFile(join(VID, 'poster.jpg'));
+}
+
+// ไอคอนสำหรับ "เพิ่มลงหน้าจอโฮม" บนไอโฟน — ซาฟารีไม่รับ favicon.svg
+// ถ้าไม่มีไฟล์นี้ ไอคอนบนหน้าจอโฮมจะกลายเป็นภาพหน้าจอของเว็บ
+const favicon = join(root, 'public', 'favicon.svg');
+if (existsSync(favicon)) {
+  await sharp(await readFile(favicon), { density: 384 })
+    .resize(180, 180)
+    .png({ compressionLevel: 9 })
+    .toFile(join(root, 'public', 'apple-touch-icon.png'));
+}
 
 await writeFile(join(OUT, '.gitkeep'), '', 'utf8');
 console.log(`ภาพแชร์: สร้าง ${made + 1} ไฟล์ที่ public/og/`);

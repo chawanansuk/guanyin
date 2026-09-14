@@ -7,7 +7,6 @@ import VisitPanel from '../components/VisitPanel.astro';
 import ShrinePhoto from '../components/ShrinePhoto.astro';
 import VideoBand from '../components/VideoBand.astro';
 import Ornament from '../components/Ornament.astro';
-import ShrineFacade from '../components/ShrineFacade.astro';
 import photos from '../data/photos.json';
 import site from '../data/site.json';
 import { allPang, enshrinedCount } from '../lib/pang';
@@ -71,7 +70,7 @@ const schema = preOpening
         <ShrinePhoto
           name="shrine-exterior"
           alt={`หน้าอาคาร${site.name_th} ${site.name_zh}`}
-          ratio="16 / 10" sizes="100vw" priority
+          ratio="1086 / 772" sizes="100vw" priority
         />
       </div>
     )}
@@ -115,10 +114,6 @@ const schema = preOpening
         {site.couplet.map((c) => <span>{c.zh}</span>)}
       </p>
     </div>
-
-    {!hasFacade && (
-      <div class="hero__art" aria-hidden="true"><ShrineFacade /></div>
-    )}
   </section>
 
   <HoursBar />
@@ -249,31 +244,37 @@ const schema = preOpening
 <style>
   /* ---------- hero ---------- */
   .hero { position: relative; overflow: hidden; }
-  .hero__photo { position: absolute; inset: 0; z-index: -1; }
-  .hero__photo :global(.shrine-photo) { width: 100%; height: 100%; aspect-ratio: auto !important; }
-  .hero--photo .hero__photo::after {
-    content: "";
-    position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(27,10,13,.74), rgba(11,7,8,.92));
+
+  /* ภาพหน้าอาคารวางเป็นแถบของตัวเองเหนือชื่อ ไม่ใช่ฉากหลังใต้ตัวอักษร
+     ภาพนี้สว่างมาก (ฟ้า ผนังขาว) ถ้าคลุมดำให้อ่านตัวหนังสือได้
+     จะเหลือแต่ภาพเทา ๆ — เสียของ และป้ายทองบนภาพก็จะจมหายไปด้วย */
+  /* อาคารในภาพสูงเกือบเต็มเฟรม ตัดบน–ล่างเมื่อไรก็เสียสันหลังคามังกร
+     หรือไม่ก็เสียประตูทอง จึงคุมด้วย "ความกว้าง" แทนการครอป
+     แล้วผูกความกว้างไว้กับความสูงจอด้วย ภาพจะได้ไม่ดันชื่อตำหนักตกจอ */
+  .hero__photo {
+    position: relative;
+    width: min(100% - 32px, 900px, 74vh * 1.407);
+    margin: clamp(28px, 5vw, 52px) auto 0;
+  }
+  .hero__photo :global(.shrine-photo) {
+    width: 100%;
+    aspect-ratio: 1086 / 772 !important;
+    border-radius: 3px;
+    box-shadow:
+      0 0 0 1px rgba(242, 220, 166, .30),
+      0 0 0 6px rgba(11, 7, 8, .55),
+      0 0 0 7px rgba(216, 169, 63, .16),
+      0 26px 60px -18px rgba(0, 0, 0, .78);
   }
 
-  /* ภาพลายเส้นหน้าอาคาร วางเป็นแถบของตัวเองใต้เนื้อหา ไม่ทับตัวอักษร
-     ใช้ระหว่างที่ยังไม่มีภาพถ่ายจริง — มีภาพถ่ายแล้วจะสลับไปใช้ภาพแทน */
-  .hero__art {
-    position: relative;
-    width: min(1080px, 94%);
-    margin: 0 auto;
-    padding-bottom: 4px;
-    opacity: .5;
-    -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 26%, #000 92%, transparent 100%);
-    mask-image: linear-gradient(180deg, transparent 0%, #000 26%, #000 92%, transparent 100%);
-    pointer-events: none;
-  }
-  @media (max-width: 700px) { .hero__art { width: 118%; opacity: .42; } }
+  /* มีภาพจริงอยู่ข้างบนแล้ว ชื่อจีนไม่ต้องตะโกนซ้ำป้ายในภาพ */
+  .hero--photo .hero__inner { padding-block: clamp(26px, 4.5vw, 44px) clamp(40px, 7vw, 72px); }
+  .hero--photo .hero__name { font-size: clamp(38px, 7.4vw, 68px); margin-top: 16px; }
+  .hero--photo .hero__orn { margin-top: 22px; width: min(340px, 74%); }
 
   .hero__inner {
     position: relative;
-    padding-block: clamp(52px, 10vw, 100px) clamp(28px, 4vw, 44px);
+    padding-block: clamp(52px, 10vw, 104px) clamp(40px, 7vw, 72px);
     display: flex;
     flex-direction: column;
     align-items: center;

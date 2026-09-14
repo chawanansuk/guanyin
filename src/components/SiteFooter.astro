@@ -2,6 +2,7 @@
 import site from '../data/site.json';
 import { hoursSummary } from '../lib/hours';
 import LangSwitch from './LangSwitch.astro';
+import ShrineMark from './ShrineMark.astro';
 import { useT, withLang, type Lang } from '../i18n';
 
 interface Props { lang?: Lang }
@@ -30,6 +31,7 @@ const LINKS = lang === 'zh'
 <footer class="site-foot zone-dark zone-dark--ox">
   <div class="wrap site-foot__inner">
     <div class="site-foot__brand">
+      <ShrineMark class="site-foot__mark" title={site.name_th} />
       <div class="site-foot__zh han foil">{site.name_zh}</div>
       <div class="site-foot__th">{lang === 'zh' ? '佛城二段' : site.name_th}</div>
       <p class="site-foot__couplet han">
@@ -72,6 +74,7 @@ const LINKS = lang === 'zh'
   .site-foot::before { display: none; }
   .site-foot__inner { padding-block: 48px 56px; display: flex; flex-direction: column; gap: 28px; }
 
+  .site-foot__brand :global(.site-foot__mark) { width: 58px; color: var(--gold); margin-bottom: 18px; }
   .site-foot__zh { font-size: 30px; font-weight: 700; letter-spacing: .2em; padding-left: .2em; line-height: 1.2; }
   .site-foot__th { font-family: var(--display); font-size: 17px; letter-spacing: .02em; color: var(--ink-2); margin-top: 6px; }
   .site-foot__couplet {

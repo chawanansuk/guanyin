@@ -24,7 +24,7 @@ const schema = [{
   eventStatus: 'https://schema.org/EventScheduled',
   eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
   location: { '@id': `${site.url}/#shrine` },
-  image: new URL('/og/default.png', site.url).href,
+  image: new URL('/og/default.jpg', site.url).href,
   organizer: { '@type': 'Organization', name: site.name_th, url: site.url },
   isAccessibleForFree: true,
 }];
