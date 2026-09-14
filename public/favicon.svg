@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="ตำหนักผู่โถวเจ้าแม่กวนอิม">
+  <rect width="64" height="64" rx="7" fill="#2B1714"/>
+  <g fill="none" stroke="#D3AC61" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M32 15c5 6 5 13 0 19-5-6-5-13 0-19Z"/>
+    <path d="M32 34c-4.5-5.5-11-7.5-16-6 1.5 6 7 10.5 16 11Z"/>
+    <path d="M32 34c4.5-5.5 11-7.5 16-6-1.5 6-7 10.5-16 11Z"/>
+  </g>
+  <path d="M16 47h32" stroke="#9E2B25" stroke-width="3.4" stroke-linecap="round"/>
+</svg>

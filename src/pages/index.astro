@@ -1,0 +1,293 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HoursBar from '../components/HoursBar.astro';
+import PangCard from '../components/PangCard.astro';
+import EventList from '../components/EventList.astro';
+import VisitPanel from '../components/VisitPanel.astro';
+import site from '../data/site.json';
+import { allPang, enshrinedCount } from '../lib/pang';
+import { getCollection } from 'astro:content';
+import { thaiDate, daysFromToday, isoDate, parseDay } from '../lib/format';
+
+const pang = await allPang();
+const count = enshrinedCount(pang);
+
+const events = (await getCollection('events')).sort((a, b) => +a.data.date - +b.data.date);
+const upcoming = events.filter((e) => daysFromToday(e.data.end_date ?? e.data.date) >= 0).slice(0, 3);
+
+const news = (await getCollection('news')).sort((a, b) => +b.data.date - +a.data.date);
+const staleMs = site.content.news_stale_months * 30 * 86_400_000;
+// ถ้าไม่มีใครลงข่าวนาน ๆ ให้ซ่อนส่วนข่าวไปเลย ดีกว่าโชว์ข่าวเก่าค้างปี
+const freshNews = news.filter((n) => Date.now() - +n.data.date < staleMs).slice(0, 3);
+
+const opening = site.opening_ceremony;
+const openingDate = parseDay(opening.date);
+const daysToOpening = daysFromToday(openingDate);
+// ก่อนวันงาน หน้าแรกพูดเรื่องพิธีเปิดเป็นอย่างแรก — หลังวันงานสลับกลับเองตอน rebuild รายวัน
+const preOpening = opening.active && daysToOpening >= 0;
+
+const schema = preOpening
+  ? [{
+      '@context': 'https://schema.org',
+      '@type': 'Event',
+      name: opening.headline,
+      startDate: opening.date,
+      eventStatus: 'https://schema.org/EventScheduled',
+      eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+      location: { '@id': `${site.url}/#shrine` },
+      url: `${site.url}/opening`,
+      organizer: { '@type': 'Organization', name: site.name_th, url: site.url },
+    }]
+  : [];
+---
+<BaseLayout
+  title={`${site.name_th} ๓๓ ปาง พุทธมณฑลสาย ๒`}
+  suffix={false}
+  description={`${site.tagline} — ดูครบทั้ง ๓๓ ปาง พร้อมความหมาย วิธีไหว้ เวลาเปิด–ปิด และการเดินทาง`}
+  schema={schema}
+>
+  <!-- ฮีโร่: ป้ายรักดำอย่างป้ายหน้าตำหนัก -->
+  <section class="hero plaque">
+    <div class="wrap hero__inner">
+      <p class="hero__zh han">{site.name_zh}</p>
+      <h1 class="hero__th">{site.name_th}</h1>
+      <p class="hero__motto han">{site.motto_zh} <span class="hero__motto-th">{site.motto_th}</span></p>
+      <p class="hero__lede">{site.tagline}</p>
+
+      {preOpening ? (
+        <div class="hero__cta">
+          <a class="btn btn--primary" href="/opening">
+            พิธีเปิด {thaiDate(openingDate, 'short')}
+            {daysToOpening > 0 && <span class="hero__count mono">อีก {daysToOpening} วัน</span>}
+          </a>
+          <a class="btn btn--plaque" href="/33-pang">ดู ๓๓ ปาง</a>
+        </div>
+      ) : (
+        <div class="hero__cta">
+          <a class="btn btn--primary" href="/33-pang">ดู ๓๓ ปางทั้งหมด</a>
+          <a class="btn btn--plaque" href="/worship/how-to">วิธีไหว้</a>
+        </div>
+      )}
+
+      <p class="hero__couplet han">
+        {site.couplet.map((c) => <span>{c.zh}</span>)}
+      </p>
+    </div>
+  </section>
+
+  <HoursBar />
+
+  <!-- ๓๓ ปางคืออะไร -->
+  <section class="band">
+    <div class="wrap">
+      <div class="intro">
+        <div class="intro__text">
+          <p class="eyebrow">หัวใจของตำหนัก</p>
+          <h2>๓๓ ปาง คืออะไร</h2>
+          <p>
+            ในสัทธรรมปุณฑรีกสูตร บทสมันตมุขปริวรรต กล่าวว่าพระโพธิสัตว์กวนอิม
+            ทรงแสดงพระองค์ตามแต่ผู้ที่ร้องขอจะรับได้ — ผู้ใดควรโปรดด้วยรูปใด ก็ทรงปรากฏด้วยรูปนั้น
+          </p>
+          <p>
+            ภายหลังคติจีนจึงประมวลออกเป็น ๓๓ ปาง แต่ละปางมีลักษณะ สิ่งที่ทรงถือ และความหมายต่างกัน
+            ตำหนักแห่งนี้ตั้งชื่อตามเกาะผู่โถวซาน (普陀山) พุทธสถานของพระโพธิสัตว์กวนอิมที่ใหญ่ที่สุดในจีน
+            และตั้งใจประดิษฐานให้ครบทั้ง ๓๓ ปาง
+          </p>
+          <p class="intro__status mono">
+            ประดิษฐานแล้ว {count.enshrined} องค์
+            {count.pending > 0 && <> · กำลังอัญเชิญอีก {count.pending} องค์</>}
+          </p>
+          <p><a class="btn btn--ghost" href="/33-pang">ดูครบทั้ง ๓๓ ปาง</a></p>
+        </div>
+        <aside class="intro__aside panel">
+          <h3>ขอพรเรื่องไหน ไหว้ปางใด</h3>
+          <p class="small">เลือกจากสิ่งที่กำลังขอ แล้วดูว่าปางใดที่คนนิยมมากราบ</p>
+          <ul class="chips">
+            <li><a class="chip" href="/wish/health">สุขภาพ</a></li>
+            <li><a class="chip" href="/wish/children">ขอบุตร</a></li>
+            <li><a class="chip" href="/wish/career">การงาน</a></li>
+            <li><a class="chip" href="/wish/trade">ค้าขาย</a></li>
+            <li><a class="chip" href="/wish/love">ความรัก</a></li>
+            <li><a class="chip" href="/wish/travel">เดินทาง</a></li>
+            <li><a class="chip" href="/wish/protection">คุ้มครอง</a></li>
+            <li><a class="chip" href="/wish/peace">คลายทุกข์</a></li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ตาราง ๓๓ ปาง -->
+  <section class="band band--sunk">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">๐๑ — ๓๓</p>
+        <h2>องค์เจ้าแม่กวนอิมในตำหนัก</h2>
+      </div>
+      <div class="pang-grid">
+        {pang.map((p, i) => <PangCard pang={p} priority={i < 6} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- วันสำคัญ -->
+  {upcoming.length > 0 && (
+    <section class="band">
+      <div class="wrap">
+        <div class="section-head section-head--row">
+          <div>
+            <p class="eyebrow">ปฏิทิน</p>
+            <h2>วันสำคัญถัดไป</h2>
+          </div>
+          <a class="btn btn--ghost" href="/calendar">ปฏิทินทั้งปี</a>
+        </div>
+        <EventList events={upcoming} compact />
+      </div>
+    </section>
+  )}
+
+  <!-- ข่าว -->
+  {freshNews.length > 0 && (
+    <section class="band band--sunk">
+      <div class="wrap">
+        <div class="section-head section-head--row">
+          <div>
+            <p class="eyebrow">ข่าวสาร</p>
+            <h2>ประกาศจากตำหนัก</h2>
+          </div>
+          <a class="btn btn--ghost" href="/news">ข่าวทั้งหมด</a>
+        </div>
+        <ul class="news-list">
+          {freshNews.map((n) => (
+            <li>
+              <a href={`/news/${n.id}`}>
+                <time class="mono" datetime={isoDate(n.data.date)}>{thaiDate(n.data.date, 'short')}</time>
+                <span class="news-list__title">{n.data.title}</span>
+                {n.data.summary && <span class="news-list__sum">{n.data.summary}</span>}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <!-- แผนที่ + ที่อยู่ -->
+  <section class="band">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">การเดินทาง</p>
+        <h2>ตำหนักอยู่ที่ไหน</h2>
+      </div>
+      <VisitPanel />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* ---------- hero ---------- */
+  .hero { border: 0; }
+  .hero__inner {
+    padding-block: clamp(48px, 9vw, 86px) clamp(40px, 7vw, 66px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0;
+  }
+  .hero__zh {
+    margin: 0;
+    font-size: clamp(40px, 11vw, 78px);
+    font-weight: 700;
+    letter-spacing: .2em;
+    padding-left: .2em;
+    line-height: 1.12;
+    color: var(--plaque-ink);
+  }
+  .hero__th {
+    margin-top: 14px;
+    font-size: clamp(21px, 3.6vw, 28px);
+    font-weight: 600;
+    color: var(--plaque-ink);
+  }
+  .hero__motto {
+    margin: 10px 0 0;
+    font-size: 14px;
+    letter-spacing: .28em;
+    color: var(--plaque-ink-2);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px 14px;
+  }
+  .hero__motto-th { font-family: var(--serif); letter-spacing: normal; }
+  .hero__lede {
+    margin: 22px 0 0;
+    max-width: 46ch;
+    font-family: var(--serif);
+    font-size: clamp(16.5px, 2.2vw, 19px);
+    line-height: 1.7;
+    color: var(--plaque-ink);
+    opacity: .9;
+  }
+  .hero__cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 28px; }
+  .hero__count { font-size: 14px; opacity: .85; }
+  .hero__couplet {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 22px;
+    margin: 34px 0 0; padding-top: 22px;
+    border-top: 1px solid var(--plaque-line);
+    width: 100%; max-width: 520px;
+    font-size: 14.5px; letter-spacing: .12em; color: var(--plaque-ink-2);
+  }
+
+  /* ---------- bands ---------- */
+  .band--sunk { background: var(--surface-2); }
+  .band--sunk + .band, .band + .band--sunk { border-top: 0; }
+  .section-head--row {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  /* ---------- intro ---------- */
+  .intro { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(260px, 1fr); gap: 36px 48px; align-items: start; }
+  .intro__text > * + * { margin-top: 16px; }
+  .intro__text h2 { margin-top: 8px; }
+  .intro__status { font-size: 15px; color: var(--celadon); }
+  .intro__aside { padding: 22px 22px 24px; }
+  .intro__aside h3 { font-size: 19px; }
+  .intro__aside .small { margin: 8px 0 16px; color: var(--ink-2); }
+  @media (max-width: 780px) { .intro { grid-template-columns: 1fr; } }
+
+  /* ---------- grid ---------- */
+  .pang-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(178px, 1fr));
+    gap: 1px;
+    background: transparent;
+  }
+  @media (max-width: 420px) { .pang-grid { grid-template-columns: repeat(2, 1fr); } }
+
+  /* ---------- news ---------- */
+  .news-list { list-style: none; margin: 0; padding: 0; }
+  .news-list li { border-top: 1px solid var(--line); }
+  .news-list li:last-child { border-bottom: 1px solid var(--line); }
+  .news-list a {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 4px 20px;
+    padding: 16px 0;
+    text-decoration: none;
+    color: inherit;
+  }
+  .news-list a:hover .news-list__title { color: var(--lacquer); }
+  .news-list time { font-size: 15px; color: var(--ink-3); }
+  .news-list__title { font-size: 17.5px; font-weight: 500; line-height: 1.5; }
+  .news-list__sum { grid-column: 2; font-size: 15.5px; color: var(--ink-2); line-height: 1.6; }
+  @media (max-width: 560px) {
+    .news-list a { grid-template-columns: 1fr; }
+    .news-list__sum { grid-column: 1; }
+  }
+</style>

@@ -1,0 +1,70 @@
+---
+import site from '../data/site.json';
+import { groupedHours } from '../lib/hours';
+import { dayNameShort } from '../lib/format';
+const groups = groupedHours();
+---
+<div class="visit">
+  <div class="visit__map plaque" aria-hidden="true">
+    <!-- ไม่ฝัง iframe แผนที่ เพราะ iframe ตัวเดียวหนักกว่าทั้งหน้ารวมกัน
+         ใช้ภาพลายเส้นแทน แล้วให้ปุ่มพาไป Google Maps ของจริง -->
+    <svg viewBox="0 0 400 260" role="img" aria-label="แผนผังตำแหน่งตำหนักริมถนนพุทธมณฑลสาย ๒">
+      <rect width="400" height="260" fill="var(--plaque)" />
+      <g stroke="var(--plaque-line)" stroke-width="1" fill="none">
+        <path d="M0 70 H400 M0 190 H400 M110 0 V260 M290 0 V260" />
+      </g>
+      <path d="M200 0 V260" stroke="var(--plaque-ink-2)" stroke-width="9" opacity=".5" fill="none" />
+      <text x="212" y="30" fill="var(--plaque-ink-2)" font-size="12" font-family="var(--mono)">พุทธมณฑลสาย ๒</text>
+      <circle cx="200" cy="130" r="9" fill="var(--lacquer)" />
+      <circle cx="200" cy="130" r="19" fill="none" stroke="var(--lacquer)" stroke-width="1.5" opacity=".55" />
+      <text x="228" y="135" fill="var(--plaque-ink)" font-size="14" font-family="var(--serif)">ตำหนัก</text>
+    </svg>
+  </div>
+
+  <div class="visit__info panel">
+    <h3>{site.name_th}</h3>
+    <p class="visit__addr">{site.address.full_th}</p>
+
+    <table class="visit__hours">
+      <caption class="visit__caption">เวลาทำการ</caption>
+      <tbody>
+        {groups.map((g) => (
+          <tr>
+            <th scope="row">{g.days.map((d) => dayNameShort(d)).join(' · ')}</th>
+            <td class="mono">{g.open}–{g.close}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+    <p class="visit__note small muted">{site.hours.note}</p>
+
+    <div class="visit__cta">
+      <a class="btn btn--primary" href={site.maps_url} target="_blank" rel="noopener">เปิดใน Google Maps</a>
+      <a class="btn btn--ghost" href="/visit">รายละเอียดการเดินทาง</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .visit { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 420px); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  @media (max-width: 760px) { .visit { grid-template-columns: 1fr; } }
+
+  .visit__map { border: 0; }
+  .visit__map svg { width: 100%; height: 100%; min-height: 240px; object-fit: cover; }
+
+  .visit__info { border: 0; border-radius: 0; padding: 24px; display: flex; flex-direction: column; gap: 14px; }
+  .visit__info h3 { font-size: 20px; }
+  .visit__addr { font-size: 16.5px; color: var(--ink-2); margin: 0; }
+
+  .visit__hours { border-collapse: collapse; width: 100%; }
+  .visit__caption {
+    text-align: left;
+    font: 600 12px/1.4 var(--mono);
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--gold); padding-bottom: 8px;
+  }
+  .visit__hours th { text-align: left; font-weight: 400; color: var(--ink-2); padding: 5px 0; font-size: 16px; }
+  .visit__hours td { text-align: right; padding: 5px 0; font-size: 16px; font-variant-numeric: tabular-nums; }
+  .visit__note { margin: 0; }
+  .visit__cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+</style>

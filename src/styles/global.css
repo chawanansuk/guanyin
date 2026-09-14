@@ -1,0 +1,328 @@
+/* ============================================================
+   ระบบสีและตัวอักษร — ตำหนักผู่โถวเจ้าแม่กวนอิม
+   สีมาจากวัสดุในตำหนัก: กระดาษสา · หมึก · ชาด · ทองคำเปลว · ศิลาดล · รักดำ
+   ชาดใช้ให้น้อยที่สุด เฉพาะจุดที่ต้องการให้มือกด ที่เหลือให้ภาพองค์พระเป็นพระเอก
+   ============================================================ */
+
+:root {
+  /* --- พื้นผิว --- */
+  --ground: #F4EFE4;          /* กระดาษสา 宣紙 */
+  --surface: #FBF8F1;
+  --surface-2: #ECE4D4;
+  --surface-sunk: #E7DDC9;
+
+  /* --- ตัวอักษร --- */
+  --ink: #1F1A16;             /* หมึก 墨 */
+  --ink-2: #5A4D44;
+  --ink-3: #837366;
+
+  /* --- เส้น --- */
+  --line: #DED4C2;
+  --line-strong: #C2B29B;
+
+  /* --- สีเน้น --- */
+  --lacquer: #9E2B25;         /* ชาด 朱砂 */
+  --lacquer-ink: #FBF8F1;     /* ตัวอักษรบนพื้นชาด */
+  --lacquer-soft: #F0E0DC;
+  /* แถบเวลาเปิด–ปิดกินพื้นที่กว้าง จึงแยกโทนออกมา
+     โหมดมืดใช้แดงเข้มแทนแดงสด ไม่งั้นจะจ้าเกินไปเต็มความกว้างจอ */
+  --bar-bg: var(--lacquer);
+  --bar-ink: var(--lacquer-ink);
+  --bar-line: rgba(255, 255, 255, .5);
+  --gold: #8A6C28;            /* ทองคำเปลว 金箔 */
+  --gold-soft: #EFE6CF;
+  --celadon: #3F6D5A;         /* ศิลาดล 青瓷 */
+  --celadon-soft: #E1EBE5;
+
+  /* --- ป้ายรักดำ 匾額 --- */
+  --plaque: #2B1714;
+  --plaque-2: #3A211C;
+  --plaque-ink: #F1E3C4;
+  --plaque-ink-2: #C3AC84;
+  --plaque-line: rgba(241, 227, 196, .22);
+
+  --shadow: 0 1px 2px rgba(31, 26, 22, .05), 0 10px 28px rgba(31, 26, 22, .06);
+  --shadow-lift: 0 2px 4px rgba(31, 26, 22, .07), 0 14px 34px rgba(31, 26, 22, .1);
+
+  /* --- ตัวอักษร --- */
+  --serif: "Noto Serif Thai", "Noto Serif", Georgia, serif;
+  --sans: "IBM Plex Sans Thai", "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --han: "Noto Serif TC", "Songti TC", "PingFang TC", "Microsoft JhengHei", serif;
+
+  /* --- ระยะ --- */
+  --gutter: 20px;
+  --measure: 66ch;
+  --radius: 3px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #15100E;
+    --surface: #1E1714;
+    --surface-2: #29201B;
+    --surface-sunk: #120D0C;
+    --ink: #F0E7DB;
+    --ink-2: #B8A897;
+    --ink-3: #8A7A6B;
+    --line: #362A24;
+    --line-strong: #4D3D34;
+    --lacquer: #E8796A;
+    --lacquer-ink: #1A0F0D;
+    --lacquer-soft: #3A211E;
+    --bar-bg: #4A1B18;
+    --bar-ink: #F7DED9;
+    --bar-line: rgba(247, 222, 217, .4);
+    --gold: #D3AC61;
+    --gold-soft: #322718;
+    --celadon: #83B79F;
+    --celadon-soft: #1D2B25;
+    --plaque: #0E0A09;
+    --plaque-2: #1A1210;
+    --plaque-ink: #EBD5A6;
+    --plaque-ink-2: #A79070;
+    --plaque-line: rgba(235, 213, 166, .2);
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px rgba(0, 0, 0, .34);
+    --shadow-lift: 0 2px 4px rgba(0, 0, 0, .45), 0 14px 34px rgba(0, 0, 0, .4);
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground: #15100E;
+  --surface: #1E1714;
+  --surface-2: #29201B;
+  --surface-sunk: #120D0C;
+  --ink: #F0E7DB;
+  --ink-2: #B8A897;
+  --ink-3: #8A7A6B;
+  --line: #362A24;
+  --line-strong: #4D3D34;
+  --lacquer: #E8796A;
+  --lacquer-ink: #1A0F0D;
+  --lacquer-soft: #3A211E;
+  --bar-bg: #4A1B18;
+  --bar-ink: #F7DED9;
+  --bar-line: rgba(247, 222, 217, .4);
+  --gold: #D3AC61;
+  --gold-soft: #322718;
+  --celadon: #83B79F;
+  --celadon-soft: #1D2B25;
+  --plaque: #0E0A09;
+  --plaque-2: #1A1210;
+  --plaque-ink: #EBD5A6;
+  --plaque-ink-2: #A79070;
+  --plaque-line: rgba(235, 213, 166, .2);
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px rgba(0, 0, 0, .34);
+  --shadow-lift: 0 2px 4px rgba(0, 0, 0, .45), 0 14px 34px rgba(0, 0, 0, .4);
+}
+
+/* ============================================================ reset */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  /* 17px ขั้นต่ำ — ผู้ใช้จำนวนมากเป็นผู้สูงอายุ อ่านบนมือถือกลางแจ้ง */
+  font: 400 17px/1.75 var(--sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img, svg, video { max-width: 100%; height: auto; display: block; }
+[hidden] { display: none !important; }
+
+/* ============================================================ typography */
+h1, h2, h3, h4 {
+  font-family: var(--serif);
+  font-weight: 600;
+  line-height: 1.3;
+  text-wrap: balance;
+  margin: 0;
+}
+h1 { font-size: clamp(28px, 5.6vw, 42px); font-weight: 700; letter-spacing: -.01em; }
+h2 { font-size: clamp(23px, 3.8vw, 30px); }
+h3 { font-size: clamp(19px, 2.6vw, 22px); }
+h4 { font-size: 18px; }
+
+p { margin: 0; max-width: var(--measure); }
+
+a { color: var(--lacquer); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+a:hover { text-decoration-thickness: 2px; }
+
+:where(a, button, summary, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--lacquer);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.han { font-family: var(--han); }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* ป้ายหัวข้อเล็กสีทอง — ใช้บอก "นี่คือส่วนอะไร" */
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0;
+}
+
+.lede {
+  font-family: var(--serif);
+  font-size: clamp(17px, 2.2vw, 19.5px);
+  line-height: 1.72;
+  color: var(--ink-2);
+  max-width: 60ch;
+  margin: 0;
+}
+
+.muted { color: var(--ink-3); }
+.small { font-size: 15px; line-height: 1.65; }
+
+/* ============================================================ layout */
+.wrap {
+  width: 100%;
+  max-width: 1080px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.wrap--narrow { max-width: 760px; }
+
+.stack { display: flex; flex-direction: column; }
+.stack > * + * { margin-top: var(--gap, 16px); }
+
+section.band { padding-block: clamp(40px, 7vw, 72px); }
+section.band + section.band { border-top: 1px solid var(--line); }
+
+.section-head { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+
+/* ============================================================ buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;             /* พื้นที่กดอย่างน้อย 44px */
+  padding: 10px 22px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font: 500 16.5px/1.3 var(--sans);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+}
+.btn--primary { background: var(--lacquer); color: var(--lacquer-ink); }
+.btn--primary:hover { background: color-mix(in oklab, var(--lacquer) 86%, black); }
+.btn--ghost { background: transparent; color: var(--ink); border-color: var(--line-strong); }
+.btn--ghost:hover { border-color: var(--ink-3); background: var(--surface); }
+.btn--plaque { background: transparent; color: var(--plaque-ink); border-color: var(--plaque-line); }
+.btn--plaque:hover { background: var(--plaque-2); }
+
+/* ============================================================ chips */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; margin: 0; list-style: none; }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 4px 14px;
+  border: 1px solid var(--celadon);
+  border-radius: 100px;
+  color: var(--celadon);
+  background: transparent;
+  font-size: 15px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.chip:hover { background: var(--celadon-soft); }
+.chip[aria-current="true"], .chip--on {
+  background: var(--lacquer);
+  border-color: var(--lacquer);
+  color: var(--lacquer-ink);
+}
+.chip--filter { min-height: 44px; padding-inline: 18px; }
+
+/* ============================================================ surfaces */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.note {
+  background: var(--surface-2);
+  border-left: 3px solid var(--gold);
+  padding: 16px 18px;
+  color: var(--ink-2);
+  font-size: 16px;
+  line-height: 1.7;
+}
+.note--lacquer { border-left-color: var(--lacquer); }
+.note--celadon { border-left-color: var(--celadon); }
+.note strong { color: var(--ink); font-weight: 600; }
+.note > * + * { margin-top: 10px; }
+
+/* ============================================================ prose */
+.prose { max-width: var(--measure); }
+.prose > * + * { margin-top: 1.1em; }
+.prose h2 { margin-top: 1.8em; }
+.prose h3 { margin-top: 1.6em; }
+.prose ul, .prose ol { padding-left: 1.3em; margin-block: 0; }
+.prose li + li { margin-top: .45em; }
+.prose blockquote {
+  margin: 0;
+  padding-left: 18px;
+  border-left: 3px solid var(--gold);
+  color: var(--ink-2);
+  font-family: var(--serif);
+}
+.prose code { font-family: var(--mono); font-size: .9em; background: var(--surface-2); padding: 1px 5px; border-radius: 2px; }
+.prose hr { border: 0; border-top: 1px solid var(--line); margin-block: 2em; }
+
+/* ============================================================ tables */
+.tablebox { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.tablebox table { border-collapse: collapse; width: 100%; min-width: 480px; font-size: 16px; }
+.tablebox th, .tablebox td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.tablebox thead th {
+  background: var(--surface-2);
+  font: 600 12.5px/1.4 var(--mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.tablebox tbody tr:last-child td { border-bottom: none; }
+.tablebox td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* ============================================================ ป้ายรักดำ 匾額 */
+.plaque {
+  background: var(--plaque);
+  color: var(--plaque-ink);
+  border: 1px solid var(--plaque-line);
+}
+
+/* ============================================================ skip link */
+.skip {
+  position: absolute;
+  left: 8px;
+  top: -60px;
+  z-index: 100;
+  padding: 12px 18px;
+  background: var(--lacquer);
+  color: var(--lacquer-ink);
+  border-radius: var(--radius);
+  transition: top .15s ease;
+}
+.skip:focus { top: 8px; }
+
+/* ============================================================ motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

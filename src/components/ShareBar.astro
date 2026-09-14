@@ -1,0 +1,44 @@
+---
+import site from '../data/site.json';
+interface Props { title: string; path: string }
+const { title, path } = Astro.props;
+const url = new URL(path, site.url).href;
+const line = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}`;
+const fb = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+---
+<div class="share" data-share-url={url}>
+  <span class="share__label">ส่งต่อหน้านี้</span>
+  <a class="share__btn" href={line} target="_blank" rel="noopener">ไลน์</a>
+  <a class="share__btn" href={fb} target="_blank" rel="noopener">เฟซบุ๊ก</a>
+  <button class="share__btn" type="button" data-copy>คัดลอกลิงก์</button>
+</div>
+
+<script is:inline>
+  for (const box of document.querySelectorAll('[data-share-url]')) {
+    const btn = box.querySelector('[data-copy]');
+    if (!btn || !navigator.clipboard) continue;
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(box.dataset.shareUrl);
+        const was = btn.textContent;
+        btn.textContent = 'คัดลอกแล้ว';
+        setTimeout(() => { btn.textContent = was; }, 1800);
+      } catch (e) {
+        btn.textContent = 'คัดลอกไม่สำเร็จ';
+      }
+    });
+  }
+</script>
+
+<style>
+  .share { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+  .share__label { font-size: 15px; color: var(--ink-3); }
+  .share__btn {
+    display: inline-flex; align-items: center;
+    min-height: 44px; padding: 4px 16px;
+    border: 1px solid var(--line-strong); border-radius: 100px;
+    background: transparent; color: var(--ink);
+    font: 400 15.5px var(--sans); text-decoration: none; cursor: pointer;
+  }
+  .share__btn:hover { border-color: var(--lacquer); color: var(--lacquer); }
+</style>

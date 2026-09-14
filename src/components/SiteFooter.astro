@@ -1,0 +1,74 @@
+---
+import site from '../data/site.json';
+import { hoursSummary } from '../lib/hours';
+const year = new Date().getFullYear() + 543;
+---
+<footer class="site-foot plaque">
+  <div class="wrap site-foot__inner">
+    <div class="site-foot__brand">
+      <div class="site-foot__zh han">{site.name_zh}</div>
+      <div class="site-foot__th">{site.name_th}</div>
+      <p class="site-foot__couplet han">
+        {site.couplet.map((c) => <span>{c.zh}</span>)}
+      </p>
+    </div>
+
+    <div class="site-foot__cols">
+      <div>
+        <h2>ที่ตั้งและเวลา</h2>
+        <p>{site.address.full_th}</p>
+        <p class="mono">{hoursSummary()}</p>
+        <p><a href={site.maps_url} target="_blank" rel="noopener">เปิดใน Google Maps</a></p>
+      </div>
+      <div>
+        <h2>ทางลัด</h2>
+        <ul>
+          <li><a href="/33-pang">๓๓ ปางทั้งหมด</a></li>
+          <li><a href="/worship/how-to">วิธีไหว้</a></li>
+          <li><a href="/worship/by-wish">ขอพรเรื่องไหน ไหว้ปางใด</a></li>
+          <li><a href="/calendar">ปฏิทินวันสำคัญ</a></li>
+          <li><a href="/faq">คำถามที่พบบ่อย</a></li>
+          <li><a href="/contact">ติดต่อตำหนัก</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="site-foot__legal">
+      เนื้อหาเรื่อง ๓๓ ปางบนเว็บนี้ ตรวจสอบโดยผู้รู้ของตำหนักก่อนเผยแพร่
+      หากพบข้อผิดพลาดโปรดแจ้งทางหน้าติดต่อ เพื่อจะได้แก้ไขให้ถูกต้อง
+    </p>
+    <p class="site-foot__legal">© {year} {site.name_th}</p>
+  </div>
+</footer>
+
+<style>
+  .site-foot { border: 0; border-top: 3px solid var(--lacquer); margin-top: 0; }
+  .site-foot__inner { padding-block: 48px 56px; display: flex; flex-direction: column; gap: 32px; }
+
+  .site-foot__zh { font-size: 26px; font-weight: 700; letter-spacing: .2em; line-height: 1.2; }
+  .site-foot__th { font-family: var(--serif); font-size: 17px; margin-top: 4px; }
+  .site-foot__couplet {
+    display: flex; flex-direction: column; gap: 2px;
+    margin: 14px 0 0; font-size: 14px; color: var(--plaque-ink-2); letter-spacing: .1em;
+  }
+
+  .site-foot__cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 28px 40px; }
+  .site-foot__cols h2 {
+    font-family: var(--mono); font-size: 12px; font-weight: 600;
+    letter-spacing: .14em; text-transform: uppercase;
+    color: var(--plaque-ink-2); margin-bottom: 10px;
+  }
+  .site-foot__cols p, .site-foot__cols li { font-size: 16px; line-height: 1.7; color: var(--plaque-ink); }
+  .site-foot__cols p + p { margin-top: 6px; }
+  .site-foot__cols ul { list-style: none; margin: 0; padding: 0; }
+  .site-foot__cols li + li { margin-top: 4px; }
+  .site-foot a { color: var(--plaque-ink); text-decoration-color: var(--plaque-line); }
+  .site-foot a:hover { color: #fff; }
+
+  .site-foot__legal {
+    font-size: 14px; line-height: 1.65; color: var(--plaque-ink-2);
+    max-width: 62ch; margin: 0;
+    padding-top: 20px; border-top: 1px solid var(--plaque-line);
+  }
+  .site-foot__legal + .site-foot__legal { padding-top: 0; border-top: 0; margin-top: -22px; }
+</style>

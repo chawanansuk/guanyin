@@ -1,0 +1,52 @@
+name: build
+
+# สร้างเว็บใหม่เมื่อมีการแก้เนื้อหา และสร้างใหม่ทุกวันตอนตี ๐๗:๐๕ ไทย
+# การสร้างใหม่รายวันคือสิ่งที่ทำให้หน้าแรกสลับจาก "งานเปิด" เป็นหน้าปกติ
+# และทำให้วันสำคัญที่ผ่านไปแล้วหลุดจากรายการเอง โดยไม่ต้องมีใครกดอะไร
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '5 0 * * *'   # 00:05 UTC = 07:05 ตามเวลาไทย
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # ภาพองค์พระอยู่นอก git (ไฟล์ใหญ่) ขั้นนี้จึงข้ามได้ถ้ายังไม่มีภาพ
+      - name: สร้างภาพย่อ (ถ้ามีภาพต้นฉบับ)
+        run: npm run images
+        continue-on-error: true
+
+      # npm run build เรียก prebuild → สร้างภาพพรีวิวตอนแชร์ให้เองก่อน
+      - name: สร้างเว็บ
+        run: npm run build
+
+      - name: ตรวจว่าได้หน้าครบตามที่ควรจะเป็น
+        run: |
+          pages=$(find dist -name '*.html' | wc -l)
+          echo "สร้างได้ $pages หน้า"
+          test "$pages" -ge 55 || { echo "หน้าน้อยผิดปกติ — คาดว่าอย่างน้อย 55 หน้า"; exit 1; }
+          test -f dist/33-pang/yang-liu.html || { echo "ไม่พบหน้าปาง"; exit 1; }
+          test -f dist/sitemap-index.xml || { echo "ไม่พบ sitemap"; exit 1; }
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: dist
+          retention-days: 7

@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import VisitPanel from '../components/VisitPanel.astro';
+import site from '../data/site.json';
+const channels = [
+  site.phone && { label: 'โทรศัพท์', value: site.phone, href: `tel:${site.phone.replace(/[^0-9+]/g, '')}` },
+  site.line_oa && { label: 'ไลน์', value: site.line_oa, href: site.line_oa },
+  site.facebook && { label: 'เฟซบุ๊ก', value: 'เพจตำหนัก', href: site.facebook },
+  site.email && { label: 'อีเมล', value: site.email, href: `mailto:${site.email}` },
+].filter(Boolean) as { label: string; value: string; href: string }[];
+---
+<BaseLayout
+  title="ติดต่อตำหนัก"
+  description="ติดต่อตำหนักผู่โถวเจ้าแม่กวนอิม ถนนพุทธมณฑลสาย ๒ — ที่อยู่ เวลาทำการ และช่องทางติดต่อ"
+  breadcrumbs={[{ label: 'หน้าแรก', href: '/' }, { label: 'ติดต่อ', href: '/contact' }]}
+>
+  <PageHero eyebrow="ติดต่อ" title="ติดต่อตำหนัก" narrow />
+  <section class="band">
+    <div class="wrap">
+      <VisitPanel />
+      <div class="wrap--narrow ch-wrap">
+        {channels.length > 0 ? (
+          <dl class="ch">
+            {channels.map((c) => (<>
+              <dt>{c.label}</dt>
+              <dd><a href={c.href}>{c.value}</a></dd>
+            </>))}
+          </dl>
+        ) : (
+          <div class="note">
+            <p>
+              <strong>ช่องทางติดต่อกำลังจัดเตรียม</strong>{' '}
+              เมื่อตำหนักเปิดเบอร์โทรศัพท์และไลน์ทางการแล้ว จะแสดงที่นี่
+              ระหว่างนี้ติดต่อได้โดยตรงที่ตำหนักในเวลาทำการ
+            </p>
+          </div>
+        )}
+        <div class="note note--celadon">
+          <p>
+            <strong>พบข้อมูลผิดพลาดบนเว็บนี้</strong>{' '}
+            โดยเฉพาะชื่อปาง คำอ่าน หรือวันสำคัญ โปรดแจ้งให้ทราบ
+            เว็บนี้จะกลายเป็นแหล่งอ้างอิงของผู้อื่นต่อไป ความถูกต้องจึงสำคัญกว่าความรวดเร็ว
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .ch-wrap { margin: 40px auto 0; padding: 0; }
+  .ch { margin: 0 0 26px; display: grid; grid-template-columns: 120px 1fr; }
+  .ch dt { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); padding: 13px 0; border-top: 1px solid var(--line); }
+  .ch dd { margin: 0; padding: 13px 0; border-top: 1px solid var(--line); }
+  .note + .note { margin-top: 18px; }
+</style>

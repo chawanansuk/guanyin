@@ -1,0 +1,91 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import HoursBar from '../components/HoursBar.astro';
+import VisitPanel from '../components/VisitPanel.astro';
+import site from '../data/site.json';
+---
+<BaseLayout
+  title="การเดินทางและเวลาเปิด–ปิด"
+  suffix={false}
+  description={`ตำหนักผู่โถวเจ้าแม่กวนอิม ${site.address.full_th} — เปิดกี่โมง เดินทางอย่างไร ที่จอดรถ การแต่งกาย และกฎการถ่ายภาพ`}
+  breadcrumbs={[{ label: 'หน้าแรก', href: '/' }, { label: 'การเดินทาง', href: '/visit' }]}
+>
+  <PageHero
+    eyebrow="การเดินทาง"
+    title="มาตำหนักอย่างไร เปิดกี่โมง"
+    lede="ตำหนักอยู่ริมถนนพุทธมณฑลสาย ๒ เขตทวีวัฒนา กรุงเทพมหานคร เดินทางด้วยรถยนต์ส่วนตัวสะดวกที่สุด"
+  />
+  <HoursBar compact />
+
+  <section class="band">
+    <div class="wrap">
+      <VisitPanel />
+
+      <div class="cols">
+        <section>
+          <h2>เดินทางด้วยรถยนต์</h2>
+          <p>
+            จากถนนบรมราชชนนี เลี้ยวเข้าถนนพุทธมณฑลสาย ๒ ตำหนักอยู่ริมถนนฝั่งซ้าย
+            สังเกตป้ายรักดำอักษรจีน <span class="han">普陀觀音堂</span> เหนือประตูทางเข้า
+          </p>
+          <p class="muted small">รายละเอียดเส้นทางและจุดสังเกตที่แม่นยำ รอยืนยันจากทางตำหนัก</p>
+        </section>
+
+        <section>
+          <h2>ที่จอดรถ</h2>
+          <p>
+            มีลานจอดรถภายในบริเวณตำหนัก ในวันงานพิธีหรือวันสำคัญ
+            ลานจอดอาจเต็ม แนะนำให้มาก่อนเวลาหรือใช้บริการรถสาธารณะ
+          </p>
+          <p class="muted small">จำนวนช่องจอด รอยืนยันจากทางตำหนัก</p>
+        </section>
+
+        <section>
+          <h2>การแต่งกาย</h2>
+          <p>
+            แต่งกายสุภาพ ปิดไหล่และเข่า ไม่สวมเสื้อสายเดี่ยวหรือกางเกงขาสั้นเหนือเข่า
+            ถอดหมวกและแว่นกันแดดก่อนเข้ากราบ
+          </p>
+        </section>
+
+        <section>
+          <h2>สิ่งอำนวยความสะดวก</h2>
+          <ul>
+            <li>ห้องน้ำ</li>
+            <li>จุดจำหน่ายธูปเทียนและดอกไม้</li>
+            <li>ที่นั่งพักในร่ม</li>
+          </ul>
+          <p class="muted small">รายการนี้รอยืนยันจากทางตำหนัก</p>
+        </section>
+
+        <section>
+          <h2>การถ่ายภาพ</h2>
+          <p>
+            ถ่ายภาพบริเวณตำหนักได้ตามปกติ แต่โปรดสอบถามเจ้าหน้าที่ก่อน
+            หากต้องการถ่ายภาพระหว่างพิธี หรือถ่ายเพื่อการค้า
+            และโปรดไม่ปีนขึ้นบนฐานองค์พระเพื่อถ่ายรูป
+          </p>
+        </section>
+
+        <section>
+          <h2>วันที่คนมาก</h2>
+          <p>
+            วันชิวอิดและจับโหงว (๑ ค่ำ และ ๑๕ ค่ำ) เทศกาลกินเจ
+            และสามวันสำคัญของเจ้าแม่กวนอิม จะมีผู้มากราบไหว้มากเป็นพิเศษ
+            ดู<a href="/calendar">ปฏิทินวันสำคัญ</a>ก่อนเดินทาง
+          </p>
+        </section>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 34px 48px; margin-top: 44px; }
+  .cols h2 { font-size: 19px; padding-bottom: 7px; border-bottom: 1px solid var(--line); margin-bottom: 12px; }
+  .cols p { color: var(--ink-2); }
+  .cols p + p { margin-top: 8px; }
+  .cols ul { margin: 0; padding-left: 1.2em; color: var(--ink-2); }
+  .cols li { margin-bottom: 5px; }
+</style>

@@ -1,0 +1,88 @@
+---
+/**
+ * ภาพองค์ปาง — ใช้ภาพถ่ายจริงถ้ามีในคลัง ถ้ายังไม่มีจะวาดแท่นบูชาแทน
+ * ที่ยอมให้ขึ้นเว็บโดยไม่มีภาพ เพราะ QR ในตำหนักและวันเปิดรอภาพไม่ได้
+ * (ดูสเปกถ่ายภาพในพิมพ์เขียว — 3:4 แนวตั้ง ชื่อไฟล์ pang-01 … pang-33)
+ */
+import photos from '../data/photos.json';
+import { pangNo } from '../lib/format';
+
+interface Props {
+  photo: string;
+  order: number;
+  nameTh: string;
+  nameZh: string;
+  enshrined?: boolean;
+  sizes?: string;
+  loading?: 'lazy' | 'eager';
+  priority?: boolean;
+}
+const {
+  photo, order, nameTh, nameZh,
+  enshrined = true, sizes = '(max-width: 640px) 45vw, 300px',
+  loading = 'lazy', priority = false,
+} = Astro.props;
+
+const entry = (photos.images as Record<string, { widths: number[]; ext: string }>)[photo];
+const srcset = entry
+  ? entry.widths.map((w) => `/images/pang/${photo}-${w}.webp ${w}w`).join(', ')
+  : null;
+---
+{srcset ? (
+  <img
+    class="pang-art"
+    src={`/images/pang/${photo}-960.webp`}
+    srcset={srcset}
+    sizes={sizes}
+    width="900" height="1200"
+    alt={`องค์${nameTh} ${nameZh} ในตำหนักผู่โถวเจ้าแม่กวนอิม`}
+    loading={priority ? 'eager' : loading}
+    fetchpriority={priority ? 'high' : undefined}
+    decoding="async"
+  />
+) : (
+  <svg class="pang-art pang-art--draft" viewBox="0 0 300 400" role="img"
+       aria-label={`ยังไม่มีภาพถ่ายองค์${nameTh} ${nameZh}`}>
+    <rect width="300" height="400" fill="var(--surface-2)" />
+    {/* ซุ้มแท่นประดิษฐาน */}
+    <path d="M60 340 L60 150 A90 90 0 0 1 240 150 L240 340 Z"
+          fill="var(--surface)" stroke="var(--line-strong)" stroke-width="1.5" />
+    {/* ฐานบัว */}
+    <path d="M96 340 q54 26 108 0 q-14 22 -54 22 q-40 0 -54 -22 Z"
+          fill="var(--gold-soft)" stroke="var(--line-strong)" stroke-width="1.2" />
+    <line x1="60" y1="340" x2="240" y2="340" stroke="var(--line-strong)" stroke-width="1.5" />
+    <text x="150" y="196" text-anchor="middle" class="pang-art__no">{pangNo(order)}</text>
+    <text x="150" y="248" text-anchor="middle" class="pang-art__zh">{nameZh.slice(0, 2)}</text>
+    <text x="150" y="300" text-anchor="middle" class="pang-art__hint">
+      {enshrined ? 'รอภาพถ่าย' : 'กำลังอัญเชิญ'}
+    </text>
+  </svg>
+)}
+
+<style>
+  .pang-art {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    background: var(--surface-2);
+    display: block;
+  }
+  .pang-art--draft { border: 1px solid var(--line); }
+  .pang-art__no {
+    font-family: var(--mono);
+    font-size: 30px;
+    fill: var(--gold);
+    letter-spacing: .1em;
+  }
+  .pang-art__zh {
+    font-family: var(--han);
+    font-size: 46px;
+    font-weight: 700;
+    fill: var(--line-strong);
+  }
+  .pang-art__hint {
+    font-family: var(--sans);
+    font-size: 15px;
+    fill: var(--ink-3);
+  }
+</style>

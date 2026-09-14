@@ -1,0 +1,63 @@
+---
+import PangArt from './PangArt.astro';
+import { pangNo } from '../lib/format';
+import { displayName, type Pang } from '../lib/pang';
+
+interface Props { pang: Pang; priority?: boolean }
+const { pang, priority = false } = Astro.props;
+const d = pang.data;
+---
+<a
+  class:list={['pang-card', !d.enshrined && 'pang-card--pending']}
+  href={`/33-pang/${d.slug}`}
+  data-wishes={d.wishes.join(' ')}
+  data-order={d.order}
+>
+  <PangArt
+    photo={d.photo} order={d.order} nameTh={displayName(pang)} nameZh={d.name_zh}
+    enshrined={d.enshrined} priority={priority}
+  />
+  <span class="pang-card__body">
+    <span class="pang-card__no mono">{pangNo(d.order)}</span>
+    <span class="pang-card__th">{displayName(pang)}</span>
+    <span class="pang-card__zh han">{d.name_zh}</span>
+    {!d.enshrined && <span class="pang-card__tag">กำลังอัญเชิญ</span>}
+  </span>
+</a>
+
+<style>
+  .pang-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    text-decoration: none;
+    color: inherit;
+    /* เส้นตารางมาจากตัวการ์ดเอง ไม่ใช่พื้นหลังของตาราง
+       เพราะ ๓๓ ปางไม่ลงตัวกับจำนวนคอลัมน์ ช่องที่เหลือจะได้ไม่มีสีพื้นค้างไว้ */
+    box-shadow: 0 0 0 1px var(--line);
+    transition: box-shadow .18s ease, transform .18s ease;
+  }
+  .pang-card:hover { box-shadow: 0 0 0 1px var(--line-strong), var(--shadow-lift); transform: translateY(-2px); position: relative; z-index: 1; }
+  .pang-card:hover .pang-card__th { color: var(--lacquer); }
+
+  .pang-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 11px 13px 15px;
+  }
+  .pang-card__no { font-size: 12px; color: var(--gold); letter-spacing: .1em; }
+  .pang-card__th { font-size: 16.5px; font-weight: 500; line-height: 1.4; }
+  .pang-card__zh { font-size: 14px; color: var(--ink-3); }
+
+  .pang-card__tag {
+    align-self: flex-start;
+    margin-top: 6px;
+    padding: 1px 9px;
+    border: 1px solid var(--line-strong);
+    border-radius: 100px;
+    font-size: 12.5px;
+    color: var(--ink-3);
+  }
+  .pang-card--pending :global(.pang-art) { opacity: .82; }
+</style>

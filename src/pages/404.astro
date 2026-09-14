@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+---
+<BaseLayout title="ไม่พบหน้าที่ต้องการ" description="ไม่พบหน้าที่ต้องการ" noindex>
+  <PageHero eyebrow="๔๐๔" title="ไม่พบหน้าที่ต้องการ" lede="หน้านี้อาจถูกย้ายหรือลิงก์อาจพิมพ์ผิด ลองเริ่มจากหน้าเหล่านี้" narrow />
+  <section class="band">
+    <div class="wrap wrap--narrow">
+      <ul class="links">
+        <li><a href="/">หน้าแรก</a></li>
+        <li><a href="/33-pang">๓๓ ปางทั้งหมด</a></li>
+        <li><a href="/worship/how-to">วิธีไหว้</a></li>
+        <li><a href="/visit">การเดินทางและเวลาเปิด–ปิด</a></li>
+        <li><a href="/calendar">ปฏิทินวันสำคัญ</a></li>
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .links { list-style: none; margin: 0; padding: 0; }
+  .links li { border-top: 1px solid var(--line); }
+  .links li:last-child { border-bottom: 1px solid var(--line); }
+  .links a { display: flex; align-items: center; min-height: 56px; font-size: 18px; text-decoration: none; }
+  .links a:hover { text-decoration: underline; }
+</style>

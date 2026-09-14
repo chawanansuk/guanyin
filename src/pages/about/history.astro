@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+---
+<BaseLayout
+  title="ประวัติความเป็นมา"
+  description="ประวัติตำหนักผู่โถวเจ้าแม่กวนอิม ถนนพุทธมณฑลสาย ๒ — การก่อตั้ง ผู้สร้าง และที่มาขององค์เจ้าแม่กวนอิม ๓๓ ปาง"
+  breadcrumbs={[
+    { label: 'หน้าแรก', href: '/' },
+    { label: 'เกี่ยวกับตำหนัก', href: '/about' },
+    { label: 'ประวัติ', href: '/about/history' },
+  ]}
+>
+  <PageHero eyebrow="เกี่ยวกับตำหนัก" title="ประวัติความเป็นมา" narrow />
+  <section class="band">
+    <div class="wrap wrap--narrow">
+      <div class="note note--lacquer">
+        <p>
+          <strong>หน้านี้รอเนื้อหาจากทางตำหนัก</strong>{' '}
+          สิ่งที่ต้องการคือความยาวประมาณ ๔๐๐–๘๐๐ คำ ครอบคลุม
+          ปีที่ก่อตั้ง · ผู้ริเริ่มและผู้อุปถัมภ์ · เหตุที่ตั้งใจให้ครบ ๓๓ ปาง ·
+          ที่มาขององค์พระ · เหตุการณ์สำคัญของตำหนัก
+        </p>
+        <p>
+          ระหว่างนี้ ที่มาของชื่อ “ผู่โถว” อ่านได้ที่<a href="/about">หน้าเกี่ยวกับตำหนัก</a>
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+
+const LINKS = [
+  { href: '/worship/how-to', title: 'ขั้นตอนการไหว้', desc: 'ตั้งแต่เตรียมตัวก่อนมา จนกราบครบทุกจุด — พร้อมจำนวนธูปแต่ละจุด' },
+  { href: '/worship/by-wish', title: 'ขอพรเรื่องไหน ไหว้ปางใด', desc: 'เลือกจากสิ่งที่กำลังขอ แล้วดูว่าปางใดที่คนนิยมมากราบ' },
+  { href: '/worship/offerings', title: 'เครื่องบูชาและข้อห้าม', desc: 'ธูปเทียน ผลไม้ ดอกไม้ สิ่งที่ควรนำมาและสิ่งที่ไม่ควร' },
+  { href: '/worship/prayers', title: 'บทสวด', desc: 'บทสวดที่ตำหนักใช้ พร้อมคำอ่านไทยและคำแปล' },
+];
+---
+<BaseLayout
+  title="การบูชาและขอพร"
+  description="วิธีไหว้เจ้าแม่กวนอิมที่ตำหนักผู่โถว ขั้นตอนการไหว้ จำนวนธูป เครื่องบูชา ข้อห้าม บทสวด และการเลือกปางตามพรที่ขอ"
+  breadcrumbs={[{ label: 'หน้าแรก', href: '/' }, { label: 'การบูชา', href: '/worship' }]}
+>
+  <PageHero
+    eyebrow="การบูชาและขอพร"
+    title="ไหว้อย่างไร ขอพรอย่างไร"
+    lede="ตำหนักแต่ละแห่งมีธรรมเนียมของตัวเอง หน้าเหล่านี้เขียนตามที่ตำหนักผู่โถวปฏิบัติจริง ไม่ได้คัดลอกจากที่อื่น"
+  />
+  <section class="band">
+    <div class="wrap">
+      <ul class="cards">
+        {LINKS.map((l) => (
+          <li>
+            <a href={l.href}>
+              <span class="cards__title">{l.title}</span>
+              <span class="cards__desc">{l.desc}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .cards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .cards a { display: flex; flex-direction: column; gap: 7px; padding: 24px 22px; background: var(--surface); text-decoration: none; color: inherit; height: 100%; }
+  .cards a:hover { background: var(--surface-2); }
+  .cards a:hover .cards__title { color: var(--lacquer); }
+  .cards__title { font-family: var(--serif); font-size: 20px; font-weight: 600; }
+  .cards__desc { font-size: 16px; color: var(--ink-2); line-height: 1.65; }
+</style>

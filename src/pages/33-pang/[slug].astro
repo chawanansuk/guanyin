@@ -1,0 +1,230 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PangArt from '../../components/PangArt.astro';
+import ShareBar from '../../components/ShareBar.astro';
+import site from '../../data/site.json';
+import { getCollection, render } from 'astro:content';
+import { allPang, displayName, altNames, isVerified, prevPang, nextPang } from '../../lib/pang';
+import { pangNo, thaiNum } from '../../lib/format';
+
+export async function getStaticPaths() {
+  const list = (await getCollection('pang')).sort((a, b) => a.data.order - b.data.order);
+  const wishes = await getCollection('wishes');
+  return list.map((entry, i) => ({
+    params: { slug: entry.data.slug },
+    props: { entry, index: i, list, wishes },
+  }));
+}
+
+const { entry, index, list, wishes } = Astro.props;
+const d = entry.data;
+const name = displayName(entry);
+const verified = isVerified(entry);
+const { Content } = await render(entry);
+const prev = prevPang(list, index);
+const next = nextPang(list, index);
+const alts = altNames(entry);
+const myWishes = wishes
+  .filter((w: any) => d.wishes.includes(w.data.id))
+  .sort((a: any, b: any) => a.data.order - b.data.order);
+
+const path = `/33-pang/${d.slug}`;
+const description =
+  `${name} (${d.name_zh}) ปางที่ ${d.order} ใน ๓๓ ปางของเจ้าแม่กวนอิม — ` +
+  `${d.attributes} นิยมขอพรเรื่อง${myWishes.map((w: any) => w.data.short).join(' ')} ` +
+  `ที่ตำหนักผู่โถว พุทธมณฑลสาย ๒`;
+---
+<BaseLayout
+  title={`${name} ${d.name_zh}`}
+  description={description}
+  noindex={!verified}
+  ogImage={`/og/pang-${String(d.order).padStart(2, '0')}.png`}
+  breadcrumbs={[
+    { label: 'หน้าแรก', href: '/' },
+    { label: '๓๓ ปาง', href: '/33-pang' },
+    { label: name, href: path },
+  ]}
+>
+  <!-- บล็อกสำหรับคนที่สแกน QR จากในตำหนัก: ตอบคำถามที่ถามตอนยืนอยู่หน้าองค์ -->
+  <aside class="qr">
+    <div class="wrap qr__inner">
+      <p class="qr__head">ยืนอยู่หน้าองค์นี้ใช่ไหม</p>
+      <p class="qr__incense">
+        จุดนี้ใช้ธูป <strong>{thaiNum(d.incense)} ดอก</strong>
+        {d.shrine_point !== null && <span class="qr__point"> · จุดที่ {thaiNum(d.shrine_point)} ในตำหนัก</span>}
+      </p>
+      <p class="qr__pray">“{d.short_prayer}”</p>
+    </div>
+  </aside>
+
+  <article class="pang">
+    <div class="wrap pang__grid">
+      <div class="pang__art">
+        <PangArt
+          photo={d.photo} order={d.order} nameTh={name} nameZh={d.name_zh}
+          enshrined={d.enshrined} priority sizes="(max-width: 820px) 92vw, 420px"
+        />
+        {!d.enshrined && (
+          <p class="pang__pending">องค์นี้ยังอยู่ระหว่างการอัญเชิญมาประดิษฐาน</p>
+        )}
+      </div>
+
+      <div class="pang__main">
+        <p class="pang__no mono">{pangNo(d.order)} / ๓๓</p>
+        <h1>{name}</h1>
+        <p class="pang__names">
+          <span class="han pang__zh">{d.name_zh}</span>
+          <span class="pang__py">{d.name_pinyin}</span>
+        </p>
+
+        <ul class="chips pang__wishes">
+          {myWishes.map((w: any) => (
+            <li><a class="chip" href={`/wish/${w.data.id}`}>{w.data.short}</a></li>
+          ))}
+        </ul>
+
+        <section class="pang__sec">
+          <h2>ลักษณะเด่น</h2>
+          <p>{d.attributes}</p>
+        </section>
+
+        <section class="pang__sec">
+          <h2>ความหมายและเรื่องเล่า</h2>
+          {verified ? (
+            <div class="prose"><Content /></div>
+          ) : (
+            <div class="note note--lacquer">
+              <p>
+                <strong>เนื้อหาส่วนนี้ยังรอผู้รู้ของตำหนักตรวจสอบ</strong>{' '}
+                จึงยังไม่เผยแพร่ เพื่อไม่ให้เว็บกลายเป็นแหล่งอ้างอิงของข้อมูลที่ยังไม่ได้ตรวจ
+              </p>
+              <p>
+                ระหว่างนี้ ชื่อ ภาพ ลักษณะเด่น และพรที่นิยมขอด้านบน
+                เพียงพอสำหรับการกราบไหว้แล้ว
+              </p>
+            </div>
+          )}
+        </section>
+
+        {d.shrine_point !== null && (
+          <section class="pang__sec">
+            <h2>ตำแหน่งในตำหนัก</h2>
+            <p>จุดที่ {thaiNum(d.shrine_point)} ตามลำดับการเดินไหว้ — ดู <a href="/about/sacred-objects">ผังจุดไหว้ในตำหนัก</a></p>
+          </section>
+        )}
+
+        {(alts.length > 0 || d.sources.length > 0) && (
+          <section class="pang__sec pang__meta">
+            {alts.length > 0 && (
+              <p class="small"><span class="pang__metalabel">ชื่ออื่นที่พบ</span> {alts.join(' · ')}</p>
+            )}
+            {d.sources.length > 0 && (
+              <p class="small"><span class="pang__metalabel">อ้างอิง</span> {d.sources.join(' · ')}</p>
+            )}
+            {d.verified_by && (
+              <p class="small"><span class="pang__metalabel">ตรวจสอบโดย</span> {d.verified_by}</p>
+            )}
+          </section>
+        )}
+
+        <div class="pang__share">
+          <ShareBar title={`${name} ${d.name_zh}`} path={path} />
+        </div>
+      </div>
+    </div>
+
+    <nav class="pang__nav" aria-label="ปางก่อนหน้าและถัดไป">
+      <div class="wrap pang__nav-inner">
+        <a class="pang__nav-link pang__nav-link--prev" href={`/33-pang/${prev.data.slug}`}>
+          <span class="pang__nav-dir">‹ ปางก่อนหน้า</span>
+          <span class="pang__nav-name">{pangNo(prev.data.order)} {displayName(prev)}</span>
+        </a>
+        <a class="pang__nav-all" href="/33-pang">ดูทั้ง ๓๓ ปาง</a>
+        <a class="pang__nav-link pang__nav-link--next" href={`/33-pang/${next.data.slug}`}>
+          <span class="pang__nav-dir">ปางถัดไป ›</span>
+          <span class="pang__nav-name">{pangNo(next.data.order)} {displayName(next)}</span>
+        </a>
+      </div>
+    </nav>
+  </article>
+</BaseLayout>
+
+<style>
+  /* ---------- แถบ QR ---------- */
+  .qr { background: var(--celadon-soft); border-bottom: 1px solid var(--line); }
+  .qr__inner { padding-block: 16px; display: flex; flex-direction: column; gap: 3px; }
+  .qr__head {
+    font: 600 12px/1.4 var(--mono);
+    letter-spacing: .12em; text-transform: uppercase;
+    color: var(--celadon); margin: 0;
+  }
+  .qr__incense { margin: 2px 0 0; font-size: 17px; }
+  .qr__incense strong { font-weight: 600; }
+  .qr__point { color: var(--ink-2); }
+  .qr__pray { margin: 4px 0 0; font-family: var(--serif); font-size: 17px; color: var(--ink-2); line-height: 1.65; }
+
+  /* ---------- เนื้อหา ---------- */
+  .pang__grid {
+    display: grid;
+    grid-template-columns: minmax(280px, 420px) minmax(0, 1fr);
+    gap: 36px 48px;
+    align-items: start;
+    padding-block: clamp(28px, 5vw, 48px);
+  }
+  @media (max-width: 820px) { .pang__grid { grid-template-columns: 1fr; gap: 26px; } }
+
+  .pang__art { position: sticky; top: 68px; }
+  @media (max-width: 820px) { .pang__art { position: static; } }
+  .pang__pending {
+    margin: 10px 0 0; padding: 9px 12px;
+    background: var(--surface-2); border-left: 3px solid var(--line-strong);
+    font-size: 15px; color: var(--ink-2);
+  }
+
+  .pang__no { font-size: 13px; color: var(--gold); letter-spacing: .12em; margin: 0 0 8px; }
+  .pang__names { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; margin: 10px 0 0; }
+  .pang__zh { font-size: 22px; font-weight: 700; color: var(--lacquer); }
+  .pang__py { font-size: 16px; color: var(--ink-3); font-style: italic; }
+  .pang__wishes { margin-top: 18px; }
+
+  .pang__sec { margin-top: 34px; }
+  .pang__sec h2 {
+    font-size: 19px;
+    padding-bottom: 7px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .pang__sec p { font-size: 17px; line-height: 1.78; }
+
+  .pang__meta { padding-top: 20px; border-top: 1px solid var(--line); }
+  .pang__meta p { margin: 0; color: var(--ink-2); }
+  .pang__meta p + p { margin-top: 6px; }
+  .pang__metalabel {
+    font-family: var(--mono); font-size: 11.5px;
+    letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink-3); margin-right: 8px;
+  }
+
+  .pang__share { margin-top: 30px; padding-top: 22px; border-top: 1px solid var(--line); }
+
+  /* ---------- ปางก่อนหน้า/ถัดไป ---------- */
+  .pang__nav { border-top: 1px solid var(--line); background: var(--surface); }
+  .pang__nav-inner {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 16px 24px;
+    align-items: center;
+    padding-block: 22px;
+  }
+  .pang__nav-link { display: flex; flex-direction: column; gap: 2px; text-decoration: none; color: inherit; min-height: 44px; justify-content: center; }
+  .pang__nav-link--next { text-align: right; }
+  .pang__nav-dir { font-size: 14px; color: var(--lacquer); }
+  .pang__nav-name { font-size: 16px; color: var(--ink-2); }
+  .pang__nav-link:hover .pang__nav-name { color: var(--ink); }
+  .pang__nav-all { font-size: 15.5px; white-space: nowrap; }
+
+  @media (max-width: 560px) {
+    .pang__nav-inner { grid-template-columns: 1fr 1fr; }
+    .pang__nav-all { grid-column: 1 / -1; grid-row: 1; text-align: center; }
+  }
+</style>

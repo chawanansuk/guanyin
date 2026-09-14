@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import ShareBar from '../../components/ShareBar.astro';
+import { getCollection, render } from 'astro:content';
+import { thaiDate, isoDate } from '../../lib/format';
+
+export async function getStaticPaths() {
+  const news = await getCollection('news');
+  return news.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const path = `/news/${entry.id}`;
+---
+<BaseLayout
+  title={entry.data.title}
+  description={entry.data.summary || entry.data.title}
+  breadcrumbs={[
+    { label: 'หน้าแรก', href: '/' },
+    { label: 'ข่าวสาร', href: '/news' },
+    { label: entry.data.title, href: path },
+  ]}
+>
+  <PageHero eyebrow="ข่าวสาร" title={entry.data.title} narrow>
+    <p class="date mono"><time datetime={isoDate(entry.data.date)}>{thaiDate(entry.data.date)}</time></p>
+  </PageHero>
+  <section class="band">
+    <div class="wrap wrap--narrow">
+      <div class="prose"><Content /></div>
+      <div class="share"><ShareBar title={entry.data.title} path={path} /></div>
+      <p class="back"><a href="/news">‹ ข่าวทั้งหมด</a></p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .date { margin-top: 14px; font-size: 15px; color: var(--ink-3); }
+  .share { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--line); }
+  .back { margin-top: 28px; }
+</style>

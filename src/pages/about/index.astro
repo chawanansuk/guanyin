@@ -1,0 +1,87 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import site from '../../data/site.json';
+import { allPang, enshrinedCount } from '../../lib/pang';
+const count = enshrinedCount(await allPang());
+---
+<BaseLayout
+  title="เกี่ยวกับตำหนัก"
+  description="ตำหนักผู่โถวเจ้าแม่กวนอิม 普陀觀音堂 ถนนพุทธมณฑลสาย ๒ — ที่มาของชื่อ ผู่โถวซาน และเหตุที่ตำหนักประดิษฐานเจ้าแม่กวนอิมครบ ๓๓ ปาง"
+  breadcrumbs={[{ label: 'หน้าแรก', href: '/' }, { label: 'เกี่ยวกับตำหนัก', href: '/about' }]}
+>
+  <PageHero eyebrow="เกี่ยวกับตำหนัก" title="ตำหนักผู่โถวเจ้าแม่กวนอิม" narrow>
+    <p class="zh han">{site.name_zh}</p>
+  </PageHero>
+
+  <section class="band">
+    <div class="wrap wrap--narrow">
+      <div class="prose">
+        <p class="lede">
+          “ผู่โถว” 普陀 มาจากชื่อเกาะผู่โถวซาน (普陀山) มณฑลเจ้อเจียง ประเทศจีน
+          พุทธสถานของพระโพธิสัตว์กวนอิมที่ใหญ่และเก่าแก่ที่สุดแห่งหนึ่ง
+          และเป็นหนึ่งในสี่ภูเขาศักดิ์สิทธิ์ของพุทธศาสนามหายานจีน
+        </p>
+        <p>
+          ตามคติที่สืบต่อกันมา ผู่โถวซานคือที่ซึ่งพระโพธิสัตว์กวนอิมทรงเลือกประทับเพื่อโปรดสรรพสัตว์
+          ชื่อนี้จึงไม่ใช่เพียงชื่อเรียก แต่เป็นคำอธิบายว่าเหตุใดตำหนักแห่งนี้
+          จึงตั้งใจประดิษฐานองค์เจ้าแม่กวนอิมให้ครบทั้ง ๓๓ ปาง ตามที่ปรากฏในสัทธรรมปุณฑรีกสูตร
+        </p>
+        <p>
+          ปัจจุบันตำหนักประดิษฐานแล้ว {count.enshrined} องค์
+          {count.pending > 0 && <> และอยู่ระหว่างอัญเชิญอีก {count.pending} องค์</>}
+          ตั้งอยู่ริม{site.address.street} {site.address.locality} {site.address.region}
+        </p>
+      </div>
+
+      <div class="plaque couplet">
+        <p class="couplet__title han">{site.motto_zh}</p>
+        <p class="couplet__title-th">{site.motto_th}</p>
+        <ul class="couplet__lines">
+          {site.couplet.map((c) => (
+            <li>
+              <span class="han">{c.zh}</span>
+              <span class="couplet__th">{c.th}</span>
+            </li>
+          ))}
+        </ul>
+        <p class="couplet__src">คำมงคลจากป้ายหน้าตำหนัก</p>
+      </div>
+
+      <ul class="sub">
+        <li>
+          <a href="/about/history">
+            <span class="sub__t">ประวัติความเป็นมา</span>
+            <span class="sub__d">ก่อตั้งเมื่อไร ใครสร้าง และองค์ ๓๓ ปางมาจากไหน</span>
+          </a>
+        </li>
+        <li>
+          <a href="/about/sacred-objects">
+            <span class="sub__t">สิ่งศักดิ์สิทธิ์และผังจุดไหว้</span>
+            <span class="sub__d">องค์ประธาน สิ่งศักดิ์สิทธิ์ภายใน และลำดับจุดไหว้ ๑–๓๓</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .zh { font-size: clamp(30px, 6vw, 44px); font-weight: 700; letter-spacing: .18em; color: var(--lacquer); margin-top: 10px; }
+
+  .couplet { margin: 44px 0; padding: 30px 28px; text-align: center; }
+  .couplet__title { font-size: 26px; letter-spacing: .28em; padding-left: .28em; margin: 0; color: var(--plaque-ink); }
+  .couplet__title-th { font-family: var(--serif); font-size: 16px; color: var(--plaque-ink-2); margin: 8px 0 0; }
+  .couplet__lines { list-style: none; margin: 24px 0 0; padding: 22px 0 0; border-top: 1px solid var(--plaque-line); display: flex; flex-direction: column; gap: 14px; }
+  .couplet__lines li { display: flex; flex-direction: column; gap: 4px; color: var(--plaque-ink); }
+  .couplet__lines .han { font-size: 19px; letter-spacing: .16em; }
+  .couplet__th { font-size: 15px; color: var(--plaque-ink-2); }
+  .couplet__src { margin: 22px 0 0; font-family: var(--mono); font-size: 12px; letter-spacing: .1em; color: var(--plaque-ink-2); }
+
+  .sub { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .sub a { display: flex; flex-direction: column; gap: 5px; padding: 20px 22px; background: var(--surface); text-decoration: none; color: inherit; }
+  .sub a:hover { background: var(--surface-2); }
+  .sub a:hover .sub__t { color: var(--lacquer); }
+  .sub__t { font-family: var(--serif); font-size: 19px; font-weight: 600; }
+  .sub__d { font-size: 15.5px; color: var(--ink-2); }
+</style>

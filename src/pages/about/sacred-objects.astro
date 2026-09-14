@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import { allPang } from '../../lib/pang';
+import { displayName } from '../../lib/pang';
+import { thaiNum } from '../../lib/format';
+const pang = await allPang();
+---
+<BaseLayout
+  title="สิ่งศักดิ์สิทธิ์และผังจุดไหว้"
+  description="ผังจุดไหว้ในตำหนักผู่โถวเจ้าแม่กวนอิม ลำดับการเดินไหว้ ๑–๓๓ และสิ่งศักดิ์สิทธิ์ภายในตำหนัก"
+  breadcrumbs={[
+    { label: 'หน้าแรก', href: '/' },
+    { label: 'เกี่ยวกับตำหนัก', href: '/about' },
+    { label: 'ผังจุดไหว้', href: '/about/sacred-objects' },
+  ]}
+>
+  <PageHero
+    eyebrow="เกี่ยวกับตำหนัก"
+    title="สิ่งศักดิ์สิทธิ์และผังจุดไหว้"
+    lede="ลำดับการเดินไหว้ในตำหนัก เรียงตามจุดที่ ๑ ถึง ๓๓ ที่ฐานของแต่ละองค์มีป้ายบอกชื่อปางและรหัสสำหรับสแกนดูความหมาย"
+  />
+  <section class="band">
+    <div class="wrap">
+      <div class="note">
+        <p>
+          <strong>ผังตำหนักแบบภาพยังรอจากทางตำหนัก</strong>{' '}
+          เมื่อได้ภาพลายเส้นแล้วจะแทนที่รายการด้านล่างด้วยผังที่กดจุดเข้าหน้าปางได้โดยตรง
+        </p>
+      </div>
+      <ol class="points">
+        {pang.map((p) => (
+          <li>
+            <span class="points__no mono">{thaiNum(String(p.data.shrine_point ?? p.data.order).padStart(2, '0'))}</span>
+            <a href={`/33-pang/${p.data.slug}`}>{displayName(p)}</a>
+            <span class="points__zh han">{p.data.name_zh}</span>
+            {!p.data.enshrined && <span class="points__tag">กำลังอัญเชิญ</span>}
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .points { list-style: none; margin: 26px 0 0; padding: 0; columns: 2; column-gap: 40px; }
+  @media (max-width: 620px) { .points { columns: 1; } }
+  .points li {
+    break-inside: avoid;
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px;
+    padding: 9px 0; border-bottom: 1px solid var(--line);
+  }
+  .points__no { font-size: 12.5px; color: var(--gold); letter-spacing: .1em; min-width: 24px; }
+  .points a { font-size: 17px; text-decoration: none; color: var(--ink); }
+  .points a:hover { color: var(--lacquer); text-decoration: underline; }
+  .points__zh { font-size: 14px; color: var(--ink-3); }
+  .points__tag { font-size: 12.5px; color: var(--ink-3); border: 1px solid var(--line-strong); border-radius: 100px; padding: 0 8px; }
+</style>

@@ -1,0 +1,51 @@
+{
+  "url": "https://putuoguanyin.com",
+  "name_th": "ตำหนักผู่โถวเจ้าแม่กวนอิม",
+  "name_zh": "普陀觀音堂",
+  "name_en": "Putuo Guanyin Shrine",
+  "motto_zh": "慈航普照",
+  "motto_th": "นาวาแห่งเมตตาส่องทั่วหล้า",
+  "couplet": [
+    { "zh": "觀音常住方寸心", "th": "กวนอิมสถิตอยู่ในใจเสมอ" },
+    { "zh": "大悲遍護世間人", "th": "มหากรุณาคุ้มครองสรรพชนทั่วโลก" }
+  ],
+  "tagline": "ตำหนักที่ประดิษฐานเจ้าแม่กวนอิมครบ ๓๓ ปาง ถนนพุทธมณฑลสาย ๒",
+  "address": {
+    "street": "ถนนพุทธมณฑลสาย ๒",
+    "locality": "เขตทวีวัฒนา",
+    "region": "กรุงเทพมหานคร",
+    "postal_code": "10170",
+    "country": "TH",
+    "full_th": "ถนนพุทธมณฑลสาย ๒ เขตทวีวัฒนา กรุงเทพมหานคร 10170"
+  },
+  "geo": { "lat": 13.7726, "lng": 100.3676 },
+  "maps_url": "https://www.google.com/maps/search/?api=1&query=%E0%B8%95%E0%B8%B3%E0%B8%AB%E0%B8%99%E0%B8%B1%E0%B8%81%E0%B8%9C%E0%B8%B9%E0%B9%88%E0%B9%82%E0%B8%96%E0%B8%A7%E0%B9%80%E0%B8%88%E0%B9%89%E0%B8%B2%E0%B9%81%E0%B8%A1%E0%B9%88%E0%B8%81%E0%B8%A7%E0%B8%99%E0%B8%AD%E0%B8%B4%E0%B8%A1",
+  "phone": "",
+  "line_oa": "",
+  "facebook": "",
+  "email": "",
+  "hours": {
+    "note": "เวลาทำการปกติ — วันงานพิธีอาจขยายเวลา ดูประกาศหน้าปฏิทิน",
+    "weekly": [
+      { "day": 1, "open": "07:00", "close": "18:00" },
+      { "day": 2, "open": "07:00", "close": "18:00" },
+      { "day": 3, "open": "07:00", "close": "18:00" },
+      { "day": 4, "open": "07:00", "close": "18:00" },
+      { "day": 5, "open": "07:00", "close": "18:00" },
+      { "day": 6, "open": "06:30", "close": "19:00" },
+      { "day": 0, "open": "06:30", "close": "19:00" }
+    ],
+    "closed_dates": []
+  },
+  "opening_ceremony": {
+    "date": "2026-10-25",
+    "headline": "พิธีเปิดตำหนักผู่โถวเจ้าแม่กวนอิม",
+    "active": true
+  },
+  "content": {
+    "require_verified": true,
+    "pang_total": 33,
+    "news_stale_months": 6
+  },
+  "analytics": { "provider": "", "domain": "" }
+}

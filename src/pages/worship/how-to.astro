@@ -1,0 +1,116 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import { thaiNum } from '../../lib/format';
+
+// ขั้นตอนตั้งต้น — ต้องให้ตำหนักยืนยันว่าตรงกับที่ปฏิบัติจริงก่อนเผยแพร่เป็นทางการ
+const STEPS = [
+  { t: 'ล้างมือและตั้งใจ', d: 'ก่อนเข้าเขตตำหนัก ล้างมือให้สะอาด แล้วตั้งใจว่าจะมาด้วยเรื่องอะไร — ความตั้งใจสำคัญกว่าจำนวนธูป' },
+  { t: 'กราบองค์ประธานก่อน', d: 'เริ่มที่องค์ประธานกลางตำหนักเสมอ บอกชื่อ นามสกุล และที่อยู่ของตนเอง แล้วจึงกล่าวสิ่งที่ขอ' },
+  { t: 'จุดธูปตามจำนวนของแต่ละจุด', d: 'จุดธูปจากเทียนที่ตำหนักเตรียมไว้ ไม่ใช้ไฟแช็กจ่อโดยตรง และไม่ดับธูปด้วยการเป่า' },
+  { t: 'ไหว้ตามลำดับจุด', d: 'เดินไหว้ตามลำดับจุดที่ ๑ ไปจนครบ ไม่ต้องรีบ ถ้ามีเวลาน้อยให้กราบองค์ประธานและปางที่ตั้งใจมาเป็นพอ' },
+  { t: 'ปางที่ตั้งใจมาขอ', d: 'ที่ฐานของแต่ละองค์มีป้ายบอกชื่อปางและรหัสสำหรับสแกนดูความหมาย กราบแล้วกล่าวคำอธิษฐานของปางนั้น' },
+  { t: 'ถวายเครื่องบูชา', d: 'วางผลไม้หรือดอกไม้ที่โต๊ะหน้าองค์ ไม่วางบนพื้น ของที่ถวายแล้วสามารถรับกลับไปรับประทานเป็นสิริมงคลได้' },
+  { t: 'กราบลาก่อนกลับ', d: 'ก่อนออกจากตำหนัก กราบลาองค์ประธานอีกครั้ง และกล่าวขอบพระคุณ' },
+];
+const FAQ = [
+  { q: 'ไหว้เจ้าแม่กวนอิมใช้ธูปกี่ดอก', a: 'ที่ตำหนักผู่โถวใช้ธูป ๓ ดอกต่อหนึ่งจุด ทั้งองค์ประธานและแต่ละปาง บางท่านใช้ ๙ ดอกในวันสำคัญ ซึ่งทำได้เช่นกัน' },
+  { q: 'ไหว้ครบทุกจุดใช้เวลานานไหม', a: 'เดินไหว้ครบทุกจุดใช้เวลาประมาณ ๓๐–๔๕ นาที ถ้ามีเวลาน้อย กราบองค์ประธานและปางที่ตั้งใจมาก็เพียงพอ' },
+  { q: 'ต้องเป็นมังสวิรัติก่อนมาไหว้หรือไม่', a: 'ไม่จำเป็น แต่ในช่วงเทศกาลกินเจ ผู้ที่ถือศีลกินเจจะงดเนื้อสัตว์ตลอดเก้าวัน ผู้ที่ไม่ได้ถือก็มากราบไหว้ได้ตามปกติ' },
+];
+const schema = [{
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'วิธีไหว้เจ้าแม่กวนอิมที่ตำหนักผู่โถว',
+  step: STEPS.map((s, i) => ({ '@type': 'HowToStep', position: i + 1, name: s.t, text: s.d })),
+}, {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQ.map((f) => ({
+    '@type': 'Question', name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+}];
+---
+<BaseLayout
+  title="วิธีไหว้เจ้าแม่กวนอิม ทีละขั้นตอน"
+  suffix={false}
+  description="ขั้นตอนการไหว้เจ้าแม่กวนอิมที่ตำหนักผู่โถว พุทธมณฑลสาย ๒ — เตรียมตัวก่อนมา ธูปกี่ดอก ไหว้ตามลำดับอย่างไร และข้อควรระวัง"
+  schema={schema}
+  breadcrumbs={[
+    { label: 'หน้าแรก', href: '/' },
+    { label: 'การบูชา', href: '/worship' },
+    { label: 'วิธีไหว้', href: '/worship/how-to' },
+  ]}
+>
+  <PageHero
+    eyebrow="การบูชา"
+    title="วิธีไหว้ ทีละขั้นตอน"
+    lede="เขียนตามที่ตำหนักผู่โถวปฏิบัติจริง ถ้ามาครั้งแรกอ่านตามลำดับได้เลย ไม่ต้องกังวลว่าจะทำผิด — ความตั้งใจสำคัญกว่าพิธีรีตอง"
+    narrow
+  />
+
+  <section class="band">
+    <div class="wrap wrap--narrow">
+      <div class="note note--celadon prep">
+        <p><strong>เตรียมก่อนมา</strong> แต่งกายสุภาพ ไม่ใส่เสื้อสายเดี่ยวหรือกางเกงขาสั้นเหนือเข่า
+        ตำหนักมีธูปเทียนและดอกไม้จำหน่ายที่หน้าตำหนัก ไม่ต้องเตรียมมาก็ได้</p>
+      </div>
+
+      <ol class="steps">
+        {STEPS.map((s, i) => (
+          <li>
+            <span class="steps__no mono">{thaiNum(i + 1)}</span>
+            <div>
+              <h2>{s.t}</h2>
+              <p>{s.d}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <h2 class="sec-h2">ข้อควรระวัง</h2>
+      <ul class="dont">
+        <li>ไม่ดับธูปด้วยการเป่า ให้โบกมือหรือสะบัดแทน</li>
+        <li>ไม่ชี้นิ้วไปที่องค์พระ และไม่ปีนขึ้นบนฐานเพื่อถ่ายรูป</li>
+        <li>ไม่วางของถวายบนพื้น ให้วางบนโต๊ะที่จัดไว้</li>
+        <li>ถอดหมวกและแว่นกันแดดก่อนกราบ</li>
+        <li>โปรดสอบถามเจ้าหน้าที่ก่อนถ่ายภาพหรือถ่ายวิดีโอในบริเวณพิธี</li>
+      </ul>
+
+      <h2 class="sec-h2">คำถามที่ถามบ่อย</h2>
+      <dl class="faq">
+        {FAQ.map((f) => (<>
+          <dt>{f.q}</dt>
+          <dd>{f.a}</dd>
+        </>))}
+      </dl>
+
+      <div class="note next">
+        <p>
+          ขั้นตอนข้างต้นเป็นฉบับตั้งต้น <strong>รอผู้ดูแลตำหนักยืนยันว่าตรงกับที่ปฏิบัติจริง</strong>{' '}
+          หากท่านเป็นผู้ดูแลและพบข้อคลาดเคลื่อน โปรดแจ้งผ่าน<a href="/contact">หน้าติดต่อ</a>
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .prep { margin-bottom: 34px; }
+  .steps { list-style: none; margin: 0; padding: 0; }
+  .steps li { display: grid; grid-template-columns: 46px 1fr; gap: 18px; padding: 22px 0; border-top: 1px solid var(--line); }
+  .steps li:last-child { border-bottom: 1px solid var(--line); }
+  .steps__no { font-family: var(--serif); font-size: 27px; font-weight: 700; color: var(--lacquer); line-height: 1.1; }
+  .steps h2 { font-size: 19px; margin-bottom: 5px; }
+  .steps p { color: var(--ink-2); }
+
+  .sec-h2 { margin-top: 48px; margin-bottom: 14px; }
+  .dont { margin: 0; padding-left: 1.2em; }
+  .dont li { margin-bottom: 8px; color: var(--ink-2); }
+
+  .faq { margin: 0; }
+  .faq dt { font-family: var(--serif); font-size: 18px; font-weight: 600; margin-top: 22px; }
+  .faq dd { margin: 7px 0 0; color: var(--ink-2); max-width: var(--measure); }
+  .next { margin-top: 42px; }
+</style>

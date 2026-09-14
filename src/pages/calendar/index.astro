@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import EventList from '../../components/EventList.astro';
+import { getCollection } from 'astro:content';
+import { daysFromToday, isoDate, beYear } from '../../lib/format';
+import site from '../../data/site.json';
+
+const all = (await getCollection('events')).sort((a, b) => +a.data.date - +b.data.date);
+const upcoming = all.filter((e) => daysFromToday(e.data.end_date ?? e.data.date) >= 0);
+const past = all.filter((e) => daysFromToday(e.data.end_date ?? e.data.date) < 0).reverse();
+const hasApprox = all.some((e) => e.data.approx);
+
+const schema = upcoming.map((e) => ({
+  '@context': 'https://schema.org',
+  '@type': 'Event',
+  name: e.data.title,
+  startDate: isoDate(e.data.date),
+  ...(e.data.end_date ? { endDate: isoDate(e.data.end_date) } : {}),
+  eventStatus: 'https://schema.org/EventScheduled',
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  location: { '@id': `${site.url}/#shrine` },
+  ...(e.data.note ? { description: e.data.note } : {}),
+}));
+---
+<BaseLayout
+  title="ปฏิทินวันสำคัญ"
+  description="วันสำคัญของเจ้าแม่กวนอิม วันประสูติ วันตรัสรู้ วันออกบวช เทศกาลกินเจ และกำหนดการพิธีที่ตำหนักผู่โถว พุทธมณฑลสาย ๒"
+  schema={schema}
+  breadcrumbs={[{ label: 'หน้าแรก', href: '/' }, { label: 'ปฏิทิน', href: '/calendar' }]}
+>
+  <PageHero
+    eyebrow="ปฏิทิน"
+    title="วันสำคัญ"
+    lede="สามวันสำคัญที่สุดของเจ้าแม่กวนอิมคือ วันประสูติ 誕辰 · วันตรัสรู้ 成道 · วันออกบวช 出家 ทั้งสามตรงกับวัน ๑๙ ค่ำ ของเดือนจันทรคติจีนที่ต่างกัน"
+  />
+
+  <section class="band">
+    <div class="wrap">
+      <h2>กำลังจะถึง</h2>
+      {upcoming.length > 0
+        ? <EventList events={upcoming} />
+        : <p class="muted">ยังไม่มีวันสำคัญที่บันทึกไว้สำหรับช่วงถัดไป</p>}
+
+      {past.length > 0 && (
+        <details class="past">
+          <summary>วันที่ผ่านไปแล้วในปีนี้ ({past.length} รายการ)</summary>
+          <EventList events={past} compact />
+        </details>
+      )}
+
+      <h2 class="mt">วันพระจีนประจำเดือน</h2>
+      <p>
+        ชิวอิด (๑ ค่ำ) และจับโหงว (๑๕ ค่ำ) ของทุกเดือนจันทรคติ รวม ๒๔ ครั้งต่อปี
+        เป็นวันที่ผู้ศรัทธานิยมมากราบไหว้เป็นประจำ ตำหนักเปิดตามเวลาปกติ
+      </p>
+
+      {hasApprox && (
+        <div class="note">
+          <p>
+            <strong>เครื่องหมาย ≈ หมายถึงวันที่คำนวณจากรอบจันทรคติ ยังไม่ได้เทียบปฏิทินจีนฉบับพิมพ์</strong>{' '}
+            อาจคลาดเคลื่อนหนึ่งวัน — ก่อนเดินทางมาในวันสำคัญ โปรดสอบถามตำหนักอีกครั้ง
+          </p>
+          <p>
+            วันที่ไม่มีเครื่องหมายคือวันที่ยืนยันแล้ว
+            ปฏิทินฉบับปี พ.ศ. {beYear(new Date())} และปีถัดไปจัดทำล่วงหน้าและปรับปรุงก่อนขึ้นปีใหม่จีนทุกปี
+          </p>
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  h2 { font-size: 21px; margin-bottom: 14px; }
+  .mt { margin-top: 48px; }
+  .past { margin-top: 28px; border-top: 1px solid var(--line); padding-top: 14px; }
+  .past summary { cursor: pointer; font-size: 16px; color: var(--ink-2); min-height: 44px; display: flex; align-items: center; }
+  .past summary:hover { color: var(--ink); }
+  .past[open] summary { margin-bottom: 8px; }
+  .note { margin-top: 36px; }
+</style>

@@ -1,0 +1,52 @@
+# วันสำคัญ พ.ศ. ๒๕๖๙ (ค.ศ. 2026)
+# วันที่คำนวณด้วย scripts/lunar.mjs (npm run lunar -- 2026)
+# approx: true = คำนวณจากรอบจันทรคติ ยังไม่ได้เทียบปฏิทินจีนฉบับพิมพ์ (通勝)
+#          ต้องให้ผู้รู้ของตำหนักยืนยันก่อน แล้วเปลี่ยนเป็น false
+- id: cny-2569
+  title: ตรุษจีน
+  title_zh: 春節
+  lunar: ๑ ค่ำ เดือน ๑
+  date: 2026-02-17
+  approx: false
+  kind: festival
+- id: birth-2569
+  title: วันประสูติเจ้าแม่กวนอิม
+  title_zh: 觀音誕辰
+  lunar: ๑๙ ค่ำ เดือน ๒
+  date: 2026-04-06
+  approx: false
+  kind: guanyin
+  note: หนึ่งในสามวันสำคัญที่สุดของปี
+- id: enlighten-2569
+  title: วันตรัสรู้เจ้าแม่กวนอิม
+  title_zh: 觀音成道
+  lunar: ๑๙ ค่ำ เดือน ๖
+  date: 2026-08-01
+  approx: true
+  kind: guanyin
+- id: vegetarian-2569
+  title: เทศกาลกินเจ
+  title_zh: 九皇齋
+  lunar: ๑–๙ ค่ำ เดือน ๙
+  date: 2026-10-10
+  end_date: 2026-10-18
+  approx: true
+  kind: festival
+  note: ช่วงที่คนค้นหาศาลเจ้ามากที่สุดของปี
+- id: opening-2569
+  title: พิธีเปิดตำหนักผู่โถวเจ้าแม่กวนอิม
+  title_zh: 開光大典
+  lunar: ช่วงกลางเดือน ๙ ตามจันทรคติจีน
+  date: 2026-10-25
+  approx: false
+  kind: shrine
+  featured: true
+  note: วันเปิดตำหนักอย่างเป็นทางการ — ดูกำหนดการที่หน้าพิธีเปิด
+- id: ordain-2569
+  title: วันออกบวชเจ้าแม่กวนอิม
+  title_zh: 觀音出家
+  lunar: ๑๙ ค่ำ เดือน ๙
+  date: 2026-10-28
+  approx: true
+  kind: guanyin
+  note: ๓ วันหลังพิธีเปิดตำหนัก

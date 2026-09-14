@@ -1,0 +1,109 @@
+---
+/**
+ * แถบเวลาเปิด–ปิดวันนี้ + ปุ่มนำทาง
+ * คนกลุ่มที่มาจาก Google มักออกภายใน 30 วินาทีถ้าไม่เจอสองอย่างนี้
+ * จึงต้องอยู่บนหน้าแรกแบบเห็นทันที ไม่ใช่ซ่อนในหน้าติดต่อ
+ *
+ * "วันนี้" คำนวณในเบราว์เซอร์ตามเวลาไทย (เว็บเป็น HTML คงที่ จะ build ค้างไว้ไม่ได้)
+ * ถ้าปิด JavaScript จะเห็นตารางรวมทั้งสัปดาห์แทน ซึ่งตอบคำถามได้เหมือนกัน
+ */
+import site from '../data/site.json';
+import { hoursSummary } from '../lib/hours';
+
+interface Props { compact?: boolean }
+const { compact = false } = Astro.props;
+const weekly = JSON.stringify(site.hours.weekly);
+---
+<div class:list={['hours-bar', compact && 'hours-bar--compact']} data-hours={weekly}>
+  <div class="wrap hours-bar__inner">
+    <p class="hours-bar__text">
+      <span class="hours-bar__dot" data-dot aria-hidden="true"></span>
+      <span data-hours-label>เวลาทำการ</span>
+      <span class="hours-bar__time mono" data-hours-time>{hoursSummary()}</span>
+    </p>
+    <a class="btn btn--ghost hours-bar__btn" href={site.maps_url} target="_blank" rel="noopener">
+      นำทางไปตำหนัก
+    </a>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    for (const el of document.querySelectorAll('[data-hours]')) {
+      var weekly, now;
+      try {
+        weekly = JSON.parse(el.dataset.hours);
+        // เวลาไทยเสมอ ไม่ว่าเครื่องผู้ใช้ตั้งเขตเวลาอะไรไว้
+        now = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Bangkok' }));
+      } catch (e) { continue; }
+
+      var slot = weekly.find(function (s) { return s.day === now.getDay(); });
+      var label = el.querySelector('[data-hours-label]');
+      var time = el.querySelector('[data-hours-time]');
+      var dot = el.querySelector('[data-dot]');
+      if (!label || !time) continue;
+
+      if (!slot) {
+        label.textContent = 'วันนี้ปิด';
+        time.textContent = '';
+        el.dataset.state = 'closed';
+        continue;
+      }
+
+      var mins = now.getHours() * 60 + now.getMinutes();
+      var toMin = function (t) { var p = t.split(':'); return +p[0] * 60 + +p[1]; };
+      var open = mins >= toMin(slot.open) && mins < toMin(slot.close);
+
+      label.textContent = open ? 'เปิดอยู่ตอนนี้' : (mins < toMin(slot.open) ? 'วันนี้เปิด' : 'ปิดแล้ววันนี้ · พรุ่งนี้เปิด');
+      time.textContent = slot.open + '–' + slot.close;
+      el.dataset.state = open ? 'open' : 'shut';
+      if (dot) dot.dataset.on = open ? 'true' : 'false';
+    }
+  })();
+</script>
+
+<style>
+  .hours-bar { background: var(--bar-bg); color: var(--bar-ink); }
+  .hours-bar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    padding-block: 12px;
+    min-height: 60px;
+  }
+  .hours-bar__text {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    margin: 0;
+    font-size: 17px;
+    font-weight: 500;
+    max-width: none;
+  }
+  .hours-bar__time { font-size: 17px; font-weight: 400; opacity: .92; }
+  .hours-bar__dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: currentColor; opacity: .45; flex: none;
+  }
+  .hours-bar__dot[data-on="true"] { opacity: 1; box-shadow: 0 0 0 4px rgba(255, 255, 255, .18); }
+
+  .hours-bar__btn {
+    flex: none;
+    min-height: 44px;
+    padding-inline: 18px;
+    border-color: var(--bar-line);
+    color: var(--bar-ink);
+    font-size: 16px;
+  }
+  .hours-bar__btn:hover { background: color-mix(in oklab, var(--bar-ink) 14%, transparent); border-color: currentColor; }
+
+  .hours-bar--compact .hours-bar__inner { min-height: 52px; padding-block: 9px; }
+
+  @media (max-width: 480px) {
+    .hours-bar__inner { flex-direction: column; align-items: stretch; }
+    .hours-bar__btn { width: 100%; }
+  }
+</style>

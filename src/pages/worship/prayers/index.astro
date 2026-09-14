@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import { getCollection } from 'astro:content';
+const prayers = (await getCollection('prayers')).sort((a, b) => a.data.order - b.data.order);
+---
+<BaseLayout
+  title="บทสวด"
+  description="บทสวดที่ใช้ในตำหนักผู่โถวเจ้าแม่กวนอิม พร้อมตัวจีน คำอ่านไทย และคำแปล"
+  breadcrumbs={[
+    { label: 'หน้าแรก', href: '/' },
+    { label: 'การบูชา', href: '/worship' },
+    { label: 'บทสวด', href: '/worship/prayers' },
+  ]}
+>
+  <PageHero
+    eyebrow="การบูชา"
+    title="บทสวด"
+    lede="สำนวนของแต่ละสำนักไม่ตรงกัน หน้านี้จึงลงเฉพาะฉบับที่ตำหนักผู่โถวใช้จริง พร้อมคำอ่านไทยบรรทัดต่อบรรทัด"
+    narrow
+  />
+  <section class="band">
+    <div class="wrap wrap--narrow">
+      <ul class="plist">
+        {prayers.map((p) => (
+          <li>
+            <a href={`/worship/prayers/${p.id}`}>
+              <span class="plist__th">{p.data.title}</span>
+              {p.data.title_zh && <span class="plist__zh han">{p.data.title_zh}</span>}
+              {p.data.subtitle && <span class="plist__sub">{p.data.subtitle}</span>}
+              {!p.data.verified_by && <span class="plist__tag">รอตรวจสอบ</span>}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .plist { list-style: none; margin: 0; padding: 0; }
+  .plist li { border-top: 1px solid var(--line); }
+  .plist li:last-child { border-bottom: 1px solid var(--line); }
+  .plist a { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 20px 0; text-decoration: none; color: inherit; min-height: 44px; }
+  .plist a:hover .plist__th { color: var(--lacquer); }
+  .plist__th { font-family: var(--serif); font-size: 20px; font-weight: 600; }
+  .plist__zh { font-size: 16px; color: var(--ink-3); }
+  .plist__sub { flex-basis: 100%; font-size: 15.5px; color: var(--ink-2); }
+  .plist__tag { padding: 1px 9px; border: 1px solid var(--line-strong); border-radius: 100px; font-size: 12.5px; color: var(--ink-3); }
+</style>

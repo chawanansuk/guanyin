@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import { getCollection } from 'astro:content';
+import { thaiDate, isoDate } from '../../lib/format';
+const news = (await getCollection('news')).sort((a, b) => +b.data.date - +a.data.date);
+---
+<BaseLayout
+  title="ข่าวสารและกิจกรรม"
+  description="ประกาศ ข่าวสาร และภาพกิจกรรมจากตำหนักผู่โถวเจ้าแม่กวนอิม พุทธมณฑลสาย ๒"
+  breadcrumbs={[{ label: 'หน้าแรก', href: '/' }, { label: 'ข่าวสาร', href: '/news' }]}
+>
+  <PageHero eyebrow="ข่าวสาร" title="ข่าวสารและกิจกรรม" narrow />
+  <section class="band">
+    <div class="wrap wrap--narrow">
+      {news.length > 0 ? (
+        <ul class="list">
+          {news.map((n) => (
+            <li>
+              <a href={`/news/${n.id}`}>
+                <time class="mono" datetime={isoDate(n.data.date)}>{thaiDate(n.data.date, 'short')}</time>
+                <span class="list__t">{n.data.title}</span>
+                {n.data.summary && <span class="list__s">{n.data.summary}</span>}
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="muted">ยังไม่มีข่าวประกาศ</p>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .list { list-style: none; margin: 0; padding: 0; }
+  .list li { border-top: 1px solid var(--line); }
+  .list li:last-child { border-bottom: 1px solid var(--line); }
+  .list a { display: grid; grid-template-columns: 116px 1fr; gap: 4px 18px; padding: 20px 0; text-decoration: none; color: inherit; }
+  .list a:hover .list__t { color: var(--lacquer); }
+  .list time { font-size: 15px; color: var(--ink-3); }
+  .list__t { font-family: var(--serif); font-size: 19px; font-weight: 600; line-height: 1.45; }
+  .list__s { grid-column: 2; font-size: 16px; color: var(--ink-2); line-height: 1.65; }
+  @media (max-width: 560px) { .list a { grid-template-columns: 1fr; } .list__s { grid-column: 1; } }
+</style>

@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+---
+<BaseLayout
+  title="ประมวลภาพ"
+  description="ภาพตำหนักผู่โถวเจ้าแม่กวนอิม องค์ ๓๓ ปาง และบรรยากาศงานพิธี"
+  breadcrumbs={[{ label: 'หน้าแรก', href: '/' }, { label: 'ประมวลภาพ', href: '/gallery' }]}
+>
+  <PageHero
+    eyebrow="ประมวลภาพ"
+    title="ประมวลภาพ"
+    lede="ภาพองค์ ๓๓ ปาง บรรยากาศตำหนัก และภาพงานพิธี"
+    narrow
+  />
+  <section class="band">
+    <div class="wrap wrap--narrow">
+      <div class="note">
+        <p>
+          <strong>คลังภาพกำลังจัดทำ</strong>{' '}
+          ชุดภาพองค์ ๓๓ ปางถ่ายพร้อมกันในคราวเดียวเพื่อให้แสงและมุมกล้องเหมือนกันทุกองค์
+          เมื่อถ่ายเสร็จจะขึ้นที่นี่และที่หน้าปางแต่ละหน้า
+        </p>
+        <p>ระหว่างนี้ดูรายชื่อและความหมายของทุกปางได้ที่<a href="/33-pang">หน้า ๓๓ ปาง</a></p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

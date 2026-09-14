@@ -1,0 +1,207 @@
+# หน้าจอจัดการเนื้อหาสำหรับเจ้าหน้าที่ตำหนัก — เข้าที่ /admin
+# ป้ายทุกช่องเป็นภาษาไทย เพราะคนที่ใช้ไม่ได้อ่านโค้ด
+#
+# ก่อนใช้งานจริงต้องตั้งค่า:
+#   1) เปลี่ยน repo ด้านล่างเป็นชื่อ repo ของตำหนัก
+#   2) ตั้ง OAuth สำหรับ GitHub (ดู docs/CMS.md) — ถ้ายังไม่ได้ตั้ง
+#      ให้ใช้ local_backend ตอนพัฒนา: npx decap-server แล้วเปิด http://localhost:4321/admin
+backend:
+  name: github
+  repo: chawanansuk/guanyin
+  branch: main
+  commit_messages:
+    create: 'เพิ่ม {{collection}} “{{slug}}”'
+    update: 'แก้ไข {{collection}} “{{slug}}”'
+    delete: 'ลบ {{collection}} “{{slug}}”'
+    uploadMedia: 'อัปโหลดภาพ {{path}}'
+    deleteMedia: 'ลบภาพ {{path}}'
+
+local_backend: true
+locale: th
+publish_mode: simple
+
+media_folder: public/images/upload
+public_folder: /images/upload
+
+collections:
+  # ---------- ข่าวสาร: สิ่งที่เจ้าหน้าที่ใช้บ่อยที่สุด ----------
+  - name: news
+    label: ข่าวสารและประกาศ
+    label_singular: ข่าว
+    folder: src/content/news
+    create: true
+    slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
+    summary: '{{date | date("D MMM YYYY")}} — {{title}}'
+    sortable_fields: [date, title]
+    fields:
+      - { name: title, label: หัวข้อข่าว, widget: string }
+      - { name: date, label: วันที่, widget: datetime, format: 'YYYY-MM-DD', date_format: 'D MMMM YYYY', time_format: false }
+      - { name: summary, label: สรุปย่อ (๑–๒ บรรทัด แสดงบนหน้าแรก), widget: text, required: false }
+      - { name: cover, label: ภาพหน้าปก, widget: image, required: false }
+      - { name: pinned, label: ปักหมุดไว้บนสุด, widget: boolean, default: false, required: false }
+      - { name: body, label: เนื้อหา, widget: markdown }
+
+  # ---------- ปฏิทินวันสำคัญ: แก้ปีละครั้ง ----------
+  - name: events
+    label: ปฏิทินวันสำคัญ
+    label_singular: ปีปฏิทิน
+    files:
+      - name: '2569'
+        label: วันสำคัญ พ.ศ. ๒๕๖๙
+        file: src/content/events/2569.yaml
+        fields:
+          - name: events
+            label: รายการวันสำคัญ
+            widget: list
+            fields: &event_fields
+              - { name: id, label: รหัส (ห้ามซ้ำ ห้ามใช้ภาษาไทย), widget: string }
+              - { name: title, label: ชื่อวัน, widget: string }
+              - { name: title_zh, label: ชื่อจีน, widget: string, required: false }
+              - { name: lunar, label: วันตามจันทรคติ เช่น ๑๙ ค่ำ เดือน ๒, widget: string, required: false }
+              - { name: date, label: วันที่สากล, widget: datetime, format: 'YYYY-MM-DD', date_format: 'D MMMM YYYY', time_format: false }
+              - { name: end_date, label: วันสุดท้าย (เฉพาะงานหลายวัน), widget: datetime, format: 'YYYY-MM-DD', date_format: 'D MMMM YYYY', time_format: false, required: false }
+              - { name: approx, label: ยังไม่ได้เทียบปฏิทินจีน (จะแสดงเครื่องหมาย ≈), widget: boolean, default: true }
+              - { name: kind, label: ประเภท, widget: select, options: [{ label: วันเจ้าแม่กวนอิม, value: guanyin }, { label: เทศกาล, value: festival }, { label: งานของตำหนัก, value: shrine }, { label: อื่น ๆ, value: other }], default: other }
+              - { name: featured, label: เน้นเป็นพิเศษ, widget: boolean, default: false, required: false }
+              - { name: note, label: หมายเหตุ, widget: text, required: false }
+      - name: '2570'
+        label: วันสำคัญ พ.ศ. ๒๕๗๐
+        file: src/content/events/2570.yaml
+        fields:
+          - { name: events, label: รายการวันสำคัญ, widget: list, fields: *event_fields }
+
+  # ---------- ข้อมูลตำหนัก: แก้นาน ๆ ครั้ง ----------
+  - name: settings
+    label: ข้อมูลตำหนัก
+    files:
+      - name: site
+        label: ที่อยู่ · เวลาเปิดปิด · ช่องทางติดต่อ
+        file: src/data/site.json
+        fields:
+          - { name: url, label: ที่อยู่เว็บ, widget: hidden }
+          - { name: name_th, label: ชื่อตำหนัก (ไทย), widget: string }
+          - { name: name_zh, label: ชื่อตำหนัก (จีน), widget: string }
+          - { name: name_en, label: ชื่อตำหนัก (อังกฤษ), widget: string }
+          - { name: motto_zh, label: คำมงคล (จีน), widget: string }
+          - { name: motto_th, label: คำมงคล (ไทย), widget: string }
+          - name: couplet
+            label: คำมงคลคู่จากป้ายหน้าตำหนัก
+            widget: list
+            fields:
+              - { name: zh, label: ตัวจีน, widget: string }
+              - { name: th, label: คำแปลไทย, widget: string }
+          - { name: tagline, label: คำบรรยายสั้น, widget: text }
+          - name: address
+            label: ที่อยู่
+            widget: object
+            fields:
+              - { name: street, label: ถนน, widget: string }
+              - { name: locality, label: เขต/อำเภอ, widget: string }
+              - { name: region, label: จังหวัด, widget: string }
+              - { name: postal_code, label: รหัสไปรษณีย์, widget: string }
+              - { name: country, label: ประเทศ, widget: hidden, default: TH }
+              - { name: full_th, label: ที่อยู่เต็มสำหรับแสดงบนเว็บ, widget: string }
+          - name: geo
+            label: พิกัด
+            widget: object
+            fields:
+              - { name: lat, label: ละติจูด, widget: number, value_type: float }
+              - { name: lng, label: ลองจิจูด, widget: number, value_type: float }
+          - { name: maps_url, label: ลิงก์ Google Maps, widget: string }
+          - { name: phone, label: เบอร์โทรศัพท์, widget: string, required: false }
+          - { name: line_oa, label: ลิงก์ไลน์ทางการ, widget: string, required: false }
+          - { name: facebook, label: ลิงก์เพจเฟซบุ๊ก, widget: string, required: false }
+          - { name: email, label: อีเมล, widget: string, required: false }
+          - name: hours
+            label: เวลาทำการ
+            widget: object
+            fields:
+              - { name: note, label: หมายเหตุเรื่องเวลา, widget: string }
+              - name: weekly
+                label: เวลาเปิด–ปิดรายวัน
+                widget: list
+                fields:
+                  - { name: day, label: วัน (0=อาทิตย์ … 6=เสาร์), widget: number, value_type: int, min: 0, max: 6 }
+                  - { name: open, label: เปิด (เช่น 07:00), widget: string }
+                  - { name: close, label: ปิด (เช่น 18:00), widget: string }
+              - { name: closed_dates, label: วันที่ปิดเป็นกรณีพิเศษ, widget: list, required: false }
+          - name: opening_ceremony
+            label: พิธีเปิดตำหนัก
+            widget: object
+            fields:
+              - { name: date, label: วันที่จัดพิธี, widget: datetime, format: 'YYYY-MM-DD', date_format: 'D MMMM YYYY', time_format: false }
+              - { name: headline, label: ชื่องาน, widget: string }
+              - { name: active, label: แสดงบนหน้าแรกจนถึงวันงาน, widget: boolean, default: true }
+          - name: content
+            label: การแสดงเนื้อหา
+            widget: object
+            fields:
+              - { name: require_verified, label: ซ่อนเนื้อหาปางที่ผู้รู้ยังไม่ได้ตรวจ, widget: boolean, default: true }
+              - { name: pang_total, label: จำนวนปางทั้งหมด, widget: hidden, default: 33 }
+              - { name: news_stale_months, label: ซ่อนส่วนข่าวบนหน้าแรกเมื่อข่าวเก่ากว่ากี่เดือน, widget: number, value_type: int, default: 6 }
+          - name: analytics
+            label: สถิติผู้เข้าชม
+            widget: object
+            fields:
+              - { name: provider, label: 'ผู้ให้บริการ (plausible / umami / เว้นว่างไว้)', widget: string, required: false }
+              - { name: domain, label: โดเมนหรือรหัสเว็บไซต์, widget: string, required: false }
+
+  # ---------- ๓๓ ปาง: ปกติกรอกผ่าน Google Sheet แต่แก้ทีละองค์ที่นี่ได้ ----------
+  - name: pang
+    label: ๓๓ ปาง
+    label_singular: ปาง
+    folder: src/content/pang
+    create: false
+    identifier_field: name_th
+    summary: '{{fields.order}} — {{fields.name_th}} {{fields.name_zh}}'
+    sortable_fields: [order, name_th]
+    fields:
+      - { name: order, label: ลำดับ (๑–๓๓), widget: number, value_type: int, min: 1, max: 33 }
+      - { name: slug, label: ชื่อใน URL (ห้ามเปลี่ยนหลังพิมพ์ป้าย QR แล้ว), widget: string, pattern: ['^[a-z0-9-]+$', 'ใช้ได้เฉพาะ a-z 0-9 และ -'] }
+      - { name: name_th, label: ชื่อไทย (ชื่อทั่วไป), widget: string }
+      - { name: name_th_shrine, label: ชื่อไทยตามป้ายในตำหนัก (ถ้าต่างจากชื่อทั่วไป), widget: string, required: false }
+      - { name: name_zh, label: ชื่อจีนตัวเต็ม, widget: string }
+      - { name: name_pinyin, label: พินอิน, widget: string }
+      - { name: name_thai_reading, label: คำอ่านไทย, widget: string }
+      - { name: name_sanskrit, label: ชื่อสันสกฤต, widget: string, required: false }
+      - { name: enshrined, label: ประดิษฐานแล้ว (ปิดไว้ = กำลังอัญเชิญ), widget: boolean, default: true }
+      - { name: shrine_point, label: จุดที่เท่าไรในผังตำหนัก, widget: number, value_type: int, required: false }
+      - { name: attributes, label: ลักษณะเด่น (ถืออะไร ประทับอย่างไร), widget: text }
+      - name: wishes
+        label: หมวดพรที่นิยมขอ (๑–๓ หมวด)
+        widget: select
+        multiple: true
+        min: 1
+        max: 3
+        options:
+          - { label: สุขภาพ · หายป่วย, value: health }
+          - { label: ขอบุตร · ครอบครัว, value: children }
+          - { label: การงาน · การศึกษา, value: career }
+          - { label: ค้าขาย · โชคลาภ, value: trade }
+          - { label: ความรัก · คู่ครอง, value: love }
+          - { label: เดินทางปลอดภัย, value: travel }
+          - { label: คุ้มครอง · แคล้วคลาด, value: protection }
+          - { label: จิตใจสงบ · คลายทุกข์, value: peace }
+      - { name: incense, label: จำนวนธูป ณ จุดนี้, widget: number, value_type: int, min: 1, max: 9, default: 3 }
+      - { name: short_prayer, label: คำอธิษฐานสั้น (แสดงให้คนที่สแกน QR หน้าองค์), widget: text }
+      - { name: photo, label: ชื่อไฟล์ภาพองค์ เช่น pang-01, widget: string, required: false }
+      - { name: photo_detail, label: ชื่อไฟล์ภาพรายละเอียด, widget: string, required: false }
+      - { name: prayer, label: บทสวดประจำปาง (รหัสบทสวด), widget: string, required: false }
+      - { name: sources, label: แหล่งอ้างอิง, widget: list, required: false }
+      - { name: verified_by, label: ผู้รู้ที่ตรวจแล้ว + วันที่ (เว้นว่าง = ยังไม่เผยแพร่เนื้อหายาว), widget: string, required: false }
+      - { name: body, label: ความหมายและเรื่องเล่า (๑๕๐–๓๐๐ คำ), widget: markdown, required: false }
+
+  # ---------- บทสวด ----------
+  - name: prayers
+    label: บทสวด
+    label_singular: บทสวด
+    folder: src/content/prayers
+    create: true
+    fields:
+      - { name: title, label: ชื่อบทสวด (ไทย), widget: string }
+      - { name: title_zh, label: ชื่อบทสวด (จีน), widget: string, required: false }
+      - { name: subtitle, label: คำอธิบายสั้น, widget: string, required: false }
+      - { name: order, label: ลำดับการแสดง, widget: number, value_type: int, default: 99 }
+      - { name: audio, label: ชื่อไฟล์เสียงใน public/audio/, widget: string, required: false }
+      - { name: verified_by, label: ผู้รู้ที่ตรวจแล้ว (เว้นว่าง = ยังไม่เผยแพร่), widget: string, required: false }
+      - { name: body, label: เนื้อบทสวด, widget: markdown }

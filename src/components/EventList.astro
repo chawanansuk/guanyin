@@ -1,0 +1,68 @@
+---
+import { thaiDateRange, daysFromToday, isoDate } from '../lib/format';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  events: CollectionEntry<'events'>[];
+  showPast?: boolean;
+  compact?: boolean;
+}
+const { events, compact = false } = Astro.props;
+const rel = (n: number) =>
+  n === 0 ? 'วันนี้' : n === 1 ? 'พรุ่งนี้' : n > 0 ? `อีก ${n} วัน` : 'ผ่านไปแล้ว';
+---
+<ol class:list={['evt', compact && 'evt--compact']}>
+  {events.map((e) => {
+    const d = e.data;
+    const n = daysFromToday(d.date);
+    return (
+      <li class:list={['evt__row', d.featured && 'evt__row--featured', n < 0 && 'evt__row--past']}>
+        <time class="evt__date mono" datetime={isoDate(d.date)}>
+          {thaiDateRange(d.date, d.end_date)}
+          {d.approx && <abbr class="evt__approx" title="คำนวณจากรอบจันทรคติ รอตำหนักยืนยัน">≈</abbr>}
+        </time>
+        <div class="evt__main">
+          <span class="evt__title">{d.title}</span>
+          {d.title_zh && <span class="evt__zh han">{d.title_zh}</span>}
+          {d.lunar && <span class="evt__lunar">{d.lunar}</span>}
+          {!compact && d.note && <span class="evt__note">{d.note}</span>}
+        </div>
+        <span class="evt__rel mono">{rel(n)}</span>
+      </li>
+    );
+  })}
+</ol>
+
+<style>
+  .evt { list-style: none; margin: 0; padding: 0; }
+  .evt__row {
+    display: grid;
+    grid-template-columns: 190px 1fr auto;
+    gap: 6px 20px;
+    align-items: baseline;
+    padding: 15px 0;
+    border-top: 1px solid var(--line);
+  }
+  .evt__row:last-child { border-bottom: 1px solid var(--line); }
+  .evt__row--featured { border-top: 2px solid var(--lacquer); }
+  .evt__row--featured .evt__title { color: var(--lacquer); font-weight: 600; }
+  .evt__row--past { color: var(--ink-3); }
+  .evt__row--past .evt__title { color: var(--ink-3); }
+
+  .evt__date { font-size: 15.5px; color: var(--ink); white-space: nowrap; }
+  .evt__row--past .evt__date { color: var(--ink-3); }
+  .evt__approx { color: var(--gold); text-decoration: none; margin-left: 4px; cursor: help; }
+
+  .evt__main { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+  .evt__title { font-size: 17px; }
+  .evt__zh { font-size: 14.5px; color: var(--ink-3); }
+  .evt__lunar { font-family: var(--mono); font-size: 13px; color: var(--ink-3); }
+  .evt__note { flex-basis: 100%; font-size: 15px; color: var(--ink-2); line-height: 1.6; }
+
+  .evt__rel { font-size: 13.5px; color: var(--ink-3); white-space: nowrap; }
+
+  @media (max-width: 620px) {
+    .evt__row { grid-template-columns: 1fr auto; }
+    .evt__date { grid-column: 1 / -1; }
+  }
+</style>

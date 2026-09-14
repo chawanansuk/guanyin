@@ -1,0 +1,21 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+.env
+.env.production
+npm-debug.log*
+# ภาพต้นฉบับความละเอียดสูงจากช่างภาพ — ไม่ commit เข้า git
+# (เก็บใน Google Drive ของตำหนัก แล้ว sync ลงเครื่องก่อนรัน npm run images)
+photos-src/**
+!photos-src/.gitkeep
+!photos-src/README.md
+
+# แผ่นพิมพ์ป้าย QR — สร้างใหม่ได้เสมอด้วย npm run qr
+dist-qr/
+
+# ภาพพรีวิวตอนแชร์ — สร้างอัตโนมัติก่อน build ทุกครั้ง (prebuild)
+public/og/*.png
+
+# ภาพย่อที่สร้างจาก photos-src — สร้างใหม่ด้วย npm run images
+public/images/pang/

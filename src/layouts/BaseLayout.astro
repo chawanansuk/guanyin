@@ -1,0 +1,127 @@
+---
+import '../styles/global.css';
+import site from '../data/site.json';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { schemaOpeningHours } from '../lib/hours';
+
+interface Props {
+  title: string;
+  description: string;
+  /** ต่อท้ายชื่อตำหนักอัตโนมัติ ตั้ง false เมื่อ title ยาวอยู่แล้ว (ไลน์ตัดที่ ~40 ตัวอักษร) */
+  suffix?: boolean;
+  ogImage?: string;
+  noindex?: boolean;
+  /** JSON-LD เพิ่มเติมของหน้านั้น ๆ เช่น Event, FAQPage */
+  schema?: unknown[];
+  breadcrumbs?: { label: string; href: string }[];
+  bodyClass?: string;
+}
+const {
+  title, description, suffix = true,
+  ogImage = '/og/default.png', noindex = false,
+  schema = [], breadcrumbs = [], bodyClass,
+} = Astro.props;
+
+const fullTitle = suffix ? `${title} · ${site.name_th}` : title;
+const canonical = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', site.url).href;
+const ogUrl = new URL(ogImage, site.url).href;
+
+const place = {
+  '@context': 'https://schema.org',
+  '@type': 'PlaceOfWorship',
+  '@id': `${site.url}/#shrine`,
+  name: site.name_th,
+  alternateName: [site.name_zh, site.name_en],
+  description: site.tagline,
+  url: site.url,
+  image: ogUrl,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: site.address.street,
+    addressLocality: site.address.locality,
+    addressRegion: site.address.region,
+    postalCode: site.address.postal_code,
+    addressCountry: site.address.country,
+  },
+  geo: { '@type': 'GeoCoordinates', latitude: site.geo.lat, longitude: site.geo.lng },
+  hasMap: site.maps_url,
+  ...(site.phone ? { telephone: site.phone } : {}),
+  openingHoursSpecification: schemaOpeningHours().map((h) => ({
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: h.dayOfWeek,
+    opens: h.opens,
+    closes: h.closes,
+  })),
+};
+
+const crumbs = breadcrumbs.length
+  ? [{
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: breadcrumbs.map((b, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: b.label,
+        item: new URL(b.href, site.url).href,
+      })),
+    }]
+  : [];
+
+const graphs = [place, ...crumbs, ...schema];
+---
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name_th} />
+    <meta property="og:locale" content="th_TH" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@400;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+TC:wght@500;700&display=swap"
+    />
+
+    {graphs.map((g) => (
+      <script type="application/ld+json" set:html={JSON.stringify(g)} />
+    ))}
+    {/* สถิติผู้เข้าชมแบบไม่ใช้คุกกี้ จึงไม่ต้องขึ้นแบนเนอร์ขอความยินยอม
+        ใช้นับสัดส่วน ?src=qr ว่าคนเข้าจากป้ายในตำหนักมากแค่ไหน */}
+    {site.analytics.provider === 'plausible' && site.analytics.domain && (
+      <script defer data-domain={site.analytics.domain} src="https://plausible.io/js/script.js"></script>
+    )}
+    {site.analytics.provider === 'umami' && site.analytics.domain && (
+      <script defer data-website-id={site.analytics.domain} src="https://cloud.umami.is/script.js"></script>
+    )}
+    <slot name="head" />
+  </head>
+  <body class={bodyClass}>
+    <a class="skip" href="#main">ข้ามไปยังเนื้อหา</a>
+    <SiteHeader />
+    <main id="main">
+      <slot />
+    </main>
+    <SiteFooter />
+  </body>
+</html>

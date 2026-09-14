@@ -1,0 +1,104 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import PangCard from '../../components/PangCard.astro';
+import { getCollection } from 'astro:content';
+import { displayName } from '../../lib/pang';
+import site from '../../data/site.json';
+
+export async function getStaticPaths() {
+  const wishes = (await getCollection('wishes')).sort((a, b) => a.data.order - b.data.order);
+  const pang = (await getCollection('pang')).sort((a, b) => a.data.order - b.data.order);
+  return wishes.map((w) => ({
+    params: { id: w.data.id },
+    props: { wish: w, pang: pang.filter((p) => p.data.wishes.includes(w.data.id)), wishes },
+  }));
+}
+
+const { wish, pang, wishes } = Astro.props;
+const w = wish.data;
+const others = wishes.filter((x: any) => x.data.id !== w.id);
+---
+<BaseLayout
+  title={`ขอพร${w.short} ไหว้กวนอิมปางใด`}
+  suffix={false}
+  description={`${w.lede} — ปางที่คนนิยมกราบไหว้เรื่อง${w.short} ที่ตำหนักผู่โถวเจ้าแม่กวนอิม พุทธมณฑลสาย ๒ พร้อมความหมายของแต่ละปาง`}
+  breadcrumbs={[
+    { label: 'หน้าแรก', href: '/' },
+    { label: 'ขอพรเรื่องไหน ไหว้ปางใด', href: '/worship/by-wish' },
+    { label: w.title, href: `/wish/${w.id}` },
+  ]}
+>
+  <PageHero eyebrow="ขอพรเรื่องไหน ไหว้ปางใด" title={w.title} lede={w.lede} />
+
+  <section class="band">
+    <div class="wrap">
+      <p class="intro">{w.intro}</p>
+
+      <div class="section-head">
+        <h2>ปางที่นิยมกราบไหว้เรื่องนี้ <span class="mono count">{pang.length} ปาง</span></h2>
+      </div>
+
+      {pang.length > 0 ? (
+        <div class="grid">
+          {pang.map((p: any, i: number) => <PangCard pang={p} priority={i < 4} />)}
+        </div>
+      ) : (
+        <p class="muted">ยังไม่ได้จัดปางเข้าหมวดนี้</p>
+      )}
+
+      <ul class="reasons">
+        {pang.map((p: any) => (
+          <li>
+            <a class="reasons__name" href={`/33-pang/${p.data.slug}`}>{displayName(p)}</a>
+            <span class="reasons__zh han">{p.data.name_zh}</span>
+            <p class="reasons__why">{p.data.attributes}</p>
+            <p class="reasons__pray">“{p.data.short_prayer}”</p>
+          </li>
+        ))}
+      </ul>
+
+      <div class="note">
+        <p>
+          <strong>การจับคู่ปางกับพรเป็นธรรมเนียมที่สืบต่อกันมา ไม่ใช่กฎตายตัว</strong>{' '}
+          ผู้ที่ศรัทธาปางใดเป็นพิเศษ ย่อมกราบไหว้ปางนั้นในทุกเรื่องได้
+          ที่จัดหมวดไว้นี้เพื่อช่วยผู้ที่มาครั้งแรกให้เริ่มต้นได้ง่ายขึ้น
+        </p>
+      </div>
+
+      <div class="others">
+        <p class="eyebrow">หมวดอื่น</p>
+        <ul class="chips">
+          {others.map((o: any) => (
+            <li><a class="chip" href={`/wish/${o.data.id}`}>{o.data.short}</a></li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .intro { font-family: var(--serif); font-size: 18px; line-height: 1.75; color: var(--ink-2); margin-bottom: 36px; }
+  .count { font-size: 15px; color: var(--ink-3); font-weight: 400; margin-left: 8px; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(186px, 1fr));
+    gap: 1px;
+    background: transparent;
+  }
+  @media (max-width: 430px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+
+  .reasons { list-style: none; margin: 36px 0 0; padding: 0; }
+  .reasons li { padding: 20px 0; border-top: 1px solid var(--line); }
+  .reasons li:last-child { border-bottom: 1px solid var(--line); }
+  .reasons__name { font-family: var(--serif); font-size: 19px; font-weight: 600; text-decoration: none; }
+  .reasons__name:hover { text-decoration: underline; }
+  .reasons__zh { font-size: 15px; color: var(--ink-3); margin-left: 10px; }
+  .reasons__why { margin: 8px 0 0; color: var(--ink-2); }
+  .reasons__pray { margin: 6px 0 0; font-family: var(--serif); color: var(--ink-3); }
+
+  .note { margin-top: 32px; }
+  .others { margin-top: 40px; display: flex; flex-direction: column; gap: 10px; }
+</style>

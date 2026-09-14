@@ -1,0 +1,139 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import PangCard from '../../components/PangCard.astro';
+import { allPang, enshrinedCount } from '../../lib/pang';
+import { getCollection } from 'astro:content';
+import site from '../../data/site.json';
+
+const pang = await allPang();
+const count = enshrinedCount(pang);
+const wishes = (await getCollection('wishes')).sort((a, b) => a.data.order - b.data.order);
+
+const schema = [{
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'เจ้าแม่กวนอิม ๓๓ ปาง',
+  numberOfItems: pang.length,
+  itemListElement: pang.map((p) => ({
+    '@type': 'ListItem',
+    position: p.data.order,
+    name: p.data.name_th_shrine || p.data.name_th,
+    url: `${site.url}/33-pang/${p.data.slug}`,
+  })),
+}];
+---
+<BaseLayout
+  title="เจ้าแม่กวนอิม ๓๓ ปาง — ครบทุกปาง พร้อมความหมาย"
+  suffix={false}
+  description="รวมเจ้าแม่กวนอิมครบทั้ง ๓๓ ปาง ชื่อไทย ชื่อจีน ลักษณะเด่น และพรที่นิยมขอ จากองค์จริงที่ประดิษฐานในตำหนักผู่โถว พุทธมณฑลสาย ๒"
+  schema={schema}
+  breadcrumbs={[{ label: 'หน้าแรก', href: '/' }, { label: '๓๓ ปาง', href: '/33-pang' }]}
+>
+  <PageHero
+    eyebrow="๐๑ — ๓๓"
+    title="เจ้าแม่กวนอิม ๓๓ ปาง"
+    lede="ในสัทธรรมปุณฑรีกสูตร บทสมันตมุขปริวรรต กล่าวว่าพระโพธิสัตว์กวนอิมทรงแสดงพระองค์ตามแต่ผู้ร้องขอจะรับได้ ภายหลังคติจีนจึงประมวลออกเป็น ๓๓ ปาง แต่ละปางมีสิ่งที่ทรงถือ ท่าประทับ และความหมายต่างกัน"
+  >
+    <p class="hero-status mono">
+      ประดิษฐานแล้ว {count.enshrined} องค์ จาก {count.total}
+      {count.pending > 0 && <> · กำลังอัญเชิญอีก {count.pending} องค์</>}
+    </p>
+  </PageHero>
+
+  <section class="band">
+    <div class="wrap">
+      <!-- ตัวกรอง: ไม่มี JS ก็ยังเป็นลิงก์ไปหน้าหมวดพรได้ตามปกติ -->
+      <div class="filter" data-filter>
+        <p class="filter__label eyebrow">ขอพรเรื่อง</p>
+        <ul class="chips">
+          <li><a class="chip chip--filter chip--on" href="/33-pang" data-wish="all" aria-current="true">ทั้งหมด</a></li>
+          {wishes.map((w) => (
+            <li><a class="chip chip--filter" href={`/wish/${w.data.id}`} data-wish={w.data.id}>{w.data.short}</a></li>
+          ))}
+        </ul>
+        <p class="filter__count small muted" data-count hidden></p>
+      </div>
+
+      <div class="pang-grid" data-grid>
+        {pang.map((p, i) => <PangCard pang={p} priority={i < 6} />)}
+      </div>
+
+      <p class="filter__empty" data-empty hidden>ยังไม่มีปางในหมวดนี้</p>
+
+      <div class="after note">
+        <p>
+          <strong>อยากรู้ว่าควรไหว้ปางไหน</strong> — หน้า{' '}
+          <a href="/worship/by-wish">ขอพรเรื่องไหน ไหว้ปางใด</a>{' '}
+          แยกตามสิ่งที่กำลังขอ พร้อมเหตุผลว่าทำไมปางนั้นจึงเกี่ยวข้อง
+        </p>
+        <p>
+          ชื่อไทยของแต่ละปางในไทยมีหลายสำนวน เว็บนี้ยึด<strong>ชื่อจีนเป็นหลัก</strong>{' '}
+          และใช้ชื่อไทยตามที่ป้ายในตำหนักใช้จริง
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script is:inline>
+  (function () {
+    var box = document.querySelector('[data-filter]');
+    var grid = document.querySelector('[data-grid]');
+    if (!box || !grid) return;
+    var chips = box.querySelectorAll('[data-wish]');
+    var countEl = box.querySelector('[data-count]');
+    var emptyEl = document.querySelector('[data-empty]');
+    var cards = grid.querySelectorAll('[data-wishes]');
+
+    function apply(wish, push) {
+      var shown = 0;
+      for (var i = 0; i < cards.length; i++) {
+        var on = wish === 'all' || (' ' + cards[i].dataset.wishes + ' ').indexOf(' ' + wish + ' ') > -1;
+        cards[i].hidden = !on;
+        if (on) shown++;
+      }
+      for (var j = 0; j < chips.length; j++) {
+        var is = chips[j].dataset.wish === wish;
+        chips[j].classList.toggle('chip--on', is);
+        if (is) chips[j].setAttribute('aria-current', 'true');
+        else chips[j].removeAttribute('aria-current');
+      }
+      if (countEl) {
+        countEl.hidden = wish === 'all';
+        countEl.textContent = 'แสดง ' + shown + ' ปาง จาก ' + cards.length;
+      }
+      if (emptyEl) emptyEl.hidden = shown > 0;
+      if (push) history.replaceState(null, '', wish === 'all' ? '/33-pang' : '/33-pang#' + wish);
+    }
+
+    box.addEventListener('click', function (e) {
+      var a = e.target.closest('[data-wish]');
+      if (!a) return;
+      e.preventDefault();
+      apply(a.dataset.wish, true);
+    });
+
+    var hash = location.hash.replace('#', '');
+    if (hash) apply(hash, false);
+  })();
+</script>
+
+<style>
+  .hero-status { margin-top: 16px; font-size: 15.5px; color: var(--celadon); }
+
+  .filter { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+  .filter__label { margin: 0; }
+  .filter__count { margin: 0; }
+  .filter__empty { margin: 28px 0 0; color: var(--ink-3); }
+
+  .pang-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(186px, 1fr));
+    gap: 1px;
+    background: transparent;
+  }
+  @media (max-width: 430px) { .pang-grid { grid-template-columns: repeat(2, 1fr); } }
+
+  .after { margin-top: 32px; }
+</style>

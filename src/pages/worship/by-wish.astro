@@ -1,0 +1,79 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import { getCollection } from 'astro:content';
+import { displayName } from '../../lib/pang';
+import { pangNo } from '../../lib/format';
+
+const wishes = (await getCollection('wishes')).sort((a, b) => a.data.order - b.data.order);
+const pang = (await getCollection('pang')).sort((a, b) => a.data.order - b.data.order);
+const byWish = wishes.map((w) => ({
+  wish: w.data,
+  list: pang.filter((p) => p.data.wishes.includes(w.data.id)),
+}));
+---
+<BaseLayout
+  title="ขอพรเรื่องไหน ไหว้กวนอิมปางใด"
+  suffix={false}
+  description="เลือกจากสิ่งที่กำลังขอ — สุขภาพ ขอบุตร การงาน ค้าขาย ความรัก เดินทาง คุ้มครอง คลายทุกข์ แล้วดูว่าเจ้าแม่กวนอิมปางใดที่คนนิยมกราบไหว้เรื่องนั้น"
+  breadcrumbs={[
+    { label: 'หน้าแรก', href: '/' },
+    { label: 'การบูชา', href: '/worship' },
+    { label: 'ขอพรเรื่องไหน ไหว้ปางใด', href: '/worship/by-wish' },
+  ]}
+>
+  <PageHero
+    eyebrow="การบูชา"
+    title="ขอพรเรื่องไหน ไหว้ปางใด"
+    lede="ใน ๓๓ ปาง แต่ละปางมีสิ่งที่ทรงถือและความหมายต่างกัน คนจึงนิยมกราบปางที่ตรงกับเรื่องที่กำลังขอ เลือกหมวดด้านล่างเพื่อดูรายละเอียดของแต่ละปาง"
+  >
+    <ul class="chips jump">
+      {byWish.map(({ wish }) => (
+        <li><a class="chip" href={`#${wish.id}`}>{wish.short}</a></li>
+      ))}
+    </ul>
+  </PageHero>
+
+  <section class="band">
+    <div class="wrap">
+      {byWish.map(({ wish, list }) => (
+        <section class="wsec" id={wish.id}>
+          <div class="wsec__head">
+            <h2>{wish.title}</h2>
+            <a class="wsec__more" href={`/wish/${wish.id}`}>ดูหมวดนี้เต็ม ›</a>
+          </div>
+          <p class="wsec__lede">{wish.lede}</p>
+          <ul class="wsec__list">
+            {list.map((p) => (
+              <li>
+                <a href={`/33-pang/${p.data.slug}`}>
+                  <span class="wsec__no mono">{pangNo(p.data.order)}</span>
+                  <span class="wsec__name">{displayName(p)}</span>
+                  <span class="wsec__zh han">{p.data.name_zh}</span>
+                </a>
+                <p class="wsec__why">{p.data.short_prayer}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .jump { margin-top: 20px; }
+  .wsec { padding-block: 30px; border-top: 1px solid var(--line); scroll-margin-top: 70px; }
+  .wsec:first-child { border-top: 0; padding-top: 0; }
+  .wsec__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 20px; }
+  .wsec__more { font-size: 15.5px; white-space: nowrap; }
+  .wsec__lede { margin: 8px 0 18px; color: var(--ink-2); }
+  .wsec__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .wsec__list li { background: var(--surface); padding: 15px 17px 17px; display: flex; flex-direction: column; gap: 5px; }
+  .wsec__list a { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; text-decoration: none; color: inherit; }
+  .wsec__list a:hover .wsec__name { color: var(--lacquer); text-decoration: underline; }
+  .wsec__no { font-size: 12px; color: var(--gold); letter-spacing: .1em; }
+  .wsec__name { font-family: var(--serif); font-size: 18px; font-weight: 600; }
+  .wsec__zh { font-size: 14.5px; color: var(--ink-3); }
+  .wsec__why { margin: 0; font-size: 15.5px; line-height: 1.6; color: var(--ink-2); }
+</style>

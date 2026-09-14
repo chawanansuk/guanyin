@@ -1,0 +1,27 @@
+{
+  "name": "guanyin",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "เว็บไซต์ตำหนักผู่โถวเจ้าแม่กวนอิม 普陀觀音堂 พุทธมณฑลสาย 2",
+  "scripts": {
+    "dev": "astro dev",
+    "prebuild": "node scripts/build-og.mjs",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "images": "node scripts/build-images.mjs",
+    "og": "node scripts/build-og.mjs",
+    "lunar": "node scripts/lunar.mjs",
+    "import:sheet": "node scripts/import-sheet.mjs",
+    "qr": "node scripts/build-qr.mjs"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.3.2"
+  },
+  "devDependencies": {
+    "qrcode": "^1.5.4",
+    "sharp": "^0.34.0"
+  }
+}

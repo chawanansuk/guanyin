@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const prayers = await getCollection('prayers');
+  return prayers.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const ready = entry.data.verified_by.trim() !== '';
+---
+<BaseLayout
+  title={`${entry.data.title}${entry.data.title_zh ? ' ' + entry.data.title_zh : ''}`}
+  description={`${entry.data.title} ฉบับที่ใช้ในตำหนักผู่โถวเจ้าแม่กวนอิม พุทธมณฑลสาย ๒`}
+  noindex={!ready}
+  breadcrumbs={[
+    { label: 'หน้าแรก', href: '/' },
+    { label: 'บทสวด', href: '/worship/prayers' },
+    { label: entry.data.title, href: `/worship/prayers/${entry.id}` },
+  ]}
+>
+  <PageHero eyebrow="บทสวด" title={entry.data.title} lede={entry.data.subtitle} narrow>
+    {entry.data.title_zh && <p class="zh han">{entry.data.title_zh}</p>}
+  </PageHero>
+  <section class="band">
+    <div class="wrap wrap--narrow">
+      {entry.data.audio && (
+        <audio class="audio" controls preload="none" src={`/audio/${entry.data.audio}`}>
+          เบราว์เซอร์นี้เล่นเสียงไม่ได้
+        </audio>
+      )}
+      {!ready && (
+        <div class="note note--lacquer">
+          <p><strong>ยังไม่เผยแพร่</strong> บทสวดนี้รอฉบับที่ตำหนักใช้จริง และรอผู้รู้ตรวจสอบคำอ่านก่อน</p>
+        </div>
+      )}
+      <div class="prose body"><Content /></div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .zh { font-size: 26px; font-weight: 700; color: var(--lacquer); margin-top: 12px; letter-spacing: .1em; }
+  .audio { width: 100%; margin-bottom: 26px; }
+  .body { margin-top: 26px; }
+</style>
