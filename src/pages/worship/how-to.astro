@@ -52,7 +52,7 @@ const schema = [{
 
   <section class="band">
     <div class="wrap wrap--narrow">
-      <div class="note note--celadon prep">
+      <div class="note prep">
         <p><strong>เตรียมก่อนมา</strong> แต่งกายสุภาพ ไม่ใส่เสื้อสายเดี่ยวหรือกางเกงขาสั้นเหนือเข่า
         ตำหนักมีธูปเทียนและดอกไม้จำหน่ายที่หน้าตำหนัก ไม่ต้องเตรียมมาก็ได้</p>
       </div>
@@ -60,7 +60,7 @@ const schema = [{
       <ol class="steps">
         {STEPS.map((s, i) => (
           <li>
-            <span class="steps__no mono">{thaiNum(i + 1)}</span>
+            <span class="steps__no numdot">{thaiNum(i + 1)}</span>
             <div>
               <h2>{s.t}</h2>
               <p>{s.d}</p>
@@ -99,9 +99,9 @@ const schema = [{
 <style>
   .prep { margin-bottom: 34px; }
   .steps { list-style: none; margin: 0; padding: 0; }
-  .steps li { display: grid; grid-template-columns: 46px 1fr; gap: 18px; padding: 22px 0; border-top: 1px solid var(--line); }
+  .steps li { display: grid; grid-template-columns: 42px 1fr; gap: 20px; padding: 24px 0; border-top: 1px solid var(--line); align-items: start; }
   .steps li:last-child { border-bottom: 1px solid var(--line); }
-  .steps__no { font-family: var(--serif); font-size: 27px; font-weight: 700; color: var(--lacquer); line-height: 1.1; }
+
   .steps h2 { font-size: 19px; margin-bottom: 5px; }
   .steps p { color: var(--ink-2); }
 

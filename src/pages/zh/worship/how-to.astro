@@ -40,14 +40,14 @@ const schema = [
 
   <section class="band">
     <div class="wrap wrap--narrow">
-      <div class="note note--celadon prep">
+      <div class="note prep">
         <p><strong>前來之前</strong>　請著端莊服裝，遮蓋肩膀與膝蓋。香燭與供花堂前有售，不必自備。</p>
       </div>
 
       <ol class="steps">
         {STEPS.map((s, i) => (
           <li>
-            <span class="steps__no mono">{i + 1}</span>
+            <span class="steps__no numdot">{i + 1}</span>
             <div><h2>{s.t}</h2><p>{s.d}</p></div>
           </li>
         ))}
@@ -77,9 +77,9 @@ const schema = [
   .prep { margin-bottom: 34px; }
   .prep p { line-height: 1.85; }
   .steps { list-style: none; margin: 0; padding: 0; }
-  .steps li { display: grid; grid-template-columns: 46px 1fr; gap: 18px; padding: 22px 0; border-top: 1px solid var(--line); }
+  .steps li { display: grid; grid-template-columns: 42px 1fr; gap: 20px; padding: 24px 0; border-top: 1px solid var(--line); align-items: start; }
   .steps li:last-child { border-bottom: 1px solid var(--line); }
-  .steps__no { font-size: 26px; font-weight: 700; color: var(--lacquer); line-height: 1.1; }
+
   .steps h2 { font-size: 19px; margin-bottom: 5px; }
   .steps p { color: var(--ink-2); line-height: 1.85; }
   .sec-h2 { margin-top: 48px; margin-bottom: 14px; }

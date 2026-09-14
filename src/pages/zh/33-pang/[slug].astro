@@ -42,7 +42,7 @@ const cn = (n: number) => (n <= 10 ? CN_NUM[n] : n < 20 ? `十${CN_NUM[n - 10]}`
     { label: d.name_zh, href: path },
   ]}
 >
-  <aside class="qr">
+  <aside class="qr zone-dark">
     <div class="wrap qr__inner">
       <p class="qr__head">您正站在這尊前嗎</p>
       <p class="qr__incense">
@@ -101,7 +101,7 @@ const cn = (n: number) => (n <= 10 ? CN_NUM[n] : n < 20 ? `十${CN_NUM[n - 10]}`
           </section>
         )}
 
-        <div class="note note--celadon pang__thai">
+        <div class="note pang__thai">
           <p>
             <strong>本尊另有長篇考釋</strong>，述及名號源流、經典依據、流傳故事與造像意涵，
             並附引用出處，約 {words.toLocaleString('en-US')} 字，目前<strong>僅有泰文版</strong>。
@@ -115,7 +115,7 @@ const cn = (n: number) => (n <= 10 ? CN_NUM[n] : n < 20 ? `十${CN_NUM[n - 10]}`
       </div>
     </div>
 
-    <nav class="pang__nav" aria-label="上一尊與下一尊">
+    <nav class="pang__nav zone-dark" aria-label="上一尊與下一尊">
       <div class="wrap pang__nav-inner">
         <a class="pang__nav-link" href={`/zh/33-pang/${prev.data.slug}`}>
           <span class="pang__nav-dir">‹ 上一尊</span>
@@ -132,16 +132,19 @@ const cn = (n: number) => (n <= 10 ? CN_NUM[n] : n < 20 ? `十${CN_NUM[n - 10]}`
 </BaseLayout>
 
 <style>
-  .qr { background: var(--celadon-soft); border-bottom: 1px solid var(--line); }
+  /* แถบสำหรับคนที่สแกน QR ยืนอยู่หน้าองค์ — รักเข้มตัวทอง
+     ของเดิมเป็นเขียวมิ้นต์ซึ่งหลุดจากระบบสองสีของเว็บ */
+  .qr { border-bottom: 1px solid var(--gold-line); }
   .qr__inner { padding-block: 16px; display: flex; flex-direction: column; gap: 3px; }
   .qr__head { font: 600 12px/1.4 var(--mono); letter-spacing: .12em; color: var(--celadon); margin: 0; }
-  .qr__incense { margin: 2px 0 0; font-size: 17px; }
+  .qr__incense { margin: 4px 0 0; font-size: 17.5px; color: var(--ink); }
   .qr__point { color: var(--ink-2); }
-  .qr__pray { margin: 4px 0 0; font-size: 17px; color: var(--ink-2); line-height: 1.75; }
+  .qr__pray { margin: 5px 0 0; font-size: 17.5px; color: var(--ink-2); line-height: 1.8; }
 
   .pang__grid { display: grid; grid-template-columns: minmax(280px, 420px) minmax(0, 1fr); gap: 36px 48px; align-items: start; padding-block: clamp(28px, 5vw, 48px); }
   @media (max-width: 820px) { .pang__grid { grid-template-columns: 1fr; gap: 26px; } }
   .pang__art { position: sticky; top: 68px; }
+  .pang__art :global(.pang-art) { box-shadow: var(--shadow-lift); }
   @media (max-width: 820px) { .pang__art { position: static; } }
   .pang__pending { margin: 10px 0 0; padding: 9px 12px; background: var(--surface-2); border-left: 3px solid var(--line-strong); font-size: 15px; color: var(--ink-2); }
 
@@ -170,14 +173,14 @@ const cn = (n: number) => (n <= 10 ? CN_NUM[n] : n < 20 ? `十${CN_NUM[n - 10]}`
   .pang__thai { margin-top: 32px; }
   .pang__share { margin-top: 30px; padding-top: 22px; border-top: 1px solid var(--line); }
 
-  .pang__nav { border-top: 1px solid var(--line); background: var(--surface); }
+  .pang__nav { border-top: 1px solid var(--gold-line); }
   .pang__nav-inner { display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px 24px; align-items: center; padding-block: 22px; }
   .pang__nav-link { display: flex; flex-direction: column; gap: 2px; text-decoration: none; color: inherit; min-height: 44px; justify-content: center; }
   .pang__nav-link--next { text-align: right; }
-  .pang__nav-dir { font-size: 14px; color: var(--lacquer); }
-  .pang__nav-name { font-size: 16px; color: var(--ink-2); }
-  .pang__nav-link:hover .pang__nav-name { color: var(--ink); }
-  .pang__nav-all { font-size: 15.5px; white-space: nowrap; }
+  .pang__nav-dir { font-size: 13px; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); }
+  .pang__nav-name { font-family: var(--display); font-size: 17px; color: var(--ink-2); margin-top: 3px; transition: color .3s var(--ease-lux); }
+  .pang__nav-link:hover .pang__nav-name { color: var(--gold-pale); }
+  .pang__nav-all { font-size: 15.5px; white-space: nowrap; color: var(--gold); text-decoration: none; border-bottom: 1px solid var(--gold-line); padding-bottom: 2px; }
   @media (max-width: 560px) {
     .pang__nav-inner { grid-template-columns: 1fr 1fr; }
     .pang__nav-all { grid-column: 1 / -1; grid-row: 1; text-align: center; }

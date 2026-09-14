@@ -20,10 +20,10 @@ const root = fileURLToPath(new URL('..', import.meta.url));
 const OUT = join(root, 'public', 'og');
 const W = 1200, H = 630;
 
-// สีเดียวกับป้ายหน้าตำหนัก: ทองบนแดงชาด
+// ชุดเดียวกับฮีโร่ของเว็บ: รักแดงเข้ม ตัวอักษรทองโลหะ
 const C = {
-  plaque: '#B5171A', plaque2: '#9C1316', line: 'rgba(248,225,164,.42)',
-  ink: '#FFF3D6', ink2: '#EFCE86', gold: '#F1C75C', lacquer: '#FFD9A8',
+  plaque: '#2A1015', plaque2: '#0F0608', line: 'rgba(242,220,166,.34)',
+  ink: '#F7F3EC', ink2: '#C0A98D', gold: '#D8A93F', pale: '#F2DCA6',
 };
 // ระบุหลายตัวเพราะแต่ละเครื่อง/แต่ละ CI มีฟอนต์ไม่เหมือนกัน
 const TH = 'Noto Serif Thai, Noto Sans Thai, Loma, Garuda, TH Sarabun New, sans-serif';
@@ -49,19 +49,36 @@ const thaiNum = (n) => String(n).replace(/\d/g, (d) => THAI_DIGITS[+d]);
 function card({ no, th, zh, py, footer, accent = C.gold }) {
   const hasArt = Boolean(zh);
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
-  <rect width="${W}" height="${H}" fill="${C.plaque}"/>
-  <rect x="0" y="0" width="${W}" height="14" fill="${C.gold}"/>
-  <rect x="0" y="${H - 14}" width="${W}" height="14" fill="${C.gold}"/>
-  <rect x="30" y="30" width="${W - 60}" height="${H - 60}" fill="none" stroke="${C.line}" stroke-width="2"/>
-  <rect x="38" y="38" width="${W - 76}" height="${H - 76}" fill="none" stroke="${C.line}" stroke-width="1" opacity=".6"/>
-  ${hasArt ? `<g opacity=".15"><text x="${W - 96}" y="430" text-anchor="end" font-family="${ZH}" font-size="300" font-weight="700" fill="${accent}">${esc(zh[0])}</text></g>` : ''}
-  ${no ? `<text x="86" y="132" font-family="monospace" font-size="34" letter-spacing="10" fill="${C.ink2}">${esc(no)}</text>` : ''}
-  <text x="86" y="${no ? 268 : 250}" font-family="${TH}" font-size="76" font-weight="700" fill="${C.ink}">${esc(th)}</text>
-  ${zh ? `<text x="86" y="${no ? 356 : 338}" font-family="${ZH}" font-size="54" font-weight="700" fill="${accent}">${esc(zh)}</text>` : ''}
-  ${py ? `<text x="86" y="${no ? 410 : 392}" font-family="serif" font-size="30" font-style="italic" fill="${C.ink2}">${esc(py)}</text>` : ''}
-  <line x1="86" y1="${H - 132}" x2="${W - 86}" y2="${H - 132}" stroke="${C.line}" stroke-width="1.5"/>
-  <text x="86" y="${H - 86}" font-family="${ZH}" font-size="30" font-weight="700" letter-spacing="6" fill="${C.gold}">普陀觀音堂</text>
-  <text x="86" y="${H - 48}" font-family="${TH}" font-size="25" fill="${C.ink2}">${esc(footer)}</text>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${C.plaque}"/><stop offset="100%" stop-color="${C.plaque2}"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="24%" cy="10%" r="62%">
+      <stop offset="0%" stop-color="rgba(216,169,63,.20)"/><stop offset="100%" stop-color="rgba(216,169,63,0)"/>
+    </radialGradient>
+    <!-- ทองโลหะเจ็ดจุดสี ชุดเดียวกับที่ใช้ในเว็บ -->
+    <linearGradient id="foil" x1="0" y1="0" x2="1" y2="0.25">
+      <stop offset="0%" stop-color="#8A6A1E"/>
+      <stop offset="22%" stop-color="#D8A93F"/>
+      <stop offset="38%" stop-color="#FBF3C4"/>
+      <stop offset="52%" stop-color="#C99B34"/>
+      <stop offset="68%" stop-color="#F2DCA6"/>
+      <stop offset="85%" stop-color="#A87F22"/>
+      <stop offset="100%" stop-color="#D8A93F"/>
+    </linearGradient>
+  </defs>
+  <rect width="${W}" height="${H}" fill="url(#bg)"/>
+  <rect width="${W}" height="${H}" fill="url(#glow)"/>
+  ${hasArt ? `<g opacity=".10"><text x="${W - 76}" y="452" text-anchor="end" font-family="${ZH}" font-size="330" font-weight="700" fill="${C.gold}">${esc(zh[0])}</text></g>` : ''}
+  <rect x="30" y="30" width="${W - 60}" height="${H - 60}" fill="none" stroke="${C.line}" stroke-width="1.5"/>
+  <rect x="39" y="39" width="${W - 78}" height="${H - 78}" fill="none" stroke="${C.line}" stroke-width="0.8" opacity=".55"/>
+  ${no ? `<text x="84" y="136" font-family="${TH}" font-size="26" letter-spacing="7" fill="${C.gold}">${esc(no)}</text>` : ''}
+  <text x="84" y="${no ? 278 : 262}" font-family="${TH}" font-size="74" font-weight="600" fill="${C.ink}">${esc(th)}</text>
+  ${zh ? `<text x="84" y="${no ? 372 : 356}" font-family="${ZH}" font-size="58" font-weight="700" fill="url(#foil)">${esc(zh)}</text>` : ''}
+  ${py ? `<text x="84" y="${no ? 424 : 408}" font-family="serif" font-size="28" font-style="italic" fill="${C.ink2}">${esc(py)}</text>` : ''}
+  <line x1="84" y1="${H - 134}" x2="${W - 84}" y2="${H - 134}" stroke="${C.line}" stroke-width="1"/>
+  <text x="84" y="${H - 88}" font-family="${ZH}" font-size="30" font-weight="700" letter-spacing="7" fill="url(#foil)">普陀觀音堂</text>
+  <text x="84" y="${H - 48}" font-family="${TH}" font-size="24" fill="${C.ink2}">${esc(footer)}</text>
 </svg>`;
 }
 

@@ -13,10 +13,10 @@ const v = (site as any).video as
 const mb = v?.bytes ? (v.bytes / 1_048_576).toFixed(1) : null;
 ---
 {v?.file && (
-  <section class="band band--sunk">
+  <section class="band zone-dark">
     <div class="wrap">
       <div class="section-head">
-        <p class="eyebrow">ภาพเคลื่อนไหว</p>
+        <p class="eyebrow eyebrow--marked">ภาพเคลื่อนไหว</p>
         <h2>{v.title}</h2>
       </div>
       <figure class="vid">
@@ -46,8 +46,10 @@ const mb = v?.bytes ? (v.bytes / 1_048_576).toFixed(1) : null;
     width: 100%;
     height: auto;
     aspect-ratio: 16 / 9;
-    background: var(--plaque);
-    border: 1px solid var(--line);
+    background: #0F0608;
+    border: 0;
+    border-radius: var(--radius);
+    box-shadow: 0 0 0 1px var(--gold-line), var(--shadow-lift);
     display: block;
   }
   .vid figcaption { font-size: 15.5px; color: var(--ink-2); line-height: 1.65; }

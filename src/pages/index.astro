@@ -16,6 +16,15 @@ import { thaiDate, daysFromToday, isoDate, parseDay } from '../lib/format';
 const pang = await allPang();
 const count = enshrinedCount(pang);
 
+const wishes = (await getCollection('wishes')).sort((a, b) => a.data.order - b.data.order);
+// หน้าแรกโชว์ ๘ องค์ หนึ่งองค์ต่อหนึ่งหมวดพร ไม่ใช่เรียงเลข ๑–๘
+// เพราะต้องการให้เห็นความหลากหลายของชุด ไม่ใช่จุดเริ่มของลำดับ
+const featured: typeof pang = [];
+for (const w of wishes) {
+  const pick = pang.find((p) => p.data.wishes.includes(w.data.id) && !featured.includes(p));
+  if (pick) featured.push(pick);
+}
+
 const events = (await getCollection('events')).sort((a, b) => +a.data.date - +b.data.date);
 const upcoming = events.filter((e) => daysFromToday(e.data.end_date ?? e.data.date) >= 0).slice(0, 3);
 
@@ -75,7 +84,7 @@ const schema = preOpening
       <h1 class="hero__name han foil foil--live">{site.name_zh}</h1>
       <p class="hero__th">{site.name_th}</p>
 
-      <hr class="rule-gold hero__rule" />
+      <div class="hero__orn"><Ornament /></div>
 
       <p class="hero__motto">
         <span class="han carved">{site.motto_zh}</span>
@@ -149,65 +158,79 @@ const schema = preOpening
     </div>
   </section>
 
-  <!-- ตาราง ๓๓ ปาง -->
-  <section class="band band--sunk">
+  <!-- ๘ องค์เด่น: ตู้จัดแสดงบนพื้นรักเข้ม ไม่ใช่กำแพงซุ้ม ๓๓ ช่อง
+       ๓๓ ช่องที่หน้าตาเหมือนกันหมดทำให้หน้าแรกอ่านเป็นตารางที่ยังไม่ได้ใส่ของ -->
+  <section class="band zone-dark featured">
     <div class="wrap">
-      <div class="section-head">
-        <p class="eyebrow eyebrow--marked">๐๑ — ๓๓</p>
-        <h2>องค์เจ้าแม่กวนอิมในตำหนัก</h2>
+      <div class="section-head section-head--row">
+        <div>
+          <p class="eyebrow eyebrow--marked">๐๑ — ๓๓</p>
+          <h2>องค์เจ้าแม่กวนอิมในตำหนัก</h2>
+        </div>
+        <a class="btn btn--ghost" href="/33-pang">ดูครบทั้ง ๓๓ ปาง</a>
       </div>
+      <p class="featured__lede">
+        เลือกมาหมวดพรละหนึ่งองค์ จากทั้งหมด {count.total} องค์
+      </p>
+
       <div class="pang-grid">
-        {pang.map((p, i) => <PangCard pang={p} priority={i < 6} />)}
+        {featured.map((p, i) => <PangCard pang={p} priority={i < 4} />)}
       </div>
     </div>
   </section>
 
   <VideoBand />
 
-  <!-- วันสำคัญ -->
-  {upcoming.length > 0 && (
+  <!-- วันสำคัญ + ข่าว อยู่แถบเดียวกัน — ทั้งคู่คือ "มีอะไรใหม่" เหมือนกัน
+       แยกเป็นสองแถบทำให้หน้าแรกยืดและจังหวะเท่ากันไปหมด -->
+  {(upcoming.length > 0 || freshNews.length > 0) && (
     <section class="band">
+      <div class="seam"><span class="seam__mark"><Ornament variant="mark" size={22} /></span></div>
       <div class="wrap">
-        <div class="section-head section-head--row">
-          <div>
-            <p class="eyebrow eyebrow--marked">ปฏิทิน</p>
-            <h2>วันสำคัญถัดไป</h2>
-          </div>
-          <a class="btn btn--ghost" href="/calendar">ปฏิทินทั้งปี</a>
-        </div>
-        <EventList events={upcoming} compact />
-      </div>
-    </section>
-  )}
+        <div class="news-cols">
+          {upcoming.length > 0 && (
+            <div>
+              <div class="section-head section-head--row">
+                <div>
+                  <p class="eyebrow eyebrow--marked">ปฏิทิน</p>
+                  <h2>วันสำคัญถัดไป</h2>
+                </div>
+                <a class="link-gold" href="/calendar">ปฏิทินทั้งปี ›</a>
+              </div>
+              <EventList events={upcoming} compact />
+            </div>
+          )}
 
-  <!-- ข่าว -->
-  {freshNews.length > 0 && (
-    <section class="band band--sunk">
-      <div class="wrap">
-        <div class="section-head section-head--row">
-          <div>
-            <p class="eyebrow eyebrow--marked">ข่าวสาร</p>
-            <h2>ประกาศจากตำหนัก</h2>
-          </div>
-          <a class="btn btn--ghost" href="/news">ข่าวทั้งหมด</a>
+          {freshNews.length > 0 && (
+            <div>
+              <div class="section-head section-head--row">
+                <div>
+                  <p class="eyebrow eyebrow--marked">ข่าวสาร</p>
+                  <h2>ประกาศจากตำหนัก</h2>
+                </div>
+                <a class="link-gold" href="/news">ข่าวทั้งหมด ›</a>
+              </div>
+              <ul class="news-list">
+                {freshNews.map((n) => (
+                  <li>
+                    <a href={`/news/${n.id}`}>
+                      <time class="mono" datetime={isoDate(n.data.date)}>{thaiDate(n.data.date, 'short')}</time>
+                      <span class="news-list__title">{n.data.title}</span>
+                      {n.data.summary && <span class="news-list__sum">{n.data.summary}</span>}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
-        <ul class="news-list">
-          {freshNews.map((n) => (
-            <li>
-              <a href={`/news/${n.id}`}>
-                <time class="mono" datetime={isoDate(n.data.date)}>{thaiDate(n.data.date, 'short')}</time>
-                <span class="news-list__title">{n.data.title}</span>
-                {n.data.summary && <span class="news-list__sum">{n.data.summary}</span>}
-              </a>
-            </li>
-          ))}
-        </ul>
       </div>
     </section>
   )}
 
   <!-- แผนที่ + ที่อยู่ -->
-  <section class="band">
+  <section class="band zone-dark">
+    <div class="seam"><span class="seam__mark"><Ornament variant="mark" size={22} /></span></div>
     <div class="wrap">
       <div class="section-head">
         <p class="eyebrow eyebrow--marked">การเดินทาง</p>
@@ -265,7 +288,7 @@ const schema = preOpening
     color: var(--ink-2);
   }
 
-  .hero__rule { width: min(360px, 76%); margin: 30px 0 0; }
+  .hero__orn { width: min(420px, 80%); margin: 30px 0 0; }
 
   .hero__motto {
     display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline;
@@ -304,6 +327,15 @@ const schema = preOpening
   /* ---------- bands ---------- */
   .band--sunk { background: var(--surface-2); }
   .band--sunk + .band, .band + .band--sunk { border-top: 0; }
+  /* โซนมืดเป็นก้อนของตัวเอง ไม่ต้องมีเส้นคั่นซ้อนอีก */
+  .band.zone-dark { border-top: 0; }
+  .band.zone-dark + .band { border-top: 0; }
+
+  /* ๙ ส่วนเด่นสูงกว่าส่วนรอง เพื่อให้หน้ามีจังหวะ ไม่ใช่บล็อกระยะเท่ากันหมด */
+  .featured { padding-block: clamp(52px, 8vw, 92px); }
+  .featured__lede { margin: -8px 0 26px; color: var(--ink-3); font-size: 15.5px; }
+
+  .news-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 44px 56px; }
   .section-head--row {
     flex-direction: row;
     align-items: flex-end;
@@ -323,13 +355,14 @@ const schema = preOpening
   @media (max-width: 780px) { .intro { grid-template-columns: 1fr; } }
 
   /* ---------- grid ---------- */
+  /* ๘ ใบพอดีสองแถวบนจอกว้าง และสองคอลัมน์บนมือถือ */
   .pang-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(178px, 1fr));
-    gap: 1px;
-    background: transparent;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
   }
-  @media (max-width: 420px) { .pang-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 900px) { .pang-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; } }
+  @media (max-width: 560px) { .pang-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
 
   /* ---------- news ---------- */
   .news-list { list-style: none; margin: 0; padding: 0; }
