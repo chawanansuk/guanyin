@@ -54,7 +54,12 @@ const place = {
     postalCode: site.address.postal_code,
     addressCountry: site.address.country,
   },
-  geo: { '@type': 'GeoCoordinates', latitude: site.geo.lat, longitude: site.geo.lng },
+  // พิกัดยังเป็นค่าประมาณ จึงยังไม่ส่งเข้า structured data —
+  // ส่งพิกัดผิดแย่กว่าไม่ส่งเลย เพราะ Google จะปักหมุดผิดที่
+  // ให้ตั้ง geo.verified = true ใน site.json เมื่อได้พิกัดจริงจากหมุดของตำหนัก
+  ...(site.geo.verified
+    ? { geo: { '@type': 'GeoCoordinates', latitude: site.geo.lat, longitude: site.geo.lng } }
+    : {}),
   hasMap: site.maps_url,
   ...(site.phone ? { telephone: site.phone } : {}),
   openingHoursSpecification: schemaOpeningHours().map((h) => ({
