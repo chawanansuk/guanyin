@@ -28,6 +28,11 @@ public/images/pang/*
 !public/images/pang/shrine-exterior-*.webp
 !public/images/pang/pang-*.webp
 
-# ภาพปกวิดีโอ — สร้างอัตโนมัติพร้อมภาพแชร์
-public/video/poster.png
-public/video/poster.jpg
+# วิดีโอต้นฉบับความละเอียดเต็ม — ไฟล์ใหญ่ ไม่ commit
+# ยกเว้นคลิปที่เว็บใช้อยู่จริง เพราะยังไม่มีคลังกลางให้ sync
+video-src/**
+!video-src/README.md
+!video-src/shrine.mp4
+
+# ไฟล์วิดีโอกับภาพปกที่ใช้บนเว็บ สร้างใหม่ได้ด้วย npm run video
+# แต่ commit ไว้ เพราะเครื่องที่ deploy ไม่มี ffmpeg และไม่มีต้นฉบับ

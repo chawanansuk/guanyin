@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import HoursBar from '../../components/HoursBar.astro';
 import PangCard from '../../components/PangCard.astro';
 import VisitPanel from '../../components/VisitPanel.astro';
+import VideoBand from '../../components/VideoBand.astro';
 import Ornament from '../../components/Ornament.astro';
 import ShrinePhoto from '../../components/ShrinePhoto.astro';
 import photos from '../../data/photos.json';
@@ -32,7 +33,7 @@ const hasFacade = 'shrine-exterior' in (photos.images as Record<string, unknown>
   suffix={false}
   description="供奉觀音菩薩三十三法相的道場，位於曼谷佛城二段路。三十三法相之名號、辨識標記與要旨，開放時間與交通資訊。"
 >
-  <section class:list={['hero zone-dark zone-dark--ox', hasFacade && 'hero--photo']}>
+  <section class:list={['hero zone-gilt', hasFacade && 'hero--photo']}>
     {hasFacade && (
       <div class="hero__photo">
         <ShrinePhoto
@@ -43,10 +44,11 @@ const hasFacade = 'shrine-exterior' in (photos.images as Record<string, unknown>
       </div>
     )}
     <div class="wrap hero__inner">
-      <div class="zh-plaque">
-        <span class="zh-plaque__prefix han eyebrow">佛城二段</span>
-        <h1 class="zh-plaque__zh han foil foil--live">{site.name_zh}</h1>
-        <span class="zh-plaque__th han">觀音菩薩三十三法相</span>
+      {/* ชื่อตำหนักเป็นป้ายชาดอักษรทอง รูปเดียวกับป้ายจริงบนอาคาร */}
+      <div class="plaque-board hero__plaque">
+        <span class="plaque-board__prefix han">佛城二段</span>
+        <h1 class="plaque-board__zh han foil foil--live">{site.name_zh}</h1>
+        <span class="plaque-board__th han">觀音菩薩三十三法相</span>
       </div>
 
       <p class="hero__motto han">{site.motto_zh}</p>
@@ -158,6 +160,8 @@ const hasFacade = 'shrine-exterior' in (photos.images as Record<string, unknown>
     </section>
   )}
 
+  <VideoBand lang={lang} />
+
   <section class="band band--sunk">
     <div class="wrap">
       <div class="section-head">
@@ -177,7 +181,7 @@ const hasFacade = 'shrine-exterior' in (photos.images as Record<string, unknown>
      มิฉะนั้นจะเสียสันหลังคามังกรหรือประตูทองไปอย่างใดอย่างหนึ่ง */
   .hero__photo {
     position: relative;
-    width: min(100% - 32px, 900px, 74vh * 1.407);
+    width: min(100% - 32px, 760px, 58vh * 1.407);
     margin: clamp(28px, 5vw, 52px) auto 0;
   }
   .hero__photo :global(.shrine-photo) {
@@ -185,10 +189,10 @@ const hasFacade = 'shrine-exterior' in (photos.images as Record<string, unknown>
     aspect-ratio: 1086 / 772 !important;
     border-radius: 3px;
     box-shadow:
-      0 0 0 1px rgba(242, 220, 166, .30),
-      0 0 0 6px rgba(11, 7, 8, .55),
-      0 0 0 7px rgba(216, 169, 63, .16),
-      0 26px 60px -18px rgba(0, 0, 0, .78);
+      0 0 0 1px rgba(142, 106, 22, .34),
+      0 0 0 7px #FFFDF8,
+      0 0 0 9px rgba(216, 169, 63, .55),
+      0 22px 48px -20px rgba(90, 62, 20, .38);
   }
   .hero__inner {
     position: relative;
@@ -196,12 +200,7 @@ const hasFacade = 'shrine-exterior' in (photos.images as Record<string, unknown>
     display: flex; flex-direction: column; align-items: center; text-align: center;
   }
   .hero--photo .hero__inner { padding-block: clamp(26px, 4.5vw, 44px) clamp(36px, 6vw, 60px); }
-  .zh-plaque { display: flex; flex-direction: column; align-items: center; }
-  .zh-plaque__prefix { color: var(--gold); letter-spacing: .38em; padding-right: .38em; }
-  .zh-plaque__zh { margin: 22px 0 0; font-weight: 700; font-size: clamp(46px, 12vw, 108px); letter-spacing: .12em; padding-left: .12em; line-height: 1.1; }
-  /* ป้ายในภาพประกาศชื่อไปแล้ว ชื่อใหญ่ใต้ภาพจึงไม่ต้องตะโกนซ้ำ */
-  .hero--photo .zh-plaque__zh { font-size: clamp(38px, 7.4vw, 68px); margin-top: 16px; }
-  .zh-plaque__th { margin: 16px 0 0; font-size: clamp(16px, 2.4vw, 21px); letter-spacing: .16em; color: var(--ink-2); }
+  .hero__plaque { margin-top: 4px; }
   .hero__motto { margin: 26px 0 0; font-size: 16px; letter-spacing: .3em; padding-left: .3em; color: var(--gold); }
   .hero__lede { margin: 18px 0 0; max-width: 38ch; font-size: clamp(16.5px, 2.2vw, 19px); line-height: 1.85; color: var(--ink-2); }
   .hero__cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 28px; }

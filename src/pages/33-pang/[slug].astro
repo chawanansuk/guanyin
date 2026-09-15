@@ -47,7 +47,7 @@ const description =
   ]}
 >
   <!-- บล็อกสำหรับคนที่สแกน QR จากในตำหนัก: ตอบคำถามที่ถามตอนยืนอยู่หน้าองค์ -->
-  <aside class="qr zone-dark">
+  <aside class="qr zone-gilt">
     <div class="wrap qr__inner">
       <p class="qr__head">ยืนอยู่หน้าองค์นี้ใช่ไหม</p>
       <p class="qr__incense">
@@ -157,7 +157,7 @@ const description =
       </div>
     </div>
 
-    <nav class="pang__nav zone-dark" aria-label="ปางก่อนหน้าและถัดไป">
+    <nav class="pang__nav zone-gilt" aria-label="ปางก่อนหน้าและถัดไป">
       <div class="wrap pang__nav-inner">
         <a class="pang__nav-link pang__nav-link--prev" href={`/33-pang/${prev.data.slug}`}>
           <span class="pang__nav-dir">‹ ปางก่อนหน้า</span>
@@ -177,12 +177,14 @@ const description =
   /* ---------- แถบ QR ---------- */
   /* แถบสำหรับคนที่สแกน QR ยืนอยู่หน้าองค์ — รักเข้มตัวทอง
      ของเดิมเป็นเขียวมิ้นต์ซึ่งหลุดจากระบบสองสีของเว็บ */
-  .qr { border-bottom: 1px solid var(--gold-line); }
+  /* แถบ "ยืนอยู่หน้าองค์นี้ใช่ไหม" — คนสแกน QR หน้าองค์จะเห็นแถบนี้ก่อน
+     ขลิบทองบนล่างให้อ่านเป็นป้ายติดผนัง ไม่ใช่กล่องแจ้งเตือน */
+  .qr { border-top: 1px solid var(--gold-bright); border-bottom: 1px solid var(--gold-bright); }
   .qr__inner { padding-block: 16px; display: flex; flex-direction: column; gap: 3px; }
   .qr__head {
     font: 600 12px/1.4 var(--mono);
     letter-spacing: .12em; text-transform: uppercase;
-    color: var(--celadon); margin: 0;
+    color: var(--gold); margin: 0;
   }
   .qr__incense { margin: 4px 0 0; font-size: 17.5px; color: var(--ink); }
   .qr__incense strong { font-weight: 600; }
@@ -284,7 +286,7 @@ const description =
   .pang__nav-link--next { text-align: right; }
   .pang__nav-dir { font-size: 13px; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); }
   .pang__nav-name { font-family: var(--display); font-size: 17px; color: var(--ink-2); margin-top: 3px; transition: color .3s var(--ease-lux); }
-  .pang__nav-link:hover .pang__nav-name { color: var(--gold-pale); }
+  .pang__nav-link:hover .pang__nav-name { color: var(--lacquer); }
   .pang__nav-all { font-size: 15.5px; white-space: nowrap; color: var(--gold); text-decoration: none; border-bottom: 1px solid var(--gold-line); padding-bottom: 2px; }
 
   @media (max-width: 560px) {

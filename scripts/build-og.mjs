@@ -20,10 +20,13 @@ const root = fileURLToPath(new URL('..', import.meta.url));
 const OUT = join(root, 'public', 'og');
 const W = 1200, H = 630;
 
-// ชุดเดียวกับฮีโร่ของเว็บ: รักแดงเข้ม ตัวอักษรทองโลหะ
+// ชุดเดียวกับเว็บ: ผนังปูนขาว ป้ายชาด ตัวอักษรทอง
 const C = {
-  plaque: '#2A1015', plaque2: '#0F0608', line: 'rgba(242,220,166,.34)',
-  ink: '#F7F3EC', ink2: '#C0A98D', gold: '#D8A93F', pale: '#F2DCA6',
+  bg: '#FDFAF4', bg2: '#F3E7D0',
+  line: 'rgba(134,99,18,.34)', rule: 'rgba(134,99,18,.22)',
+  ink: '#241813', ink2: '#7A6650',
+  gold: '#866312', goldBright: '#D8A93F', pale: '#F6E3B0',
+  plaque: '#A0201C', plaque2: '#7C1512',
 };
 // ระบุหลายตัวเพราะแต่ละเครื่อง/แต่ละ CI มีฟอนต์ไม่เหมือนกัน
 const TH = 'Noto Serif Thai, Noto Sans Thai, Loma, Garuda, TH Sarabun New, sans-serif';
@@ -74,47 +77,54 @@ function card({ no, th, zh, py, footer, accent = C.gold, photo = null, photoNote
   const ftSize = fitSize(footer, textW, 24);
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+    <linearGradient id="bg" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0%" stop-color="${C.bg}"/><stop offset="100%" stop-color="${C.bg2}"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="22%" cy="8%" r="64%">
+      <stop offset="0%" stop-color="rgba(255,255,255,.85)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </radialGradient>
+    <linearGradient id="plaque" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="${C.plaque}"/><stop offset="100%" stop-color="${C.plaque2}"/>
     </linearGradient>
-    <radialGradient id="glow" cx="24%" cy="10%" r="62%">
-      <stop offset="0%" stop-color="rgba(216,169,63,.20)"/><stop offset="100%" stop-color="rgba(216,169,63,0)"/>
-    </radialGradient>
     <!-- ทองโลหะเจ็ดจุดสี ชุดเดียวกับที่ใช้ในเว็บ -->
+    <!-- ทองบนป้ายชาด ทุกจุดสีต้องสว่าง จุดสีเข้มจะจมหายไปกับพื้นแดง -->
     <linearGradient id="foil" x1="0" y1="0" x2="1" y2="0.25">
-      <stop offset="0%" stop-color="#8A6A1E"/>
-      <stop offset="22%" stop-color="#D8A93F"/>
-      <stop offset="38%" stop-color="#FBF3C4"/>
-      <stop offset="52%" stop-color="#C99B34"/>
-      <stop offset="68%" stop-color="#F2DCA6"/>
-      <stop offset="85%" stop-color="#A87F22"/>
-      <stop offset="100%" stop-color="#D8A93F"/>
+      <stop offset="0%" stop-color="#D8A93F"/>
+      <stop offset="18%" stop-color="#F2DCA6"/>
+      <stop offset="34%" stop-color="#FFF8DE"/>
+      <stop offset="50%" stop-color="#E4C070"/>
+      <stop offset="66%" stop-color="#FBF3C4"/>
+      <stop offset="84%" stop-color="#D2A340"/>
+      <stop offset="100%" stop-color="#F2DCA6"/>
     </linearGradient>
-    <!-- ขอบซ้ายของภาพต้องจมเข้าพื้นรัก ไม่งั้นจะเห็นเป็นภาพแปะทับการ์ด -->
+    <!-- ขอบซ้ายของภาพต้องจมเข้าพื้นผนัง ไม่งั้นจะเห็นเป็นภาพแปะทับการ์ด -->
     <linearGradient id="seam" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="${C.plaque}"/>
-      <stop offset="100%" stop-color="rgba(42,16,21,0)"/>
+      <stop offset="0%" stop-color="${C.bg2}"/>
+      <stop offset="100%" stop-color="rgba(243,231,208,0)"/>
     </linearGradient>
   </defs>
   <rect width="${W}" height="${H}" fill="url(#bg)"/>
   <rect width="${W}" height="${H}" fill="url(#glow)"/>
-  ${hasArt ? `<g opacity=".10"><text x="${W - 76}" y="452" text-anchor="end" font-family="${ZH}" font-size="330" font-weight="700" fill="${C.gold}">${esc(zh[0])}</text></g>` : ''}
+  ${hasArt ? `<g opacity=".07"><text x="${W - 76}" y="452" text-anchor="end" font-family="${ZH}" font-size="330" font-weight="700" fill="${C.plaque}">${esc(zh[0])}</text></g>` : ''}
   ${photo ? `<clipPath id="pane"><rect x="${PX}" y="0" width="${PW}" height="${H}"/></clipPath>
   <image clip-path="url(#pane)" x="${PX}" y="0" width="${PW}" height="${H}"
          preserveAspectRatio="xMidYMid slice" href="${photo}"/>
   <rect x="${PX}" y="0" width="180" height="${H}" fill="url(#seam)"/>
   <rect x="${PX}" y="0" width="1.5" height="${H}" fill="${C.line}"/>
   ${photoNote ? `<rect x="${PX}" y="${H - 52}" width="${PW}" height="52" fill="rgba(11,7,8,.84)"/>
-  <text x="${PX + PW / 2}" y="${H - 20}" text-anchor="middle" font-family="${TH}" font-size="21" fill="${C.ink2}">${esc(photoNote)}</text>` : ''}` : ''}
+  <text x="${PX + PW / 2}" y="${H - 20}" text-anchor="middle" font-family="${TH}" font-size="21" fill="${C.pale}">${esc(photoNote)}</text>` : ''}` : ''}
   <rect x="30" y="30" width="${W - 60}" height="${H - 60}" fill="none" stroke="${C.line}" stroke-width="1.5"/>
   <rect x="39" y="39" width="${W - 78}" height="${H - 78}" fill="none" stroke="${C.line}" stroke-width="0.8" opacity=".55"/>
   ${no ? `<text x="84" y="136" font-family="${TH}" font-size="26" letter-spacing="7" fill="${C.gold}">${esc(no)}</text>` : ''}
   <text x="84" y="${no ? 278 : 262}" font-family="${TH}" font-size="${thSize}" font-weight="600" fill="${C.ink}">${esc(th)}</text>
-  ${zh ? `<text x="84" y="${no ? 372 : 356}" font-family="${ZH}" font-size="${zhSize}" font-weight="700" fill="url(#foil)">${esc(zh)}</text>` : ''}
+  ${zh ? `<text x="84" y="${no ? 372 : 356}" font-family="${ZH}" font-size="${zhSize}" font-weight="700" fill="${C.plaque}">${esc(zh)}</text>` : ''}
   ${py ? `<text x="84" y="${no ? 424 : 408}" font-family="serif" font-size="${pySize}" font-style="italic" fill="${C.ink2}">${esc(py)}</text>` : ''}
-  <line x1="84" y1="${H - 134}" x2="${textRight}" y2="${H - 134}" stroke="${C.line}" stroke-width="1"/>
-  <text x="84" y="${H - 88}" font-family="${ZH}" font-size="30" font-weight="700" letter-spacing="7" fill="url(#foil)">普陀觀音堂</text>
-  <text x="84" y="${H - 48}" font-family="${TH}" font-size="${ftSize}" fill="${C.ink2}">${esc(footer)}</text>
+  <!-- ชื่อตำหนักอยู่บนป้ายชาดเล็ก ๆ แทนตัวหนังสือลอย
+       เป็นที่เดียวในการ์ดที่ทองอ่านออก และซ้ำรูปป้ายจริงบนอาคาร -->
+  <rect x="84" y="${H - 132}" width="248" height="60" rx="2" fill="url(#plaque)" stroke="${C.goldBright}" stroke-width="1.5"/>
+  <rect x="89" y="${H - 127}" width="238" height="50" rx="1" fill="none" stroke="rgba(246,227,176,.38)" stroke-width="0.8"/>
+  <text x="208" y="${H - 92}" text-anchor="middle" font-family="${ZH}" font-size="27" font-weight="700" letter-spacing="6" fill="url(#foil)">普陀觀音堂</text>
+  <text x="352" y="${H - 95}" font-family="${TH}" font-size="${Math.min(ftSize, 22)}" fill="${C.ink2}">${esc(footer)}</text>
 </svg>`;
 }
 
@@ -190,53 +200,8 @@ for (const f of files) {
   made++;
 }
 
-// ภาพปกวิดีโอ — ถ้ามีภาพหน้าอาคารให้ใช้ภาพจริง คนจะได้รู้ว่ากดแล้วจะเห็นอะไร
-const VID = join(root, 'public', 'video');
-const PW2 = 1280, PH2 = 720;
-await mkdir(VID, { recursive: true });
-
-if (facadeUri) {
-  // ครอปจากขอบบน — อาคารสูงเกือบเต็มเฟรม ถ้าครอปกลางจะตัดสันหลังคามังกรทิ้ง
-  const base = await sharp(FACADE)
-    .resize(PW2, PH2, { fit: 'cover', position: 'north' })
-    .toBuffer();
-  const veil = `<svg xmlns="http://www.w3.org/2000/svg" width="${PW2}" height="${PH2}">
-  <defs>
-    <linearGradient id="v" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="rgba(11,7,8,0)"/>
-      <stop offset="54%" stop-color="rgba(11,7,8,.24)"/>
-      <stop offset="100%" stop-color="rgba(11,7,8,.90)"/>
-    </linearGradient>
-    <linearGradient id="foil2" x1="0" y1="0" x2="1" y2="0.25">
-      <stop offset="0%" stop-color="#8A6A1E"/><stop offset="22%" stop-color="#D8A93F"/>
-      <stop offset="38%" stop-color="#FBF3C4"/><stop offset="52%" stop-color="#C99B34"/>
-      <stop offset="68%" stop-color="#F2DCA6"/><stop offset="85%" stop-color="#A87F22"/>
-      <stop offset="100%" stop-color="#D8A93F"/>
-    </linearGradient>
-  </defs>
-  <rect width="${PW2}" height="${PH2}" fill="url(#v)"/>
-  <!-- ปุ่มเล่นทับอยู่บนป้ายแดง ถ้าวงกลมจางไปตัวอักษรบนป้ายจะทะลุขึ้นมาอ่านปนกัน -->
-  <circle cx="${PW2 / 2}" cy="${PH2 / 2 - 10}" r="78" fill="rgba(11,7,8,.34)"/>
-  <circle cx="${PW2 / 2}" cy="${PH2 / 2 - 10}" r="56" fill="rgba(11,7,8,.80)" stroke="${C.line}" stroke-width="2"/>
-  <path d="M ${PW2 / 2 - 16} ${PH2 / 2 - 36} L ${PW2 / 2 + 30} ${PH2 / 2 - 10} L ${PW2 / 2 - 16} ${PH2 / 2 + 16} Z" fill="url(#foil2)"/>
-  <text x="${PW2 / 2}" y="${PH2 - 96}" text-anchor="middle" font-family="${ZH}" font-size="40" font-weight="700" letter-spacing="10" fill="url(#foil2)">普陀觀音堂</text>
-  <text x="${PW2 / 2}" y="${PH2 - 50}" text-anchor="middle" font-family="${TH}" font-size="26" fill="${C.ink}">ตำหนักผู่โถวเจ้าแม่กวนอิม · ถนนพุทธมณฑลสาย ๒</text>
-</svg>`;
-  await sharp(base)
-    .composite([{ input: Buffer.from(veil), top: 0, left: 0 }])
-    .jpeg({ quality: 82 })
-    .toFile(join(VID, 'poster.jpg'));
-} else {
-  await sharp(Buffer.from(card({
-    th: 'ตำหนักผู่โถวเจ้าแม่กวนอิม',
-    zh: '普陀觀音堂',
-    py: 'กดเพื่อเล่นวิดีโอ',
-    footer: 'ถนนพุทธมณฑลสาย ๒',
-  })))
-    .resize(PW2, PH2, { fit: 'cover' })
-    .jpeg({ quality: 82 })
-    .toFile(join(VID, 'poster.jpg'));
-}
+// ภาพปกวิดีโอไม่ได้สร้างที่นี่แล้ว — build-video.mjs ตัดเฟรมแรกของคลิปจริงมาใช้
+// ซึ่งตรงสัดส่วนกับวิดีโอเสมอ ต่างจากการ์ดที่เคยใช้ซึ่งเป็น 16:9 ตายตัว
 
 // ไอคอนสำหรับ "เพิ่มลงหน้าจอโฮม" บนไอโฟน — ซาฟารีไม่รับ favicon.svg
 // ถ้าไม่มีไฟล์นี้ ไอคอนบนหน้าจอโฮมจะกลายเป็นภาพหน้าจอของเว็บ

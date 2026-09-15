@@ -64,7 +64,7 @@ const schema = preOpening
 >
   <!-- ฮีโร่: พื้นรักแดงเข้ม ตัวอักษรทองคำเปลว
        ตัวอักษรใหญ่บนพื้นมืดคือที่เดียวที่ทองโลหะทำงานได้เต็มที่ -->
-  <section class:list={['hero zone-dark zone-dark--ox', hasFacade && 'hero--photo']}>
+  <section class:list={['hero zone-gilt', hasFacade && 'hero--photo']}>
     {hasFacade && (
       <div class="hero__photo">
         <ShrinePhoto
@@ -75,14 +75,17 @@ const schema = preOpening
       </div>
     )}
     <div class="wrap hero__inner">
+      {/* ชื่อตำหนักทำเป็นป้ายชาดอักษรทอง — รูปเดียวกับป้ายจริงที่แขวนบนอาคาร
+          บนพื้นผนังสว่าง ทองจะอ่านออกก็ต่อเมื่ออยู่บนพื้นแดงเท่านั้น */}
+      <div class="plaque-board hero__plaque">
+        <span class="plaque-board__prefix han">{site.plaque_prefix_zh}</span>
+        <h1 class="plaque-board__zh han foil foil--live">{site.name_zh}</h1>
+        <span class="plaque-board__th">{site.name_th}</span>
+      </div>
+
       <p class="eyebrow hero__eyebrow">
-        <span class="han">{site.plaque_prefix_zh}</span>
-        <span class="hero__eyebrow-sep" aria-hidden="true">·</span>
         <span>พุทธมณฑลสาย ๒</span>
       </p>
-
-      <h1 class="hero__name han foil foil--live">{site.name_zh}</h1>
-      <p class="hero__th">{site.name_th}</p>
 
       <div class="hero__orn"><Ornament /></div>
 
@@ -160,7 +163,7 @@ const schema = preOpening
 
   <!-- ๘ องค์เด่น: ตู้จัดแสดงบนพื้นรักเข้ม ไม่ใช่กำแพงซุ้ม ๓๓ ช่อง
        ๓๓ ช่องที่หน้าตาเหมือนกันหมดทำให้หน้าแรกอ่านเป็นตารางที่ยังไม่ได้ใส่ของ -->
-  <section class="band zone-dark featured">
+  <section class="band zone-gilt featured">
     <div class="wrap">
       <div class="section-head section-head--row">
         <div>
@@ -229,7 +232,7 @@ const schema = preOpening
   )}
 
   <!-- แผนที่ + ที่อยู่ -->
-  <section class="band zone-dark">
+  <section class="band zone-gilt">
     <div class="seam"><span class="seam__mark"><Ornament variant="mark" size={22} /></span></div>
     <div class="wrap">
       <div class="section-head">
@@ -253,7 +256,7 @@ const schema = preOpening
      แล้วผูกความกว้างไว้กับความสูงจอด้วย ภาพจะได้ไม่ดันชื่อตำหนักตกจอ */
   .hero__photo {
     position: relative;
-    width: min(100% - 32px, 900px, 74vh * 1.407);
+    width: min(100% - 32px, 760px, 58vh * 1.407);
     margin: clamp(28px, 5vw, 52px) auto 0;
   }
   .hero__photo :global(.shrine-photo) {
@@ -261,15 +264,14 @@ const schema = preOpening
     aspect-ratio: 1086 / 772 !important;
     border-radius: 3px;
     box-shadow:
-      0 0 0 1px rgba(242, 220, 166, .30),
-      0 0 0 6px rgba(11, 7, 8, .55),
-      0 0 0 7px rgba(216, 169, 63, .16),
-      0 26px 60px -18px rgba(0, 0, 0, .78);
+      0 0 0 1px rgba(142, 106, 22, .34),
+      0 0 0 7px #FFFDF8,
+      0 0 0 9px rgba(216, 169, 63, .55),
+      0 22px 48px -20px rgba(90, 62, 20, .38);
   }
 
   /* มีภาพจริงอยู่ข้างบนแล้ว ชื่อจีนไม่ต้องตะโกนซ้ำป้ายในภาพ */
   .hero--photo .hero__inner { padding-block: clamp(26px, 4.5vw, 44px) clamp(40px, 7vw, 72px); }
-  .hero--photo .hero__name { font-size: clamp(38px, 7.4vw, 68px); margin-top: 16px; }
   .hero--photo .hero__orn { margin-top: 22px; width: min(340px, 74%); }
 
   .hero__inner {
@@ -281,31 +283,13 @@ const schema = preOpening
     text-align: center;
   }
 
+  .hero__plaque { margin-top: 4px; }
   .hero__eyebrow {
     display: flex; align-items: center; gap: 10px;
+    margin-top: 20px;
     color: var(--gold);
     letter-spacing: .34em;
     padding-right: .34em;
-  }
-  .hero__eyebrow-sep { opacity: .55; }
-
-  .hero__name {
-    margin: 22px 0 0;
-    font-family: var(--han);
-    font-weight: 700;
-    font-size: clamp(46px, 12vw, 108px);
-    letter-spacing: .12em;
-    padding-left: .12em;
-    line-height: 1.1;
-  }
-
-  .hero__th {
-    margin: 14px 0 0;
-    font-family: var(--display);
-    font-weight: 400;
-    font-size: clamp(17px, 2.6vw, 23px);
-    letter-spacing: .04em;
-    color: var(--ink-2);
   }
 
   .hero__orn { width: min(420px, 80%); margin: 30px 0 0; }
@@ -348,8 +332,8 @@ const schema = preOpening
   .band--sunk { background: var(--surface-2); }
   .band--sunk + .band, .band + .band--sunk { border-top: 0; }
   /* โซนมืดเป็นก้อนของตัวเอง ไม่ต้องมีเส้นคั่นซ้อนอีก */
-  .band.zone-dark { border-top: 0; }
-  .band.zone-dark + .band { border-top: 0; }
+  .band.zone-gilt { border-top: 0; }
+  .band.zone-gilt + .band { border-top: 0; }
 
   /* ๙ ส่วนเด่นสูงกว่าส่วนรอง เพื่อให้หน้ามีจังหวะ ไม่ใช่บล็อกระยะเท่ากันหมด */
   .featured { padding-block: clamp(52px, 8vw, 92px); }

@@ -19,34 +19,34 @@ const dayName = (d: number) => (lang === 'zh' ? ZH_DAYS[d] : dayNameShort(d));
          aria-label={lang === 'zh' ? '本堂位於佛城二段路旁的位置示意圖' : 'แผนผังตำแหน่งตำหนักริมถนนพุทธมณฑลสาย ๒'}>
       <defs>
         <linearGradient id="mapbg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#2A1015" />
-          <stop offset="100%" stop-color="#12070A" />
+          <stop offset="0%" stop-color="#FBF3E3" />
+          <stop offset="100%" stop-color="#F2E6CE" />
         </linearGradient>
         <radialGradient id="mapglow" cx="50%" cy="52%" r="42%">
-          <stop offset="0%" stop-color="rgba(216,169,63,.30)" />
-          <stop offset="100%" stop-color="rgba(216,169,63,0)" />
+          <stop offset="0%" stop-color="rgba(160,32,28,.16)" />
+          <stop offset="100%" stop-color="rgba(160,32,28,0)" />
         </radialGradient>
       </defs>
       <rect width="400" height="300" fill="url(#mapbg)" />
 
       {/* ถนนซอย */}
-      <g stroke="rgba(242,220,166,.16)" stroke-width="1" fill="none">
+      <g stroke="rgba(142,106,22,.20)" stroke-width="1" fill="none">
         <path d="M0 74 H400 M0 214 H400 M96 0 V300 M304 0 V300" />
       </g>
 
       {/* ถนนสายหลัก */}
-      <path d="M200 0 V300" stroke="rgba(242,220,166,.10)" stroke-width="26" fill="none" />
-      <path d="M200 0 V300" stroke="rgba(242,220,166,.34)" stroke-width="1" fill="none" stroke-dasharray="7 9" />
+      <path d="M200 0 V300" stroke="rgba(255,255,255,.85)" stroke-width="26" fill="none" />
+      <path d="M200 0 V300" stroke="rgba(142,106,22,.5)" stroke-width="1" fill="none" stroke-dasharray="7 9" />
 
-      <text x="216" y="34" fill="#D8A93F" font-size="11.5" letter-spacing="2.4"
+      <text x="216" y="34" fill="#8E6A16" font-size="11.5" letter-spacing="2.4"
             font-family="var(--mono)">{lang === 'zh' ? '佛城二段路' : 'พุทธมณฑลสาย ๒'}</text>
 
       {/* ตำแหน่งตำหนัก */}
       <circle cx="200" cy="156" r="46" fill="url(#mapglow)" />
-      <circle cx="200" cy="156" r="21" fill="none" stroke="rgba(242,220,166,.34)" stroke-width="1" />
-      <circle cx="200" cy="156" r="9" fill="#D8A93F" />
-      <circle cx="200" cy="156" r="3.4" fill="#2A1015" />
-      <text x="200" y="216" text-anchor="middle" fill="#F6E3B0" font-size="14"
+      <circle cx="200" cy="156" r="21" fill="none" stroke="rgba(160,32,28,.34)" stroke-width="1" />
+      <circle cx="200" cy="156" r="9" fill="#A0201C" />
+      <circle cx="200" cy="156" r="3.4" fill="#F6E3B0" />
+      <text x="200" y="216" text-anchor="middle" fill="#7C1512" font-size="14"
             font-family="var(--display)">{lang === 'zh' ? '本堂' : 'ตำหนัก'}</text>
     </svg>
   </div>
@@ -87,7 +87,7 @@ const dayName = (d: number) => (lang === 'zh' ? ZH_DAYS[d] : dayNameShort(d));
   }
   @media (max-width: 760px) { .visit { grid-template-columns: 1fr; } }
 
-  .visit__map { background: #12070A; }
+  .visit__map { background: #F2E6CE; }
   .visit__map svg { width: 100%; height: 100%; min-height: 250px; display: block; object-fit: cover; }
 
   .visit__info { border: 0; border-radius: 0; padding: 26px; display: flex; flex-direction: column; gap: 14px; border-left: 1px solid var(--line); }

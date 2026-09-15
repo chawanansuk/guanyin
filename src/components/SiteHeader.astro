@@ -29,7 +29,7 @@ const NAV = lang === 'zh'
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isOn = (href: string) => path === href || path.startsWith(href + '/');
 ---
-<header class="site-head zone-dark zone-dark--ox">
+<header class="site-head">
   <div class="site-head__bar">
     <div class="wrap site-head__bar-inner">
       <a href={withLang('/', lang)} class="brand">
@@ -62,14 +62,14 @@ const isOn = (href: string) => path === href || path.startsWith(href + '/');
 </header>
 
 <style>
-  /* หัวเว็บ แถบเมนู และฮีโร่ ต่อกันเป็นก้อนมืดก้อนเดียว
-     แดงสดคั่นกลางจะตัดกับฮีโร่จนสะดุดตา */
-  .site-head { --ground: #170809; border-bottom: 1px solid var(--gold-line); }
-  .site-head::before { display: none; }
-  .site-head__bar {
-    background: linear-gradient(180deg, #1E0A0D 0%, #150709 100%);
+  /* หัวเว็บเป็นผนังปูนขาวเหมือนตัวอาคาร มีเส้นทองคาดบนล่างอย่างคิ้วกรอบ
+     ชื่อตำหนักเป็นสีชาดตามป้ายจริง ไม่ใช่ทองบนพื้นมืด */
+  .site-head {
+    background: linear-gradient(180deg, #FFFDF8 0%, #FBF5EA 100%);
     border-bottom: 1px solid var(--gold-line);
+    box-shadow: inset 0 3px 0 -1px var(--gold-bright);
   }
+  .site-head__bar { border-bottom: 1px solid var(--line); }
   .site-head__bar-inner {
     display: flex;
     align-items: center;
@@ -86,20 +86,21 @@ const isOn = (href: string) => path === href || path.startsWith(href + '/');
     align-items: center;
     gap: 11px;
     text-decoration: none;
-    color: var(--plaque-ink);
+    color: var(--lacquer);
   }
   .brand__text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
   /* ตราศาลา — ขนาดเท่าความสูงของชื่อสองบรรทัดรวมกัน จะได้อ่านเป็นชิ้นเดียว */
   .brand :global(.brand__mark) { width: 42px; flex: none; color: var(--gold); transition: color .3s var(--ease-lux); }
-  .brand:hover :global(.brand__mark) { color: var(--gold-bright); }
-  .brand__zh { font-size: 21px; font-weight: 700; letter-spacing: .16em; padding-left: .16em; line-height: 1.25; }
-  .brand__th { font-family: var(--display); font-size: 13.5px; letter-spacing: .02em; color: var(--ink-3); line-height: 1.35; }
+  .brand:hover :global(.brand__mark) { color: var(--lacquer); }
+  /* ชื่อจีนสีชาด ตรงกับป้ายบนอาคาร — ทองบนพื้นครีมอ่านไม่ขึ้นที่ขนาดนี้ */
+  .brand__zh { font-size: 21px; font-weight: 700; letter-spacing: .16em; padding-left: .16em; line-height: 1.25; color: var(--lacquer); }
+  .brand__th { font-family: var(--display); font-size: 13.5px; letter-spacing: .02em; color: var(--ink-2); line-height: 1.35; }
 
   .site-head__nav-btn { flex: none; font-size: 15.5px; min-height: 44px; padding-inline: 16px; }
 
   .site-nav {
-    background: linear-gradient(180deg, #150709 0%, #1B0A0D 100%);
-    border-bottom: 1px solid var(--gold-line);
+    background: #FFFDF8;
+    border-bottom: 1px solid var(--line-strong);
     position: sticky;
     top: 0;
     z-index: 20;
@@ -125,15 +126,15 @@ const isOn = (href: string) => path === href || path.startsWith(href + '/');
     letter-spacing: .02em;
     text-decoration: none;
     white-space: nowrap;
-    border-bottom: 1px solid transparent;
+    border-bottom: 2px solid transparent;
     transition: color .3s var(--ease-lux), border-color .3s var(--ease-lux);
   }
   .site-nav__list li:first-child a { padding-left: 0; }
-  .site-nav__list a:hover { color: var(--gold); }
+  .site-nav__list a:hover { color: var(--lacquer); }
   .site-nav__list a[aria-current="page"] {
-    color: var(--gold-pale);
-    border-bottom-color: var(--gold-bright);
-    font-weight: 500;
+    color: var(--lacquer);
+    border-bottom-color: var(--lacquer);
+    font-weight: 600;
   }
 
   @media (max-width: 560px) {

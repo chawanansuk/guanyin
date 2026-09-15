@@ -1,58 +1,236 @@
 ---
 /**
- * วิดีโอแนะนำตำหนัก
+ * ภาพเคลื่อนไหวของตำหนัก
  *
- * ตั้ง preload="none" และไม่เล่นอัตโนมัติ เพราะไฟล์ใหญ่กว่างบทั้งหน้าหลายเท่า
- * คนที่เปิดจาก 4G จึงไม่ต้องจ่ายค่าเน็ตให้วิดีโอที่ไม่ได้ตั้งใจดู
- * เบราว์เซอร์จะโหลดเฉพาะภาพปกจนกว่าผู้ใช้จะกดเล่น
+ * คลิปเป็นแนวตั้ง 3:4 ตามไฟล์จริง ไม่ใช่ 16:9 — ถ้าใส่กรอบผิดสัดส่วน
+ * จะเห็นแถบดำสองข้างซึ่งอ่านเป็นความผิดพลาด ไม่ใช่การออกแบบ
+ *
+ * จอใหญ่: เล่นเงียบวนเองเมื่อเลื่อนมาถึง ทำหน้าที่เป็นภาพเคลื่อนไหวประกอบ
+ * มือถือ: กดเล่นเอง เพราะงบเน็ตของคนที่เปิดจาก 4G สำคัญกว่าลูกเล่น
+ * ทั้งสองแบบเคารพ prefers-reduced-motion และโหมดประหยัดเน็ตของเครื่อง
  */
 import site from '../lib/site';
-const v = (site as any).video as
-  | { file: string; title: string; caption: string; note?: string; bytes?: number }
-  | undefined;
+import ShrineMark from './ShrineMark.astro';
+import type { Lang } from '../i18n';
+
+interface Props { lang?: Lang }
+const { lang = 'th' } = Astro.props;
+
+const v = (site as any).video as {
+  file: string; title: string; title_zh?: string;
+  caption: string; caption_zh?: string; note?: string;
+  bytes?: number; width?: number; height?: number; poster?: string;
+  simulated?: boolean; youtube?: string; youtube_title?: string; youtube_title_zh?: string;
+} | undefined;
+
+const zh = lang === 'zh';
+const L = zh
+  ? { eyebrow: '動態影像', play: '播放影片', sim: '示意影像', simNote: '由照片生成的示意影像，非現場拍攝', mb: (m: string) => `影片 ${m} MB` }
+  : { eyebrow: 'ภาพเคลื่อนไหว', play: 'กดเพื่อเล่น', sim: 'ภาพจำลอง', simNote: 'ภาพเคลื่อนไหวจำลองจากภาพถ่าย ไม่ใช่คลิปที่ถ่ายจริง', mb: (m: string) => `ไฟล์ ${m} MB` };
+
 const mb = v?.bytes ? (v.bytes / 1_048_576).toFixed(1) : null;
+const title = (zh && v?.title_zh) ? v.title_zh : v?.title;
+const caption = (zh && v?.caption_zh) ? v.caption_zh : v?.caption;
+const poster = `/video/${v?.poster ?? 'shrine-poster.jpg'}`;
+const ratio = v?.width && v?.height ? `${v.width} / ${v.height}` : '3 / 4';
+// เล่นเองได้เฉพาะไฟล์ที่เล็กพอ ไฟล์ใหญ่ต้องให้คนเลือกเองเสมอ
+const mayAutoplay = (v?.bytes ?? Infinity) <= 2_200_000;
+const yt = v?.youtube?.trim();
+const ytTitle = (zh ? v?.youtube_title_zh : v?.youtube_title) ?? '';
 ---
 {v?.file && (
-  <section class="band zone-dark">
-    <div class="wrap">
-      <div class="section-head">
-        <p class="eyebrow eyebrow--marked">ภาพเคลื่อนไหว</p>
-        <h2>{v.title}</h2>
-      </div>
+  <section class="band zone-gilt vidband">
+    <div class="wrap vidband__grid">
       <figure class="vid">
-        <video
-          controls
-          preload="none"
-          playsinline
-          poster="/video/poster.jpg"
-          width="1280" height="720"
-        >
-          <source src={`/video/${v.file}`} type="video/mp4" />
-          เบราว์เซอร์นี้เล่นวิดีโอไม่ได้ — <a href={`/video/${v.file}`}>เปิดไฟล์วิดีโอโดยตรง</a>
-        </video>
-        <figcaption>
-          {v.caption}
-          {mb && <span class="vid__size mono"> · ไฟล์ {mb} MB กดเพื่อเริ่มเล่น</span>}
-          {v.note && <span class="vid__note">{v.note}</span>}
-        </figcaption>
+        {/* กรอบอย่างม้วนภาพแขวน — ขลิบทองสองชั้นบนพื้นขาว */}
+        <div class="vid__frame" style={`aspect-ratio:${ratio}`}>
+          <video
+            class="vid__el"
+            playsinline
+            muted
+            loop
+            preload="none"
+            poster={poster}
+            width={v.width ?? 768}
+            height={v.height ?? 1024}
+            data-autoplay={mayAutoplay ? 'true' : 'false'}
+          >
+            <source src={`/video/${v.file}`} type="video/mp4" />
+          </video>
+          <button class="vid__play" type="button" data-play>
+            <span class="vid__play-mark"><ShrineMark title={L.play} /></span>
+            <span class="vid__play-label">{L.play}</span>
+          </button>
+          {v.simulated && <span class="vid__tag" title={L.simNote}>{L.sim}</span>}
+        </div>
       </figure>
+
+      <div class="vidband__text">
+        <p class="eyebrow eyebrow--marked">{L.eyebrow}</p>
+        <h2 class:list={[zh && 'han']}>{title}</h2>
+        <p class="vid__caption">{caption}</p>
+        {v.simulated && <p class="vid__sim">{L.simNote}</p>}
+        {mb && <p class="vid__size mono">{L.mb(mb)}</p>}
+        {v.note && <p class="vid__note">{v.note}</p>}
+      </div>
     </div>
+
+    {yt && (
+      <div class="wrap vidband__yt">
+        <h3 class:list={[zh && 'han']}>{ytTitle}</h3>
+        {/* ฝังแบบเบา: โชว์ภาพปกก่อน โหลดตัวเล่นของยูทูบเมื่อกดเท่านั้น
+            ถ้าฝัง iframe ตรง ๆ หน้านี้จะหนักขึ้นเป็นเมกะไบต์ตั้งแต่เปิด */}
+        <button class="yt" type="button" data-yt={yt} aria-label={ytTitle}>
+          <img src={`https://i.ytimg.com/vi/${yt}/hqdefault.jpg`} alt="" loading="lazy" width="480" height="360" />
+          <span class="yt__play" aria-hidden="true">▶</span>
+        </button>
+      </div>
+    )}
   </section>
 )}
 
-<style>
-  .vid { margin: 0; display: flex; flex-direction: column; gap: 12px; }
-  .vid video {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 9;
-    background: #0F0608;
-    border: 0;
-    border-radius: var(--radius);
-    box-shadow: 0 0 0 1px var(--gold-line), var(--shadow-lift);
-    display: block;
+<script>
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const saver = (navigator as any).connection?.saveData === true;
+  const wide = matchMedia('(min-width: 900px)').matches;
+
+  for (const frame of document.querySelectorAll<HTMLElement>('.vid__frame')) {
+    const video = frame.querySelector('video');
+    const btn = frame.querySelector<HTMLButtonElement>('[data-play]');
+    if (!video || !btn) continue;
+
+    const start = () => {
+      frame.dataset.playing = 'true';
+      video.play().catch(() => { delete frame.dataset.playing; });
+    };
+    btn.addEventListener('click', () => { video.controls = true; start(); });
+
+    // เล่นเองเฉพาะจอกว้าง ไฟล์เล็กพอ ไม่ได้เปิดโหมดประหยัดเน็ต และไม่ได้ขอลดการเคลื่อนไหว
+    if (video.dataset.autoplay !== 'true' || reduced || saver || !wide) continue;
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) { video.preload = 'auto'; start(); io.disconnect(); }
+      }
+    }, { rootMargin: '120px' });
+    io.observe(frame);
   }
-  .vid figcaption { font-size: 15.5px; color: var(--ink-2); line-height: 1.65; }
-  .vid__size { color: var(--ink-3); font-size: 13.5px; }
-  .vid__note { display: block; color: var(--ink-3); font-size: 14.5px; margin-top: 4px; }
+
+  for (const b of document.querySelectorAll<HTMLButtonElement>('[data-yt]')) {
+    b.addEventListener('click', () => {
+      const f = document.createElement('iframe');
+      f.src = `https://www.youtube-nocookie.com/embed/${b.dataset.yt}?autoplay=1&rel=0`;
+      f.title = b.getAttribute('aria-label') ?? '';
+      f.allow = 'accelerometer; autoplay; encrypted-media; picture-in-picture';
+      f.allowFullscreen = true;
+      f.loading = 'lazy';
+      b.replaceWith(f);
+    }, { once: true });
+  }
+</script>
+
+<style>
+  .vidband__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+    gap: 32px 48px;
+    align-items: center;
+  }
+  @media (max-width: 820px) { .vidband__grid { grid-template-columns: 1fr; gap: 24px; } }
+
+  .vid { margin: 0; }
+  /* ม้วนภาพแขวน: ขอบขาว แล้วขลิบทองอีกชั้นหนึ่งนอกขอบขาว */
+  .vid__frame {
+    position: relative;
+    overflow: hidden;
+    border-radius: 3px;
+    background: #F2E6CE;
+    box-shadow:
+      0 0 0 1px rgba(142, 106, 22, .34),
+      0 0 0 7px #FFFDF8,
+      0 0 0 9px rgba(216, 169, 63, .55),
+      0 20px 44px -20px rgba(90, 62, 20, .38);
+  }
+  .vid__el { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* ปุ่มเล่น: ตราศาลาทองบนป้ายชาด */
+  .vid__play {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    border: 0;
+    cursor: pointer;
+    background: linear-gradient(180deg, rgba(40, 8, 6, .1) 0%, rgba(40, 8, 6, .42) 100%);
+    transition: opacity .4s var(--ease-lux);
+  }
+  .vid__play-mark {
+    width: 74px;
+    display: grid;
+    place-items: center;
+    padding: 12px;
+    border-radius: 50%;
+    color: var(--gold-bright);
+    background: linear-gradient(175deg, var(--plaque) 0%, var(--plaque-2) 100%);
+    box-shadow: 0 0 0 1px var(--gold-bright), 0 10px 26px rgba(40, 8, 6, .45);
+    transition: transform .45s var(--ease-lux);
+  }
+  .vid__play-label {
+    font: 600 13px/1 var(--sans);
+    letter-spacing: .22em;
+    padding-left: .22em;
+    color: #FFF7E4;
+    text-shadow: 0 1px 3px rgba(40, 8, 6, .8);
+  }
+  .vid__play:hover .vid__play-mark { transform: scale(1.06); }
+  .vid__frame[data-playing="true"] .vid__play { opacity: 0; pointer-events: none; }
+
+  .vid__tag {
+    position: absolute;
+    left: 8px;
+    bottom: 8px;
+    padding: 3px 8px 4px;
+    font: 600 10.5px/1.45 var(--sans);
+    letter-spacing: .12em;
+    padding-right: calc(8px + .12em);
+    color: #F2DCA6;
+    background: rgba(11, 7, 8, .82);
+    box-shadow: inset 0 0 0 1px rgba(242, 220, 166, .28);
+    pointer-events: none;
+  }
+
+  .vidband__text h2 { margin-top: 6px; }
+  .vid__caption { margin: 14px 0 0; font-size: 17px; color: var(--ink-2); line-height: 1.7; }
+  .vid__sim { margin: 10px 0 0; font-size: 14.5px; color: var(--ink-3); line-height: 1.65; }
+  .vid__size { margin: 10px 0 0; font-size: 13.5px; color: var(--ink-3); }
+  .vid__note { margin: 8px 0 0; font-size: 14.5px; color: var(--ink-3); }
+
+  .vidband__yt { margin-top: 36px; }
+  .vidband__yt h3 { margin-bottom: 14px; }
+  .yt {
+    position: relative;
+    display: block;
+    width: 100%;
+    max-width: 680px;
+    padding: 0;
+    border: 0;
+    cursor: pointer;
+    background: none;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 0 0 1px var(--gold-line), var(--shadow);
+  }
+  .yt img { width: 100%; height: auto; display: block; }
+  .yt__play {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 40px;
+    color: #FFF7E4;
+    background: rgba(40, 8, 6, .34);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, .6);
+  }
 </style>

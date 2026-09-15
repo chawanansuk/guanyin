@@ -88,8 +88,16 @@
     "title": "ตำหนักผู่โถวเจ้าแม่กวนอิม",
     "caption": "ภาพเคลื่อนไหวหน้าอาคารตำหนัก",
     "note": "",
-    "bytes": 7372072,
-    "title_zh": "普陀觀音堂"
+    "bytes": 1846494,
+    "title_zh": "普陀觀音堂",
+    "width": 768,
+    "height": 1024,
+    "poster": "shrine-poster.jpg",
+    "caption_zh": "本堂正面動態影像",
+    "simulated": true,
+    "youtube": "",
+    "youtube_title": "วิดีโอแนะนำตำหนัก",
+    "youtube_title_zh": "本堂導覽影片"
   },
   "content": {
     "require_verified": true,
