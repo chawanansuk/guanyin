@@ -46,6 +46,26 @@ try {
 } catch { /* ไม่มี fc-list ก็ปล่อยผ่าน */ }
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+/** ลายก้นหอยสี่เหลี่ยม 回紋 หนึ่งหน่วย — ชุดเดียวกับกรอบทองบนเว็บ
+ *  วาดเป็น pattern แล้วเทลงในแถบขอบทั้งสี่ด้าน ด้านตั้งหมุน 90 องศา */
+const FRET_UNIT = 26;
+const fretPath = (() => {
+  const u = FRET_UNIT * 0.74, x = (FRET_UNIT - u) / 2, y = x;
+  return `M ${(x+u*0.08).toFixed(1)} ${(y+u*0.86).toFixed(1)} V ${(y+u*0.14).toFixed(1)} ` +
+         `H ${(x+u*0.92).toFixed(1)} V ${(y+u*0.86).toFixed(1)} H ${(x+u*0.44).toFixed(1)} ` +
+         `V ${(y+u*0.44).toFixed(1)} H ${(x+u*0.70).toFixed(1)} V ${(y+u*0.66).toFixed(1)}`;
+})();
+const fretDefs = (gold, shade) => `
+    <pattern id="fretH" width="${FRET_UNIT}" height="${FRET_UNIT}" patternUnits="userSpaceOnUse">
+      <path d="${fretPath}" fill="none" stroke="${shade}" stroke-width="4" stroke-linecap="square" opacity=".5"/>
+      <path d="${fretPath}" fill="none" stroke="${gold}" stroke-width="2.4" stroke-linecap="square"/>
+    </pattern>
+    <pattern id="fretV" width="${FRET_UNIT}" height="${FRET_UNIT}" patternUnits="userSpaceOnUse"
+             patternTransform="rotate(90 ${FRET_UNIT / 2} ${FRET_UNIT / 2})">
+      <path d="${fretPath}" fill="none" stroke="${shade}" stroke-width="4" stroke-linecap="square" opacity=".5"/>
+      <path d="${fretPath}" fill="none" stroke="${gold}" stroke-width="2.4" stroke-linecap="square"/>
+    </pattern>`;
 const THAI_DIGITS = ['๐','๑','๒','๓','๔','๕','๖','๗','๘','๙'];
 const thaiNum = (n) => String(n).replace(/\d/g, (d) => THAI_DIGITS[+d]);
 
@@ -67,14 +87,20 @@ const fitSize = (text, maxW, base) => {
 function card({ no, th, zh, py, footer, accent = C.gold, photo = null, photoNote = null }) {
   // มีภาพจริงเมื่อไร ให้ภาพทำหน้าที่แทนตัวอักษรจีนจาง ๆ ที่เคยใช้เป็นลาย
   const hasArt = Boolean(zh) && !photo;
-  const PW = 470;              // ความกว้างช่องภาพด้านขวา
-  const PX = W - PW;           // ขอบซ้ายของช่องภาพ
-  const textRight = photo ? PX - 44 : W - 84;
-  const textW = textRight - 84;
+  // ช่องภาพต้องอยู่ "ข้างใน" กรอบลาย ไม่ใช่ทับกรอบ
+  const IN = 24 + 26;          // ระยะจากขอบการ์ดถึงด้านในของกรอบลาย
+  const PW = 400;              // ความกว้างช่องภาพด้านขวา
+  const PX = W - IN - PW;      // ขอบซ้ายของช่องภาพ
+  const textRight = photo ? PX - 40 : W - IN - 24;
+  const PADX = 74;
+  const textW = textRight - PADX;
   const thSize = fitSize(th, textW, 74);
   const zhSize = fitSize(zh, textW, 58);
   const pySize = fitSize(py, textW, 28);
-  const ftSize = fitSize(footer, textW, 24);
+  // ข้อความท้ายการ์ดเริ่มหลังป้ายชาด จึงเหลือที่น้อยกว่าบรรทัดอื่น
+  // ถ้าวัดด้วยความกว้างเต็ม ข้อความจะยาวลอดใต้ช่องภาพออกไป
+  const FOOT_X = PADX + 268;
+  const ftSize = fitSize(footer, textRight - FOOT_X, 22);
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0.35" y2="1">
@@ -101,30 +127,38 @@ function card({ no, th, zh, py, footer, accent = C.gold, photo = null, photoNote
     <linearGradient id="seam" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0%" stop-color="${C.bg2}"/>
       <stop offset="100%" stop-color="rgba(243,231,208,0)"/>
-    </linearGradient>
+    </linearGradient>${fretDefs(C.goldBright, '#8A6512')}
   </defs>
   <rect width="${W}" height="${H}" fill="url(#bg)"/>
   <rect width="${W}" height="${H}" fill="url(#glow)"/>
   ${hasArt ? `<g opacity=".07"><text x="${W - 76}" y="452" text-anchor="end" font-family="${ZH}" font-size="330" font-weight="700" fill="${C.plaque}">${esc(zh[0])}</text></g>` : ''}
-  ${photo ? `<clipPath id="pane"><rect x="${PX}" y="0" width="${PW}" height="${H}"/></clipPath>
-  <image clip-path="url(#pane)" x="${PX}" y="0" width="${PW}" height="${H}"
+  ${photo ? `<clipPath id="pane"><rect x="${PX}" y="${IN}" width="${PW}" height="${H - IN * 2}"/></clipPath>
+  <image clip-path="url(#pane)" x="${PX}" y="${IN}" width="${PW}" height="${H - IN * 2}"
          preserveAspectRatio="xMidYMid slice" href="${photo}"/>
-  <rect x="${PX}" y="0" width="180" height="${H}" fill="url(#seam)"/>
-  <rect x="${PX}" y="0" width="1.5" height="${H}" fill="${C.line}"/>
-  ${photoNote ? `<rect x="${PX}" y="${H - 52}" width="${PW}" height="52" fill="rgba(11,7,8,.84)"/>
-  <text x="${PX + PW / 2}" y="${H - 20}" text-anchor="middle" font-family="${TH}" font-size="21" fill="${C.pale}">${esc(photoNote)}</text>` : ''}` : ''}
-  <rect x="30" y="30" width="${W - 60}" height="${H - 60}" fill="none" stroke="${C.line}" stroke-width="1.5"/>
-  <rect x="39" y="39" width="${W - 78}" height="${H - 78}" fill="none" stroke="${C.line}" stroke-width="0.8" opacity=".55"/>
-  ${no ? `<text x="84" y="136" font-family="${TH}" font-size="26" letter-spacing="7" fill="${C.gold}">${esc(no)}</text>` : ''}
-  <text x="84" y="${no ? 278 : 262}" font-family="${TH}" font-size="${thSize}" font-weight="600" fill="${C.ink}">${esc(th)}</text>
-  ${zh ? `<text x="84" y="${no ? 372 : 356}" font-family="${ZH}" font-size="${zhSize}" font-weight="700" fill="${C.plaque}">${esc(zh)}</text>` : ''}
-  ${py ? `<text x="84" y="${no ? 424 : 408}" font-family="serif" font-size="${pySize}" font-style="italic" fill="${C.ink2}">${esc(py)}</text>` : ''}
+  <rect x="${PX}" y="${IN}" width="150" height="${H - IN * 2}" fill="url(#seam)"/>
+  <rect x="${PX}" y="${IN}" width="1.5" height="${H - IN * 2}" fill="${C.line}"/>
+  ${photoNote ? `<rect x="${PX}" y="${H - IN - 46}" width="${PW}" height="46" fill="rgba(11,7,8,.84)"/>
+  <text x="${PX + PW / 2}" y="${H - IN - 16}" text-anchor="middle" font-family="${TH}" font-size="19" fill="${C.pale}">${esc(photoNote)}</text>` : ''}` : ''}
+  <!-- กรอบทองลาย 回紋 รอบการ์ด — ลายเดียวกับกรอบป้ายบนเว็บ
+       เทเป็น pattern ลงในแถบขอบสี่ด้าน มุมทับกันพอดีเพราะหน่วยลายเป็นสี่เหลี่ยมจัตุรัส -->
+  <g opacity=".95">
+    <rect x="24" y="24" width="${W - 48}" height="${FRET_UNIT}" fill="url(#fretH)"/>
+    <rect x="24" y="${H - 24 - FRET_UNIT}" width="${W - 48}" height="${FRET_UNIT}" fill="url(#fretH)"/>
+    <rect x="24" y="24" width="${FRET_UNIT}" height="${H - 48}" fill="url(#fretV)"/>
+    <rect x="${W - 24 - FRET_UNIT}" y="24" width="${FRET_UNIT}" height="${H - 48}" fill="url(#fretV)"/>
+  </g>
+  <rect x="22" y="22" width="${W - 44}" height="${H - 44}" fill="none" stroke="${C.line}" stroke-width="1.2"/>
+  <rect x="${24 + FRET_UNIT}" y="${24 + FRET_UNIT}" width="${W - 48 - FRET_UNIT * 2}" height="${H - 48 - FRET_UNIT * 2}" fill="none" stroke="${C.rule}" stroke-width="1"/>
+  ${no ? `<text x="${PADX}" y="136" font-family="${TH}" font-size="26" letter-spacing="7" fill="${C.gold}">${esc(no)}</text>` : ''}
+  <text x="${PADX}" y="${no ? 278 : 262}" font-family="${TH}" font-size="${thSize}" font-weight="600" fill="${C.ink}">${esc(th)}</text>
+  ${zh ? `<text x="${PADX}" y="${no ? 372 : 356}" font-family="${ZH}" font-size="${zhSize}" font-weight="700" fill="${C.plaque}">${esc(zh)}</text>` : ''}
+  ${py ? `<text x="${PADX}" y="${no ? 424 : 408}" font-family="serif" font-size="${pySize}" font-style="italic" fill="${C.ink2}">${esc(py)}</text>` : ''}
   <!-- ชื่อตำหนักอยู่บนป้ายชาดเล็ก ๆ แทนตัวหนังสือลอย
        เป็นที่เดียวในการ์ดที่ทองอ่านออก และซ้ำรูปป้ายจริงบนอาคาร -->
-  <rect x="84" y="${H - 132}" width="248" height="60" rx="2" fill="url(#plaque)" stroke="${C.goldBright}" stroke-width="1.5"/>
+  <rect x="${PADX}" y="${H - 132}" width="248" height="60" rx="2" fill="url(#plaque)" stroke="${C.goldBright}" stroke-width="1.5"/>
   <rect x="89" y="${H - 127}" width="238" height="50" rx="1" fill="none" stroke="rgba(246,227,176,.38)" stroke-width="0.8"/>
   <text x="208" y="${H - 92}" text-anchor="middle" font-family="${ZH}" font-size="27" font-weight="700" letter-spacing="6" fill="url(#foil)">普陀觀音堂</text>
-  <text x="352" y="${H - 95}" font-family="${TH}" font-size="${Math.min(ftSize, 22)}" fill="${C.ink2}">${esc(footer)}</text>
+  <text x="${FOOT_X}" y="${H - 95}" font-family="${TH}" font-size="${Math.min(ftSize, 22)}" fill="${C.ink2}">${esc(footer)}</text>
 </svg>`;
 }
 

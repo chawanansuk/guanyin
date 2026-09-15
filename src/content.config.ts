@@ -19,13 +19,19 @@ const pang = defineCollection({
     name_zh: z.string(),
     name_pinyin: z.string(),
     name_thai_reading: z.string(),
+    /** ชื่ออ่านแบบญี่ปุ่น เช่น โยริว คันนง — ชุดภาพ ๓๓ ปางแพร่หลายในญี่ปุ่นด้วย */
+    name_japanese: z.string().default(''),
     name_sanskrit: z.string().default(''),
     /** ชื่อไทยสายแปลศัพท์ธรรม (นีลกัณฐอวโลกิเตศวร ฯลฯ) — ใช้เป็น "ชื่ออื่นที่พบ" */
     name_th_scholarly: z.string().default(''),
     /** รูปอักษรจีนทางเลือกที่พบตามป้ายและเอกสาร เช่น 巖戶觀音 */
     name_zh_variants: z.array(z.string()).default([]),
-    /** แก่นของปางหนึ่งประโยค — เป็นคำอธิบายเชิงตีความ ไม่ใช่ถ้อยคำจากพระสูตร */
+    /** วลีสั้นบอกแก่นของปาง ใช้บนการ์ดในหน้ารวม ให้กวาดสายตาหาปางที่ตรงกับเรื่องที่จะขอได้ */
+    tagline: z.string().default(''),
+    /** ประโยคเปิดบท — เป็นคำอธิบายเชิงตีความ ไม่ใช่ถ้อยคำจากพระสูตร */
     essence: z.string().default(''),
+    /** ข้อสรุปสั้นของปาง อ่านจบใน ๑๐ วินาที สำหรับคนที่ไม่อ่านบทเต็ม */
+    keypoints: z.array(z.string()).default([]),
     /** เอกสารต้นทางของเนื้อหา — ต่างจาก verified_by ที่เป็นผู้รู้ของตำหนัก */
     source_doc: z.string().default(''),
     has_full: z.boolean().default(false),

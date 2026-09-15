@@ -195,10 +195,14 @@ const hasFacade = 'shrine-exterior' in (photos.images as Record<string, unknown>
       width: min(100% - 64px, 880px, 56vh * 1.407);
       margin-top: clamp(20px, 3.4vw, 36px);
     }
-    .hero__photo :global(.shrine-photo) {
-      border-radius: 2px;
-      box-shadow: 0 0 0 1px rgba(134, 99, 18, .38), 0 22px 48px -22px rgba(90, 62, 20, .4);
+    /* กรอบทองลาย 回紋 รอบภาพอาคาร — ใส่เฉพาะจอที่ภาพไม่ชนขอบจอ
+       บนมือถือภาพเต็มความกว้าง กรอบจะกลายเป็นขอบจอ ไม่ใช่กรอบภาพ */
+    .hero__photo {
+      border: 14px solid transparent;
+      border-image: var(--fret-light) 26 round;
+      box-shadow: 0 22px 48px -22px rgba(90, 62, 20, .4);
     }
+    .hero__photo :global(.shrine-photo) { box-shadow: 0 0 0 1px rgba(134, 99, 18, .3); }
   }
 
   .hero__inner {

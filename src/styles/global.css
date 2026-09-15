@@ -783,6 +783,19 @@ body::after {
 }
 .fret--light { border-image-source: var(--fret-light); }
 
+/* เส้นคั่นลาย 回紋 แนวนอน — ใช้แทน hr ระหว่างแถบเนื้อหา
+   ตัดเฉพาะแถบบนของไฟล์เดียวกัน (0–26px) มาเรียงซ้ำตามความกว้าง */
+.rule-fret {
+  height: 22px;
+  border: 0;
+  margin: 0;
+  background-image: var(--fret-light);
+  background-repeat: repeat-x;
+  background-size: auto 66px;      /* 66 = ความสูงเต็มไฟล์ ทำให้เห็นเฉพาะแถบบน */
+  background-position: center top;
+  opacity: .8;
+}
+
 /* ============================================================
    ๕ เลขลำดับในวงกลมขลิบทอง — ใช้กับขั้นตอนการไหว้และรายการที่มีลำดับ
    ============================================================ */

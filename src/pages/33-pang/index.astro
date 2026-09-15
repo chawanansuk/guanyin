@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
 import PangCard from '../../components/PangCard.astro';
+import confusable from '../../data/pang-confusable.json';
 import { allPang, enshrinedCount } from '../../lib/pang';
 import { getCollection } from 'astro:content';
 import site from '../../lib/site';
@@ -33,13 +34,42 @@ const schema = [{
   <PageHero
     eyebrow="๐๑ — ๓๓"
     title="เจ้าแม่กวนอิม ๓๓ ปาง"
-    lede="ในสัทธรรมปุณฑรีกสูตร บทสมันตมุขปริวรรต กล่าวว่าพระโพธิสัตว์กวนอิมทรงแสดงพระองค์ตามแต่ผู้ร้องขอจะรับได้ ภายหลังคติจีนจึงประมวลออกเป็น ๓๓ ปาง แต่ละปางมีสิ่งที่ทรงถือ ท่าประทับ และความหมายต่างกัน"
+    lede="๓๓ ปาง ไม่ใช่เทพเจ้า ๓๓ องค์ แต่คือพระโพธิสัตว์องค์เดียวกันที่ผู้ศรัทธาถ่ายทอดออกมาเป็น ๓๓ ภาพ แต่ละภาพเปรียบเหมือนหน้าต่างบานหนึ่ง ที่เปิดให้เห็นความกรุณาในมุมที่ต่างกันไป"
   >
     <p class="hero-status mono">
       ประดิษฐานแล้ว {count.enshrined} องค์ จาก {count.total}
       {count.pending > 0 && <> · กำลังอัญเชิญอีก {count.pending} องค์</>}
     </p>
   </PageHero>
+
+  <section class="band">
+    <div class="wrap wrap--narrow">
+      <div class="prose">
+        <p>
+          ในพระสัทธรรมปุณฑรีกสูตร บทที่ ๒๕ ที่คนจีนเรียกว่า <strong>“ผู่เหมินผิ่น” (普門品)</strong>{' '}
+          หรือ “บทประตูแห่งความกรุณาอันเปิดกว้าง” พระพุทธเจ้าตรัสว่า พระอวโลกิเตศวรทรงปรากฏ
+          ในรูปกายที่เหมาะกับผู้ที่พระองค์จะช่วยเหลือ จะเป็นพระพุทธเจ้า เทวดา กษัตริย์ พ่อค้า
+          นักบวช สตรี เด็ก หรือแม้แต่สิ่งมีชีวิตที่ไม่ใช่มนุษย์ก็ได้
+        </p>
+        <p>
+          หัวใจของคำสอนนี้คือ{' '}
+          <strong>ความกรุณาไม่ได้บังคับให้ทุกคนต้องเข้ามาหาในรูปแบบเดียว แต่ยอมเปลี่ยนรูปเพื่อเดินเข้าไปหาทุกคน</strong>
+        </p>
+        <p>
+          ส่วน<strong>รายชื่อทั้ง ๓๓ ปาง</strong>เป็นชุดภาพศิลปะที่เกิดขึ้นภายหลังในจีนและญี่ปุ่น
+          พระสูตรไม่ได้ระบุชื่อทั้ง ๓๓ ปางไว้ตรง ๆ ผู้รวบรวมชุดภาพยืมเลข ๓๓ และแนวคิดเรื่องการแสดงพระกาย
+          มาเรียงร้อยภาพกวนอิมที่มีที่มาหลากหลายเข้าไว้ด้วยกัน จึงไม่แปลกที่ตำราแต่ละสำนัก
+          จะจับคู่ปางกับรูปกายต่างกันบ้าง
+        </p>
+      </div>
+      <div class="note note--lacquer">
+        <p>
+          <strong>อย่าสับสน</strong> เส้นทางไหว้พระ ๓๓ วัดในญี่ปุ่น (เช่น ไซโกกุ) เป็นอีกระบบหนึ่ง
+          วัดทั้ง ๓๓ แห่งไม่ได้ประดิษฐานกวนอิม ๓๓ ปางเรียงตามรายชื่อนี้
+        </p>
+      </div>
+    </div>
+  </section>
 
   <section class="band zone-gilt">
     <div class="wrap">
@@ -63,8 +93,8 @@ const schema = [{
 
       <div class="after note">
         <p>
-          <strong>ทุกปางมีบทความฉบับเต็ม</strong> ว่าด้วยที่มาของพระนาม หลักฐานจากพระสูตร
-          ตำนานที่เล่าสืบกันมา และความหมายทางศิลปกรรม พร้อมแหล่งอ้างอิงท้ายบท
+          <strong>ทุกปางมีบทความฉบับเต็ม</strong> เล่าที่มาจากพระสูตรและตำนาน
+          พร้อมข้อคิดสำหรับชีวิตวันนี้ และสรุปสั้น ๆ ท้ายบทสำหรับคนที่ไม่มีเวลาอ่านยาว
           กดเข้าไปในปางใดก็ได้แล้วเลือก “อ่านฉบับเต็ม”
         </p>
         <p>
@@ -78,6 +108,39 @@ const schema = [{
           เว็บนี้ยึด<strong>ชื่อจีนเป็นหลัก</strong> แสดงชื่อสายแปลความเป็นชื่อหน้า
           และเก็บชื่ออีกสายไว้ท้ายหน้าปาง เพื่อให้ค้นด้วยชื่อสายไหนก็เจอ
         </p>
+      </div>
+    </div>
+  </section>
+
+  {/* ปางที่คนมักจำสลับกัน — คำถามที่เจอหน้างานจริงบ่อยที่สุดคือ
+      "องค์นี้กับองค์นั้นต่างกันตรงไหน" ตารางนี้ตอบได้ในบรรทัดเดียว */}
+  <section class="band">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow eyebrow--marked">แยกให้ออก</p>
+        <h2>ปางที่มักจำสลับกัน</h2>
+        <p class="lede">{confusable.note}</p>
+      </div>
+
+      <div class="tablebox">
+        <table>
+          <thead>
+            <tr><th scope="col">กลุ่มปาง</th><th scope="col">จุดที่เหมือนกัน</th><th scope="col">วิธีแยก</th></tr>
+          </thead>
+          <tbody>
+            {confusable.rows.map((r) => (
+              <tr>
+                <th scope="row">{r.pair}</th>
+                <td>{r.same}</td>
+                <td>{r.tell}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note note--celadon confuse__rule">
+        <p><strong>หลักสำคัญ</strong> <span set:html={confusable.rule} /></p>
       </div>
     </div>
   </section>
@@ -127,6 +190,7 @@ const schema = [{
 </script>
 
 <style>
+  .confuse__rule { margin-top: 20px; }
   .hero-status { margin-top: 16px; font-size: 15.5px; color: var(--celadon); }
 
   .filter { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }

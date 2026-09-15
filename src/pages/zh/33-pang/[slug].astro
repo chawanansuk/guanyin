@@ -150,7 +150,14 @@ const cn = (n: number) => (n <= 10 ? CN_NUM[n] : n < 20 ? `十${CN_NUM[n - 10]}`
   .pang__grid { display: grid; grid-template-columns: minmax(280px, 420px) minmax(0, 1fr); gap: 36px 48px; align-items: start; padding-block: clamp(28px, 5vw, 48px); }
   @media (max-width: 820px) { .pang__grid { grid-template-columns: 1fr; gap: 26px; } }
   .pang__art { position: sticky; top: 68px; }
-  .pang__art :global(.pang-art) { box-shadow: var(--shadow-lift); }
+  /* ภาพองค์บนหน้าปางคือภาพเดียวที่คนจ้องดูนาน จึงใส่กรอบทองลาย 回紋
+     ในหน้ารวมไม่ใส่ เพราะการ์ด ๓๓ ใบที่มีกรอบทุกใบจะกลายเป็นลายพร่า */
+  .pang__art :global(.pang-figure) {
+    border: clamp(11px, 2.6vw, 15px) solid transparent;
+    border-image: var(--fret-light) 26 round;
+    box-shadow: var(--shadow-lift);
+  }
+  .pang__art :global(.pang-art) { box-shadow: 0 0 0 1px rgba(134, 99, 18, .3); }
   @media (max-width: 820px) { .pang__art { position: static; } }
   .pang__artnote { margin: 10px 0 0; padding: 9px 12px; background: var(--surface-2); border-left: 3px solid var(--gold-line); font-size: 14px; line-height: 1.75; color: var(--ink-3); }
   .pang__pending { margin: 10px 0 0; padding: 9px 12px; background: var(--surface-2); border-left: 3px solid var(--line-strong); font-size: 15px; color: var(--ink-2); }

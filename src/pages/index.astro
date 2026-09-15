@@ -6,7 +6,6 @@ import EventList from '../components/EventList.astro';
 import VisitPanel from '../components/VisitPanel.astro';
 import ShrinePhoto from '../components/ShrinePhoto.astro';
 import VideoBand from '../components/VideoBand.astro';
-import Ornament from '../components/Ornament.astro';
 import photos from '../data/photos.json';
 import site from '../lib/site';
 import { allPang, enshrinedCount } from '../lib/pang';
@@ -178,7 +177,7 @@ const schema = preOpening
        แยกเป็นสองแถบทำให้หน้าแรกยืดและจังหวะเท่ากันไปหมด -->
   {(upcoming.length > 0 || freshNews.length > 0) && (
     <section class="band">
-      <div class="seam"><span class="seam__mark"><Ornament variant="mark" size={22} /></span></div>
+      <hr class="rule-fret" aria-hidden="true" />
       <div class="wrap">
         <div class="news-cols">
           {upcoming.length > 0 && (
@@ -223,7 +222,7 @@ const schema = preOpening
 
   <!-- แผนที่ + ที่อยู่ -->
   <section class="band zone-gilt">
-    <div class="seam"><span class="seam__mark"><Ornament variant="mark" size={22} /></span></div>
+    <hr class="rule-fret" aria-hidden="true" />
     <div class="wrap">
       <div class="section-head">
         <p class="eyebrow eyebrow--marked">การเดินทาง</p>
@@ -260,10 +259,14 @@ const schema = preOpening
       width: min(100% - 64px, 880px, 56vh * 1.407);
       margin-top: clamp(20px, 3.4vw, 36px);
     }
-    .hero__photo :global(.shrine-photo) {
-      border-radius: 2px;
-      box-shadow: 0 0 0 1px rgba(134, 99, 18, .38), 0 22px 48px -22px rgba(90, 62, 20, .4);
+    /* กรอบทองลาย 回紋 รอบภาพอาคาร — ใส่เฉพาะจอที่ภาพไม่ชนขอบจอ
+       บนมือถือภาพเต็มความกว้าง กรอบจะกลายเป็นขอบจอ ไม่ใช่กรอบภาพ */
+    .hero__photo {
+      border: 14px solid transparent;
+      border-image: var(--fret-light) 26 round;
+      box-shadow: 0 22px 48px -22px rgba(90, 62, 20, .4);
     }
+    .hero__photo :global(.shrine-photo) { box-shadow: 0 0 0 1px rgba(134, 99, 18, .3); }
   }
 
   .hero__inner {
