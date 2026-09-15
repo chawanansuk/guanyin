@@ -6,7 +6,7 @@
  * และตอบได้ด้วยการสอบถามผู้ดูแลศาลเจ้าโดยตรงเท่านั้น
  * การจับคู่บนเว็บนี้จึงต้องนำเสนอว่าเป็นธรรมเนียมของตำหนักผู่โถว ไม่ใช่ข้อกำหนดในพระสูตร
  */
-import site from '../data/site.json';
+import site from '../lib/site';
 const pending = !site.content.wishes_verified;
 ---
 <div class:list={['note', pending ? 'note--lacquer' : 'note--celadon']}>

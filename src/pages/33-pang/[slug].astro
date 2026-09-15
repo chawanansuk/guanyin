@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PangArt from '../../components/PangArt.astro';
 import photoMeta from '../../data/photo-meta.json';
 import ShareBar from '../../components/ShareBar.astro';
-import site from '../../data/site.json';
+import site from '../../lib/site';
 import { getCollection, render } from 'astro:content';
 import { allPang, displayName, altNames, isVerified, prevPang, nextPang } from '../../lib/pang';
 import { pangNo, thaiNum } from '../../lib/format';

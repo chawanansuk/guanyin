@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import VisitPanel from '../components/VisitPanel.astro';
-import site from '../data/site.json';
+import site from '../lib/site';
 const channels = [
   site.phone && { label: 'โทรศัพท์', value: site.phone, href: `tel:${site.phone.replace(/[^0-9+]/g, '')}` },
   site.line_oa && { label: 'ไลน์', value: site.line_oa, href: site.line_oa },

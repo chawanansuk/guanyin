@@ -1,10 +1,10 @@
 ---
 import '../styles/global.css';
-import site from '../data/site.json';
+import site from '../lib/site';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import { schemaOpeningHours } from '../lib/hours';
-import { LANG_META, LANGS, altPath, useT, type Lang } from '../i18n';
+import { LANG_META, LANGS, altPath, cleanPath, useT, type Lang } from '../i18n';
 
 interface Props {
   title: string;
@@ -27,14 +27,14 @@ const {
 
 const t = useT(lang);
 const meta = LANG_META[lang];
-const here = Astro.url.pathname.replace(/\/$/, '') || '/';
+const here = cleanPath(Astro.url.pathname);
 // hreflang ให้ Google รู้ว่าหน้านี้มีอีกภาษาอยู่ที่ไหน และหน้าไหนเป็นค่าตั้งต้น
 const alternates = LANGS
   .map((l) => ({ l, p: altPath(here, l) }))
   .filter((x): x is { l: Lang; p: string } => x.p !== null);
 
 const fullTitle = suffix ? `${title} · ${lang === 'zh' ? site.name_zh : site.name_th}` : title;
-const canonical = new URL(Astro.url.pathname.replace(/\/$/, '') || '/', site.url).href;
+const canonical = new URL(here, site.url).href;
 const ogUrl = new URL(ogImage, site.url).href;
 
 const place = {

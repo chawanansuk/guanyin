@@ -6,7 +6,7 @@
  * คนที่เปิดจาก 4G จึงไม่ต้องจ่ายค่าเน็ตให้วิดีโอที่ไม่ได้ตั้งใจดู
  * เบราว์เซอร์จะโหลดเฉพาะภาพปกจนกว่าผู้ใช้จะกดเล่น
  */
-import site from '../data/site.json';
+import site from '../lib/site';
 const v = (site as any).video as
   | { file: string; title: string; caption: string; note?: string; bytes?: number }
   | undefined;

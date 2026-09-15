@@ -4,7 +4,7 @@ import PageHero from '../../components/PageHero.astro';
 import PangCard from '../../components/PangCard.astro';
 import { allPang, enshrinedCount } from '../../lib/pang';
 import { getCollection } from 'astro:content';
-import site from '../../data/site.json';
+import site from '../../lib/site';
 
 const pang = await allPang();
 const count = enshrinedCount(pang);

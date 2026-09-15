@@ -9,8 +9,25 @@
 |---|---|
 | Build command | `npm run build` |
 | Output directory | `dist` |
-| Node version | `22` |
+| Node version | `22` (ล็อกไว้ที่ `engines` ใน package.json แล้ว) |
 | Install command | `npm ci` |
+
+`vercel.json` ตั้ง `cleanUrls` ไว้แล้ว — ลิงก์จะเป็น `/about` ไม่ใช่ `/about.html`
+ตรงกับ canonical และ sitemap ถ้าย้ายไปโฮสต์อื่นต้องตั้งแบบเดียวกัน
+
+## โดเมนระหว่างที่ยังไม่ได้จด
+
+ตั้ง environment variable ชื่อ **`SITE_URL`** ที่โฮสต์ ให้เป็นลิงก์ที่ใช้อยู่จริง
+เช่น `https://guanyin.vercel.app` แล้ว canonical, hreflang, sitemap, robots.txt
+และ URL ของภาพพรีวิวตอนแชร์ จะตามไปทั้งหมด
+
+ถ้าไม่ตั้ง ระบบจะใช้ลำดับนี้
+
+1. `SITE_URL`
+2. `VERCEL_PROJECT_PRODUCTION_URL` (Vercel ตั้งให้เอง)
+3. `url` ใน `src/data/site.json`
+
+**พอต่อโดเมนจริงเข้ากับโฮสต์แล้ว ให้ลบ `SITE_URL` ทิ้ง** เพื่อให้กลับไปใช้โดเมนจริง
 
 `npm run build` จะสร้างภาพพรีวิวตอนแชร์ให้เองก่อน (ผ่าน `prebuild`)
 ถ้ามีภาพต้นฉบับอยู่ในเครื่องที่ build ด้วย ให้ใช้ `npm run images && npm run build`
@@ -19,7 +36,8 @@
 
 1. **แก้ `url` ใน `src/data/site.json`** ให้เป็นโดเมนจริง
    (มีผลกับ canonical, sitemap, ภาพพรีวิวตอนแชร์ และ QR ทุกชิ้น)
-2. แก้ `Sitemap:` ใน `public/robots.txt` ให้ตรงโดเมนเดียวกัน
+   แล้วลบ `SITE_URL` ที่โฮสต์ทิ้ง ถ้าเคยตั้งไว้
+2. ~~แก้ robots.txt~~ — สร้างเองตอน build จาก `src/pages/robots.txt.ts` แล้ว
 3. แก้ `repo:` ใน `public/admin/config.yml`
 4. **ทดสอบส่งลิงก์หน้าปางในไลน์บนมือถือจริง** ต้องเห็นภาพองค์ ไม่ใช่กล่องเปล่า
 5. เปิดเว็บบนมือถือจริงอย่างน้อย ๓ เครื่อง (Android ราคาถูก · iPhone รุ่นเก่า · แท็บเล็ต)

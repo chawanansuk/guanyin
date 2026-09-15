@@ -4,7 +4,7 @@ import PageHero from '../../components/PageHero.astro';
 import EventList from '../../components/EventList.astro';
 import { getCollection } from 'astro:content';
 import { daysFromToday, isoDate, beYear } from '../../lib/format';
-import site from '../../data/site.json';
+import site from '../../lib/site';
 
 const all = (await getCollection('events')).sort((a, b) => +a.data.date - +b.data.date);
 const upcoming = all.filter((e) => daysFromToday(e.data.end_date ?? e.data.date) >= 0);

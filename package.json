@@ -4,6 +4,9 @@
   "version": "0.1.0",
   "private": true,
   "description": "เว็บไซต์ตำหนักผู่โถวเจ้าแม่กวนอิม 普陀觀音堂 พุทธมณฑลสาย 2",
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "dev": "astro dev",
     "prebuild": "node scripts/build-og.mjs",

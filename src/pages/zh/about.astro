@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
-import site from '../../data/site.json';
+import site from '../../lib/site';
 import { allPang, enshrinedCount } from '../../lib/pang';
 const lang = 'zh' as const;
 const count = enshrinedCount(await allPang());

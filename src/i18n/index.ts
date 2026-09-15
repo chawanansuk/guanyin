@@ -36,9 +36,17 @@ export function langFromUrl(url: URL): Lang {
  * รองรับทั้ง /a/b, /a/b/, /a/b.html และ /index.html
  * เพราะ build.format: 'file' ทำให้ pathname ที่เห็นตอน build ไม่ได้อยู่ในรูปเดียวเสมอ
  */
+/** path ที่ผู้ใช้เห็นบนแถบที่อยู่ — ตัด .html และสแลชท้ายออก
+ *  ตอน build แบบ format:'file' ค่า Astro.url.pathname จะลงท้าย .html
+ *  ถ้าเอาไปทำ canonical ตรง ๆ กูเกิลจะเห็นสองที่อยู่สำหรับหน้าเดียวกัน
+ *  (ตัวที่มี .html จาก canonical และตัวไม่มีจาก sitemap) */
+export function cleanPath(pathname: string): string {
+  const p = pathname.replace(/index\.html$/, '').replace(/\.html$/, '');
+  return p.replace(/\/+$/, '') || '/';
+}
+
 export function basePath(pathname: string): string {
-  let p = pathname.replace(/index\.html$/, '').replace(/\.html$/, '');
-  p = p.replace(/\/+$/, '') || '/';
+  const p = cleanPath(pathname);
   if (p === '/zh') return '/';
   return p.startsWith('/zh/') ? p.slice(3) : p;
 }

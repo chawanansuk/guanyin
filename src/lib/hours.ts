@@ -1,4 +1,4 @@
-import site from '../data/site.json';
+import site from './site';
 
 export type Slot = { day: number; open: string; close: string };
 

@@ -1,5 +1,5 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
-import site from '../data/site.json';
+import site from './site';
 
 export type Pang = CollectionEntry<'pang'>;
 

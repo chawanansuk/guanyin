@@ -5,7 +5,7 @@ import PangCard from '../../components/PangCard.astro';
 import WishNotice from '../../components/WishNotice.astro';
 import { getCollection } from 'astro:content';
 import { displayName } from '../../lib/pang';
-import site from '../../data/site.json';
+import site from '../../lib/site';
 
 export async function getStaticPaths() {
   const wishes = (await getCollection('wishes')).sort((a, b) => a.data.order - b.data.order);

@@ -1,5 +1,5 @@
 ---
-import site from '../data/site.json';
+import site from '../lib/site';
 interface Props { title: string; path: string }
 const { title, path } = Astro.props;
 const url = new URL(path, site.url).href;
