@@ -13,8 +13,6 @@ photos-src/**
 # ยกเว้นภาพที่ใช้อยู่จริงตอนนี้ — ไฟล์ไม่ใหญ่ และยังไม่มีคลังกลางให้ sync
 !photos-src/shrine-exterior.jpg
 !photos-src/pang-*.jpg
-!photos-src/unplaced/
-!photos-src/unplaced/*.jpg
 
 # แผ่นพิมพ์ป้าย QR — สร้างใหม่ได้เสมอด้วย npm run qr
 dist-qr/
