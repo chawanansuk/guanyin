@@ -7,7 +7,6 @@ name_sanskrit: ""
 enshrined: true
 shrine_point: 9
 wishes: [health]
-incense: 3
 short_prayer: "ขอให้โรคภัยหายขาด ร่างกายแข็งแรงดังเดิม"
 photo: pang-09
 photo_detail: pang-09-detail

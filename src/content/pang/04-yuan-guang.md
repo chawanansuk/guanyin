@@ -7,7 +7,6 @@ name_sanskrit: ""
 enshrined: true
 shrine_point: 4
 wishes: [protection, peace]
-incense: 3
 short_prayer: "ขอให้แสงแห่งเมตตาขจัดความมืดและภัยร้ายให้สิ้นไป"
 photo: pang-04
 photo_detail: pang-04-detail

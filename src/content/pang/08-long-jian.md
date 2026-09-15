@@ -7,7 +7,6 @@ name_sanskrit: ""
 enshrined: true
 shrine_point: 8
 wishes: [protection, travel]
-incense: 3
 short_prayer: "ขอให้พ้นจากภัยแห่งน้ำและอุบัติเหตุทั้งปวง"
 photo: pang-08
 photo_detail: pang-08-detail

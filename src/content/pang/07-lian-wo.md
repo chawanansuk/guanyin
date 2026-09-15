@@ -7,7 +7,6 @@ name_sanskrit: ""
 enshrined: true
 shrine_point: 7
 wishes: [children, peace]
-incense: 3
 short_prayer: "ขอให้ชีวิตครอบครัวงอกงามบริสุทธิ์ดั่งดอกบัวเหนือน้ำ"
 photo: pang-07
 photo_detail: pang-07-detail

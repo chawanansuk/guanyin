@@ -46,9 +46,11 @@ const cn = (n: number) => (n <= 10 ? CN_NUM[n] : n < 20 ? `十${CN_NUM[n - 10]}`
   <aside class="qr zone-gilt">
     <div class="wrap qr__inner">
       <p class="qr__head">您正站在這尊前嗎</p>
-      <p class="qr__incense">
-        此處供香 <strong>三支</strong>
-        {d.shrine_point !== null && <span class="qr__point"> · 堂內第 {cn(d.shrine_point)} 位</span>}
+      <p class="qr__where">
+        {d.shrine_point !== null
+          ? <span>堂內第 <strong>{cn(d.shrine_point)}</strong> 位</span>
+          : <span>本尊列於堂中三十三觀音之中</span>}
+        <span class="qr__nosmoke"> · 本堂<strong>不燃香燭</strong>，合掌為禮</span>
       </p>
       <p class="qr__pray">「{essence}」</p>
     </div>
@@ -143,8 +145,8 @@ const cn = (n: number) => (n <= 10 ? CN_NUM[n] : n < 20 ? `十${CN_NUM[n - 10]}`
   .qr { border-top: 1px solid var(--gold-bright); border-bottom: 1px solid var(--gold-bright); }
   .qr__inner { padding-block: 16px; display: flex; flex-direction: column; gap: 3px; }
   .qr__head { font: 600 12px/1.4 var(--mono); letter-spacing: .12em; color: var(--gold); margin: 0; }
-  .qr__incense { margin: 4px 0 0; font-size: 17.5px; color: var(--ink); }
-  .qr__point { color: var(--ink-2); }
+  .qr__where { margin: 4px 0 0; font-size: 17.5px; color: var(--ink); }
+  .qr__nosmoke { color: var(--ink-2); }
   .qr__pray { margin: 5px 0 0; font-size: 17.5px; color: var(--ink-2); line-height: 1.8; }
 
   .pang__grid { display: grid; grid-template-columns: minmax(280px, 420px) minmax(0, 1fr); gap: 36px 48px; align-items: start; padding-block: clamp(28px, 5vw, 48px); }

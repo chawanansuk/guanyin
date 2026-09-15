@@ -7,7 +7,6 @@ name_sanskrit: ""
 enshrined: true
 shrine_point: 10
 wishes: [trade, protection]
-incense: 3
 short_prayer: "ขอให้การค้าขายคล่องตัว ปราศจากภัยจากผู้คิดร้าย"
 photo: pang-10
 photo_detail: pang-10-detail

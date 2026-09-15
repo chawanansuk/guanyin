@@ -7,7 +7,6 @@ name_sanskrit: "Tārā"
 enshrined: true
 shrine_point: 24
 wishes: [travel, protection]
-incense: 3
 short_prayer: "ขอให้มีผู้นำทางในยามหลงทิศ และถึงที่หมายโดยปลอดภัย"
 photo: pang-24
 photo_detail: pang-24-detail

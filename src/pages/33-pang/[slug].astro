@@ -50,9 +50,11 @@ const description =
   <aside class="qr zone-gilt">
     <div class="wrap qr__inner">
       <p class="qr__head">ยืนอยู่หน้าองค์นี้ใช่ไหม</p>
-      <p class="qr__incense">
-        จุดนี้ใช้ธูป <strong>{thaiNum(d.incense)} ดอก</strong>
-        {d.shrine_point !== null && <span class="qr__point"> · จุดที่ {thaiNum(d.shrine_point)} ในตำหนัก</span>}
+      <p class="qr__where">
+        {d.shrine_point !== null
+          ? <span>จุดที่ <strong>{thaiNum(d.shrine_point)}</strong> ในตำหนัก</span>
+          : <span>องค์นี้อยู่ในหมู่ ๓๓ ปางของตำหนัก</span>}
+        <span class="qr__nosmoke"> · ตำหนักนี้<strong>ไม่จุดธูปเทียน</strong> กราบด้วยการพนมมือ</span>
       </p>
       <p class="qr__pray">“{d.short_prayer}”</p>
     </div>
@@ -197,9 +199,9 @@ const description =
     letter-spacing: .12em; text-transform: uppercase;
     color: var(--gold); margin: 0;
   }
-  .qr__incense { margin: 4px 0 0; font-size: 17.5px; color: var(--ink); }
-  .qr__incense strong { font-weight: 600; }
-  .qr__point { color: var(--ink-2); }
+  .qr__where { margin: 4px 0 0; font-size: 17.5px; color: var(--ink); }
+  .qr__where strong { font-weight: 600; }
+  .qr__nosmoke { color: var(--ink-2); }
   .qr__pray { margin: 5px 0 0; font-family: var(--display); font-weight: 300; font-size: 17.5px; color: var(--ink-2); line-height: 1.7; }
 
   /* ---------- เนื้อหา ---------- */

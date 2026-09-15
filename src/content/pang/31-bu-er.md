@@ -7,7 +7,6 @@ name_sanskrit: "Advaya"
 enshrined: true
 shrine_point: 31
 wishes: [peace, protection]
-incense: 3
 short_prayer: "ขอให้ละความแบ่งแยก เห็นเขาเห็นเราเป็นหนึ่งเดียว"
 photo: pang-31
 photo_detail: pang-31-detail

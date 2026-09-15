@@ -7,7 +7,6 @@ name_sanskrit: ""
 enshrined: true
 shrine_point: 1
 wishes: [health, peace]
-incense: 3
 short_prayer: "ขอให้โรคภัยเบาบาง กายและใจสงบเย็นดั่งน้ำทิพย์"
 photo: pang-01
 photo_detail: pang-01-detail

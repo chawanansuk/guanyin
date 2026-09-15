@@ -7,7 +7,6 @@ name_sanskrit: ""
 enshrined: true
 shrine_point: 28
 wishes: [love, career]
-incense: 3
 short_prayer: "ขอให้พบคู่ครองที่ดี และเข้าใจกันด้วยเมตตา"
 photo: pang-28
 photo_detail: pang-28-detail

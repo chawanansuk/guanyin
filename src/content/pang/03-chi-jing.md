@@ -7,7 +7,6 @@ name_sanskrit: ""
 enshrined: true
 shrine_point: 3
 wishes: [career, peace]
-incense: 3
 short_prayer: "ขอให้สติปัญญาแจ่มใส เล่าเรียนและการงานก้าวหน้า"
 photo: pang-03
 photo_detail: pang-03-detail

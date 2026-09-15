@@ -7,7 +7,6 @@ name_sanskrit: ""
 enshrined: true
 shrine_point: 30
 wishes: [protection, peace]
-incense: 3
 short_prayer: "ขอให้พ้นจากภัยฟ้าผ่าและพายุร้ายทั้งปวง"
 photo: pang-30
 photo_detail: pang-30-detail

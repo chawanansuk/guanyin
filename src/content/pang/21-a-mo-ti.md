@@ -7,7 +7,6 @@ name_sanskrit: "Abhetri"
 enshrined: true
 shrine_point: 21
 wishes: [protection]
-incense: 3
 short_prayer: "ขอให้แคล้วคลาดจากภัยของสัตว์ร้ายและผู้มุ่งร้าย"
 photo: pang-21
 photo_detail: pang-21-detail

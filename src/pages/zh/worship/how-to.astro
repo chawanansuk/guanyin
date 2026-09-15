@@ -4,16 +4,16 @@ import PageHero from '../../../components/PageHero.astro';
 
 const lang = 'zh' as const;
 const STEPS = [
-  { t: '淨手、定意', d: '入堂前先淨手，並想清楚此行所為何事。心意比香的數目重要。' },
+  { t: '淨手、定意', d: '入堂前先淨手，並想清楚此行所為何事。心意比供品重要。' },
   { t: '先禮主尊', d: '先至堂中主尊前，自報姓名與住處，再陳所願。' },
-  { t: '依各處定數上香', d: '以堂內備妥的燭火引香，勿以打火機直接燒燎；熄香以手扇滅，不可用口吹。' },
+  { t: '合掌為禮，不必上香', d: '本堂不燃香、不點燭。合掌當胸，或於佛前拜墊頂禮，即為圓滿之敬。' },
   { t: '依序參拜', d: '自第一位依序禮拜，不必匆忙。時間有限者，禮主尊與此行所為的那一尊即可。' },
   { t: '此行所為的那一尊', d: '各尊台座設有名牌與掃碼標示，可即時查看該尊的名號與意涵。' },
   { t: '供養', d: '鮮果與供花請置於佛前供桌，勿放地上。供畢之物可帶回食用，視為吉祥。' },
   { t: '辭別', d: '離堂前再至主尊前禮拜辭別並致謝。' },
 ];
 const FAQ = [
-  { q: '參拜觀音要上幾支香？', a: '本堂每處供香三支，主尊與各尊皆同。重要日子有人用九支，亦無不可。' },
+  { q: '本堂可以上香點燭嗎？', a: '不可。本堂不燃香、不點燭，以護堂內空氣，並免煙塵薰染聖像。合掌頂禮即為圓滿，不必另尋他處上香。' },
   { q: '全部拜完需要多久？', a: '依序禮拜全部約需三十至四十五分鐘。時間有限者，禮主尊與此行所為的那一尊即可。' },
   { q: '參拜前必須吃素嗎？', a: '不必。九皇齋期間持齋者九日不食葷腥；未持齋者照常前來禮拜即可。' },
 ];
@@ -27,7 +27,7 @@ const schema = [
 <BaseLayout
   lang={lang}
   title="參拜方式"
-  description="普陀觀音堂的參拜步驟、上香數目、供養與注意事項。位於曼谷佛城二段路。"
+  description="普陀觀音堂的參拜步驟、供養與注意事項。本堂不燃香燭。位於曼谷佛城二段路。"
   schema={schema}
   breadcrumbs={[{ label: '首頁', href: '/zh' }, { label: '參拜方式', href: '/zh/worship/how-to' }]}
 >
@@ -41,7 +41,8 @@ const schema = [
   <section class="band">
     <div class="wrap wrap--narrow">
       <div class="note prep">
-        <p><strong>前來之前</strong>　請著端莊服裝，遮蓋肩膀與膝蓋。香燭與供花堂前有售，不必自備。</p>
+        <p><strong>前來之前</strong>　請著端莊服裝，遮蓋肩膀與膝蓋。</p>
+        <p class="prep__nosmoke"><strong>本堂不燃香燭</strong>　不必購買，亦不必攜帶香燭前來；合掌為禮即可。如欲供花果，請參閱下方供養一節。</p>
       </div>
 
       <ol class="steps">
@@ -58,7 +59,8 @@ const schema = [
         <li><strong>觀音茹素</strong>，供品一律不用葷腥，包括雞、豬、鴨、蛋，以及用豬油烹製之物。</li>
         <li>不供酒類。</li>
         <li>不供五辛——蒜、蔥、薤、韭、興渠。</li>
-        <li>宜供：三支香、紅燭一對、蓮花或白黃色鮮花、五色吉祥果、清水或清茶、素點心。</li>
+        <li><strong>不供香燭與金銀紙</strong>，本堂一概不燃火。</li>
+        <li>宜供：蓮花或白黃色鮮花、五色吉祥果、清水或清茶、素點心。</li>
       </ul>
 
       <h2 class="sec-h2">常見問題</h2>
@@ -75,6 +77,8 @@ const schema = [
 
 <style>
   .prep { margin-bottom: 34px; }
+  .prep p + p { margin-top: 10px; }
+  .prep__nosmoke strong { color: var(--lacquer); }
   .prep p { line-height: 1.85; }
   .steps { list-style: none; margin: 0; padding: 0; }
   .steps li { display: grid; grid-template-columns: 42px 1fr; gap: 20px; padding: 24px 0; border-top: 1px solid var(--line); align-items: start; }

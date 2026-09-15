@@ -7,7 +7,6 @@ name_sanskrit: ""
 enshrined: true
 shrine_point: 13
 wishes: [travel, protection]
-incense: 3
 short_prayer: "ขอให้ข้ามพ้นอุปสรรค เดินทางไกลโดยสวัสดิภาพ"
 photo: pang-13
 photo_detail: pang-13-detail

@@ -7,7 +7,6 @@ name_sanskrit: ""
 enshrined: true
 shrine_point: 29
 wishes: [peace, love]
-incense: 3
 short_prayer: "ขอให้ความขัดแย้งคลี่คลาย และอยู่ร่วมกันด้วยไมตรี"
 photo: pang-29
 photo_detail: pang-29-detail

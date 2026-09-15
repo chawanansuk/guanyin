@@ -7,7 +7,6 @@ name_sanskrit: ""
 enshrined: true
 shrine_point: 33
 wishes: [peace, health]
-incense: 3
 short_prayer: "ขอให้น้ำมนต์ชำระเคราะห์โศกโรคภัยให้หมดสิ้นไป"
 photo: pang-33
 photo_detail: pang-33-detail

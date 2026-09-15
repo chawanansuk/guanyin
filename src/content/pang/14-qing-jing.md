@@ -7,7 +7,6 @@ name_sanskrit: "Nīlakaṇṭha"
 enshrined: true
 shrine_point: 14
 wishes: [protection, health]
-incense: 3
 short_prayer: "ขอให้พ้นจากพิษภัยและคำใส่ร้ายทั้งปวง"
 photo: pang-14
 photo_detail: pang-14-detail

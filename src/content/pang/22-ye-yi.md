@@ -7,7 +7,6 @@ name_sanskrit: "Parṇaśavarī"
 enshrined: true
 shrine_point: 22
 wishes: [health, protection]
-incense: 3
 short_prayer: "ขอให้ปราศจากโรคระบาด บ้านเรือนสงบร่มเย็น"
 photo: pang-22
 photo_detail: pang-22-detail

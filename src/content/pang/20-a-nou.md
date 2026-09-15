@@ -7,7 +7,6 @@ name_sanskrit: "Anavatapta"
 enshrined: true
 shrine_point: 20
 wishes: [travel, protection]
-incense: 3
 short_prayer: "ขอให้ผู้เดินเรือและผู้เดินทางไกลปลอดภัยทุกคน"
 photo: pang-20
 photo_detail: pang-20-detail

@@ -7,7 +7,6 @@ name_sanskrit: ""
 enshrined: true
 shrine_point: 18
 wishes: [protection, health]
-incense: 3
 short_prayer: "ขอให้พ้นจากพิษของสัตว์ร้ายและสิ่งอัปมงคล"
 photo: pang-18
 photo_detail: pang-18-detail

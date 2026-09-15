@@ -7,7 +7,6 @@ name_sanskrit: ""
 enshrined: true
 shrine_point: 5
 wishes: [peace, travel]
-incense: 3
 short_prayer: "ขอให้จิตใจเป็นอิสระ คลายจากความกังวลที่ผูกรัด"
 photo: pang-05
 photo_detail: pang-05-detail

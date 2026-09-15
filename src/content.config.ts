@@ -40,7 +40,6 @@ const pang = defineCollection({
     shrine_point: z.number().int().nullable().default(null),
     attributes: z.string(),
     wishes: z.array(z.enum(WISH_IDS)).min(1).max(3),
-    incense: z.number().int().min(1).max(9).default(3),
     short_prayer: z.string(),
     photo: z.string().default(''),
     photo_detail: z.string().default(''),

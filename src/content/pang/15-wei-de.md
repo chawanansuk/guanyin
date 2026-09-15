@@ -7,7 +7,6 @@ name_sanskrit: ""
 enshrined: true
 shrine_point: 15
 wishes: [protection, career]
-incense: 3
 short_prayer: "ขอให้มีอำนาจบารมีคุ้มครอง ศัตรูหมู่มารมิอาจกล้ำกราย"
 photo: pang-15
 photo_detail: pang-15-detail

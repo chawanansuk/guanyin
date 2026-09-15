@@ -7,7 +7,6 @@ name_sanskrit: ""
 enshrined: true
 shrine_point: 12
 wishes: [love, peace]
-incense: 3
 short_prayer: "ขอให้เห็นความจริงของสิ่งที่ยึดถือ และคลายจากความลุ่มหลง"
 photo: pang-12
 photo_detail: pang-12-detail

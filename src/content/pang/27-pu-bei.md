@@ -7,7 +7,6 @@ name_sanskrit: ""
 enshrined: true
 shrine_point: 27
 wishes: [peace, protection]
-incense: 3
 short_prayer: "ขอให้มหากรุณาแผ่ถึงสรรพชีวิตโดยไม่เลือกหน้า"
 photo: pang-27
 photo_detail: pang-27-detail

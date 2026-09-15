@@ -7,7 +7,6 @@ name_sanskrit: ""
 enshrined: true
 shrine_point: 23
 wishes: [health, peace]
-incense: 3
 short_prayer: "ขอให้กายใจใสสะอาดดั่งแก้วไพฑูรย์ โรคภัยมลายสิ้น"
 photo: pang-23
 photo_detail: pang-23-detail

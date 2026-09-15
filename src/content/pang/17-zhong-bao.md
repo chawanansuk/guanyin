@@ -7,7 +7,6 @@ name_sanskrit: ""
 enshrined: true
 shrine_point: 17
 wishes: [trade, career]
-incense: 3
 short_prayer: "ขอให้ทรัพย์สินเพิ่มพูน กิจการมั่นคงไม่ขาดมือ"
 photo: pang-17
 photo_detail: pang-17-detail

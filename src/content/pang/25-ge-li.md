@@ -7,7 +7,6 @@ name_sanskrit: ""
 enshrined: true
 shrine_point: 25
 wishes: [children, trade]
-incense: 3
 short_prayer: "ขอให้สมหวังในบุตรธิดา และมีอาหารบริบูรณ์ไม่ขาดแคลน"
 photo: pang-25
 photo_detail: pang-25-detail

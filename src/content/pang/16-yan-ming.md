@@ -7,7 +7,6 @@ name_sanskrit: ""
 enshrined: true
 shrine_point: 16
 wishes: [health]
-incense: 3
 short_prayer: "ขอให้มีอายุยืนยาว ปราศจากโรคภัยเบียดเบียน"
 photo: pang-16
 photo_detail: pang-16-detail

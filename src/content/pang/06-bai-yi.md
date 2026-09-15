@@ -7,7 +7,6 @@ name_sanskrit: "Pāṇḍaravāsinī"
 enshrined: true
 shrine_point: 6
 wishes: [children, peace]
-incense: 3
 short_prayer: "ขอให้ได้บุตรที่สมบูรณ์ ครอบครัวร่มเย็นเป็นสุข"
 photo: pang-06
 photo_detail: pang-06-detail

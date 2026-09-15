@@ -7,7 +7,6 @@ name_sanskrit: ""
 enshrined: true
 shrine_point: 19
 wishes: [peace, travel]
-incense: 3
 short_prayer: "ขอให้คลื่นลมในใจสงบ และภัยทางทะเลระงับไป"
 photo: pang-19
 photo_detail: pang-19-detail

@@ -7,7 +7,6 @@ name_sanskrit: ""
 enshrined: true
 shrine_point: 32
 wishes: [love, children]
-incense: 3
 short_prayer: "ขอให้ความรักบริสุทธิ์ และครอบครัวเบิกบานดั่งบัวบาน"
 photo: pang-32
 photo_detail: pang-32-detail

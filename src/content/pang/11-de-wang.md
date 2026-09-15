@@ -7,7 +7,6 @@ name_sanskrit: ""
 enshrined: true
 shrine_point: 11
 wishes: [career, protection]
-incense: 3
 short_prayer: "ขอให้มีบารมี เป็นที่นับถือ และมีผู้ใหญ่อุปถัมภ์"
 photo: pang-11
 photo_detail: pang-11-detail

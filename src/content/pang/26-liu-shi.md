@@ -7,7 +7,6 @@ name_sanskrit: ""
 enshrined: true
 shrine_point: 26
 wishes: [protection, peace]
-incense: 3
 short_prayer: "ขอให้ได้รับการคุ้มครองทุกยาม ทั้งกลางวันและกลางคืน"
 photo: pang-26
 photo_detail: pang-26-detail
