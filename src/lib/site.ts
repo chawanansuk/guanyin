@@ -26,4 +26,11 @@ const fromEnv =
 
 export const siteUrl = clean(fromEnv || raw.url);
 
+/** เว็บอยู่บนลิงก์ชั่วคราวของโฮสต์ ยังไม่ใช่โดเมนจริงของตำหนัก
+ *
+ *  ลิงก์แบบนี้ต้องไม่ถูกกูเกิลเก็บเข้าสารบัญ ไม่งั้นพอย้ายไปโดเมนจริง
+ *  ผลค้นหาจะยังพาคนไปที่อยู่เก่าอยู่อีกนาน — พอต่อโดเมนจริงกับโฮสต์แล้ว
+ *  ค่านี้จะกลายเป็น false เอง ไม่ต้องกลับมาแก้ */
+export const isTemporaryHost = /\.vercel\.app$/.test(new URL(siteUrl).hostname);
+
 export default { ...raw, url: siteUrl };

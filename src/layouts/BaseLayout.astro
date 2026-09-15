@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import site from '../lib/site';
+import site, { isTemporaryHost } from '../lib/site';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import { schemaOpeningHours } from '../lib/hours';
@@ -89,7 +89,9 @@ const graphs = [place, ...crumbs, ...schema];
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex, follow" />}
+    {isTemporaryHost
+      ? <meta name="robots" content="noindex, nofollow" />
+      : noindex && <meta name="robots" content="noindex, follow" />}
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={lang === "zh" ? site.name_zh : site.name_th} />

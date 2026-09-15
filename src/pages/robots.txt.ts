@@ -4,15 +4,23 @@
  * กูเกิลจะตามไปอ่าน sitemap ที่โดเมนอื่นซึ่งอาจยังไม่มีอยู่
  */
 import type { APIRoute } from 'astro';
-import { siteUrl } from '../lib/site';
+import { siteUrl, isTemporaryHost } from '../lib/site';
 
-export const GET: APIRoute = () =>
-  new Response(
-    `User-agent: *
+// ตอนอยู่บนลิงก์ชั่วคราวของโฮสต์ ปิดทั้งเว็บไม่ให้บอตเก็บ
+// พอต่อโดเมนจริงแล้วไฟล์นี้จะกลับมาเปิดเอง
+const body = isTemporaryHost
+  ? `User-agent: *
+Disallow: /
+`
+  : `User-agent: *
 Allow: /
 Disallow: /admin/
 
 Sitemap: ${siteUrl}/sitemap-index.xml
-`,
+`;
+
+export const GET: APIRoute = () =>
+  new Response(
+    body,
     { headers: { 'Content-Type': 'text/plain; charset=utf-8' } },
   );
