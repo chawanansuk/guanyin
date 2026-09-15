@@ -2,10 +2,40 @@
   "note": "ที่มาของภาพแต่ละภาพ — ภาพที่ไม่มีชื่ออยู่ในนี้ถือว่าเป็นภาพถ่ายองค์จริงในตำหนัก",
   "howto": "เมื่อได้ภาพถ่ายองค์จริงมาแทนภาพใด ให้ลบชื่อภาพนั้นออกจาก illustrations แล้วป้าย 'ภาพประกอบ' จะหายไปเอง",
   "illustrations": [
-    "pang-01", "pang-02", "pang-03", "pang-04", "pang-05", "pang-06",
-    "pang-08", "pang-09", "pang-11", "pang-12", "pang-13", "pang-14",
-    "pang-15", "pang-16", "pang-17", "pang-18", "pang-19", "pang-20",
-    "pang-21", "pang-22", "pang-23", "pang-25", "pang-26", "pang-27",
-    "pang-28", "pang-29", "pang-30", "pang-31", "pang-32", "pang-33"
-  ]
+    "pang-01",
+    "pang-05",
+    "pang-06",
+    "pang-11",
+    "pang-12",
+    "pang-14",
+    "pang-15",
+    "pang-17",
+    "pang-18",
+    "pang-19",
+    "pang-20",
+    "pang-22",
+    "pang-23",
+    "pang-25",
+    "pang-27",
+    "pang-28",
+    "pang-31",
+    "pang-33"
+  ],
+  "photos_note": "ภาพถ่ายองค์จริง — จับคู่ปางตามชื่อที่อ่านจากฐานองค์ (content-src/guanyin-29-image-names-th.md) รูปที่ยังไม่ได้จับคู่อยู่ใน photos-src/unplaced/",
+  "photos": {
+    "pang-10": "guanyin-red-17",
+    "pang-13": "guanyin-red-06",
+    "pang-16": "guanyin-red-29",
+    "pang-21": "guanyin-red-19",
+    "pang-26": "guanyin-red-24",
+    "pang-29": "guanyin-red-08",
+    "pang-30": "guanyin-red-15",
+    "pang-32": "guanyin-red-02",
+    "pang-02": "guanyin-red-18",
+    "pang-03": "guanyin-red-10",
+    "pang-04": "guanyin-red-11",
+    "pang-07": "guanyin-red-26",
+    "pang-08": "guanyin-red-09",
+    "pang-09": "guanyin-red-05"
+  }
 }
