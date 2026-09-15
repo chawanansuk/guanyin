@@ -21,6 +21,9 @@ const labels = JSON.stringify({
   soon: t('hours.opensToday'),
   shut: t('hours.closedNow'),
   closed: t('hours.closedToday'),
+  days: lang === 'zh'
+    ? ['週日', '週一', '週二', '週三', '週四', '週五', '週六']
+    : ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'],
 });
 ---
 <div class:list={['hours-bar', compact && 'hours-bar--compact']} data-hours={weekly} data-hours-labels={labels}>
@@ -28,7 +31,7 @@ const labels = JSON.stringify({
     <p class="hours-bar__text">
       <span class="hours-bar__dot" data-dot aria-hidden="true"></span>
       <span data-hours-label>{t('hours.label')}</span>
-      <span class="hours-bar__time mono" data-hours-time>{hoursSummary()}</span>
+      <span class="hours-bar__time mono" data-hours-time>{hoursSummary(lang)}</span>
     </p>
     <a class="btn btn--ghost hours-bar__btn" href={site.maps_url} target="_blank" rel="noopener">
       <span class="hours-bar__btn-full">{t('cta.directions')}</span>
@@ -55,10 +58,23 @@ const labels = JSON.stringify({
       var dot = el.querySelector('[data-dot]');
       if (!label || !time) continue;
 
+      // หาวันเปิดถัดไปจริง ๆ — ตำหนักปิดวันจันทร์ ถ้าเขียนว่า "พรุ่งนี้เปิด"
+      // ในเย็นวันอาทิตย์ คนจะขับรถมาเจอประตูปิด
+      var nextOpen = function (from) {
+        for (var i = 1; i <= 7; i++) {
+          var d = (from + i) % 7;
+          var s2 = weekly.find(function (s) { return s.day === d; });
+          if (s2) return { day: d, slot: s2 };
+        }
+        return null;
+      };
+
       if (!slot) {
+        var nx = nextOpen(now.getDay());
         label.textContent = L.closed;
-        time.textContent = '';
+        time.textContent = nx ? (L.days[nx.day] + ' ' + nx.slot.open + '–' + nx.slot.close) : '';
         el.dataset.state = 'closed';
+        if (dot) dot.dataset.on = 'false';
         continue;
       }
 
@@ -73,10 +89,10 @@ const labels = JSON.stringify({
         label.textContent = L.soon;
         time.textContent = slot.open + '–' + slot.close;
       } else {
-        // ปิดแล้ว — เวลาที่แสดงต้องเป็นของพรุ่งนี้ ไม่ใช่ของวันนี้ที่ผ่านไปแล้ว
-        var next = weekly.find(function (s) { return s.day === (now.getDay() + 1) % 7; });
+        // ปิดแล้ว — เวลาที่แสดงต้องเป็นของวันเปิดถัดไป ไม่ใช่ของวันนี้ที่ผ่านไปแล้ว
+        var nx2 = nextOpen(now.getDay());
         label.textContent = L.shut;
-        time.textContent = next ? next.open + '–' + next.close : '';
+        time.textContent = nx2 ? (L.days[nx2.day] + ' ' + nx2.slot.open + '–' + nx2.slot.close) : '';
       }
       el.dataset.state = open ? 'open' : 'shut';
       if (dot) dot.dataset.on = open ? 'true' : 'false';
@@ -102,6 +118,7 @@ const labels = JSON.stringify({
     gap: 8px 14px;
     padding-block: 8px;
     min-height: 52px;
+    flex-wrap: nowrap;
   }
   .hours-bar__text {
     display: flex;
@@ -112,6 +129,8 @@ const labels = JSON.stringify({
     font-size: 17px;
     font-weight: 500;
     max-width: none;
+    /* ข้อความยาวต้องตัดบรรทัดในตัวเอง ไม่ใช่ดันปุ่มนำทางลงไปอีกแถว */
+    min-width: 0;
   }
   .hours-bar__time { font-size: 17px; font-weight: 400; opacity: .92; }
   .hours-bar__dot {

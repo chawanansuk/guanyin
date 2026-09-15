@@ -43,7 +43,7 @@ const LINKS = lang === 'zh'
       <div>
         <h2>{t('foot.place')}</h2>
         <p>{lang === 'zh' ? site.address.full_zh : site.address.full_th}</p>
-        <p class="mono">{hoursSummary()}</p>
+        <p class="mono">{hoursSummary(lang)}</p>
         <p><a href={site.maps_url} target="_blank" rel="noopener">{t('cta.maps')}</a></p>
       </div>
       <div>

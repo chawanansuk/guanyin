@@ -1,6 +1,6 @@
 ---
 import site from '../lib/site';
-import { groupedHours } from '../lib/hours';
+import { groupedHours, closedDays } from '../lib/hours';
 import { dayNameShort } from '../lib/format';
 import { useT, withLang, type Lang } from '../i18n';
 
@@ -8,6 +8,7 @@ interface Props { lang?: Lang }
 const { lang = 'th' } = Astro.props;
 const t = useT(lang);
 const groups = groupedHours();
+const shut = closedDays();
 const ZH_DAYS = ['日', '一', '二', '三', '四', '五', '六'];
 const dayName = (d: number) => (lang === 'zh' ? ZH_DAYS[d] : dayNameShort(d));
 ---
@@ -64,6 +65,14 @@ const dayName = (d: number) => (lang === 'zh' ? ZH_DAYS[d] : dayNameShort(d));
             <td class="mono">{g.open}–{g.close}</td>
           </tr>
         ))}
+        {/* วันปิดต้องมีแถวของตัวเอง ไม่ใช่หายไปเฉย ๆ จากตาราง
+            คนอ่านตารางแล้วไม่เห็นวันจันทร์ จะคิดว่าลืมใส่ ไม่ใช่ว่าปิด */}
+        {shut.length > 0 && (
+          <tr class="visit__shut">
+            <th scope="row">{shut.map((d) => dayName(d)).join(' · ')}</th>
+            <td>{t('hours.closed')}</td>
+          </tr>
+        )}
       </tbody>
     </table>
     <p class="visit__note small muted">{lang === 'zh' ? site.hours.note_zh : site.hours.note}</p>
@@ -104,6 +113,10 @@ const dayName = (d: number) => (lang === 'zh' ? ZH_DAYS[d] : dayNameShort(d));
   }
   .visit__hours th { text-align: left; font-weight: 400; color: var(--ink-2); padding: 7px 0; font-size: 16px; border-top: 1px solid var(--line); }
   .visit__hours td { text-align: right; padding: 7px 0; font-size: 16px; font-variant-numeric: tabular-nums; border-top: 1px solid var(--line); }
+
+  /* แถววันปิดต้องอ่านออกทันทีว่าเป็นวันหยุด ไม่ใช่เวลาที่ลืมกรอก */
+  .visit__shut th, .visit__shut td { color: var(--lacquer); }
+  .visit__shut td { font-weight: 600; }
   .visit__note { margin: 0; }
   .visit__cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
 </style>
