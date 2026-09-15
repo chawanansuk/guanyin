@@ -31,7 +31,9 @@ const labels = JSON.stringify({
       <span class="hours-bar__time mono" data-hours-time>{hoursSummary()}</span>
     </p>
     <a class="btn btn--ghost hours-bar__btn" href={site.maps_url} target="_blank" rel="noopener">
-      {t('cta.directions')}
+      <span class="hours-bar__btn-full">{t('cta.directions')}</span>
+      <span class="hours-bar__btn-short" aria-hidden="true">{t('cta.directionsShort')}</span>
+      <span aria-hidden="true">›</span>
     </a>
   </div>
 </div>
@@ -97,9 +99,9 @@ const labels = JSON.stringify({
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 10px 18px;
-    padding-block: 10px;
-    min-height: 54px;
+    gap: 8px 14px;
+    padding-block: 8px;
+    min-height: 52px;
   }
   .hours-bar__text {
     display: flex;
@@ -122,18 +124,24 @@ const labels = JSON.stringify({
     background: transparent;
     flex: none;
     min-height: 40px;
-    padding-inline: 16px;
+    padding-inline: 14px;
+    gap: 6px;
     border-color: rgba(160, 32, 28, .34);
     color: var(--lacquer-deep);
-    font-size: 16px;
+    font-size: 15.5px;
     font-weight: 500;
   }
+  .hours-bar__btn-short { display: none; }
   .hours-bar__btn:hover { background: rgba(160, 32, 28, .07); border-color: var(--lacquer); color: var(--lacquer-deep); }
 
   .hours-bar--compact .hours-bar__inner { min-height: 52px; padding-block: 9px; }
 
+  /* มือถือ: ยังอยู่บรรทัดเดียว ปุ่มใช้คำสั้น ไม่ดันลงไปเป็นสองแถว */
   @media (max-width: 480px) {
-    .hours-bar__inner { flex-direction: column; align-items: stretch; }
-    .hours-bar__btn { width: 100%; }
+    .hours-bar__text { font-size: 16px; gap: 6px 8px; }
+    .hours-bar__time { font-size: 15.5px; }
+    .hours-bar__btn-full { display: none; }
+    .hours-bar__btn-short { display: inline; }
+    .hours-bar__btn { padding-inline: 12px; min-height: 38px; }
   }
 </style>

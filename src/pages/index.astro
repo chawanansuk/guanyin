@@ -62,8 +62,9 @@ const schema = preOpening
   description={`${site.tagline} — ดูครบทั้ง ๓๓ ปาง พร้อมความหมาย วิธีไหว้ เวลาเปิด–ปิด และการเดินทาง`}
   schema={schema}
 >
-  <!-- ฮีโร่: พื้นรักแดงเข้ม ตัวอักษรทองคำเปลว
-       ตัวอักษรใหญ่บนพื้นมืดคือที่เดียวที่ทองโลหะทำงานได้เต็มที่ -->
+  <!-- ฮีโร่: ภาพอาคาร แล้วป้ายชาดแขวนทับขอบล่างของภาพ
+       ให้ภาพกับชื่ออ่านเป็นของชิ้นเดียวกันอย่างป้ายจริงที่แขวนบนตัวอาคาร
+       ไม่ใช่ภาพหนึ่งกล่อง ชื่อหนึ่งกล่อง เรียงต่อกันลงมา -->
   <section class:list={['hero zone-gilt', hasFacade && 'hero--photo']}>
     {hasFacade && (
       <div class="hero__photo">
@@ -75,47 +76,36 @@ const schema = preOpening
       </div>
     )}
     <div class="wrap hero__inner">
-      {/* ชื่อตำหนักทำเป็นป้ายชาดอักษรทอง — รูปเดียวกับป้ายจริงที่แขวนบนอาคาร
-          บนพื้นผนังสว่าง ทองจะอ่านออกก็ต่อเมื่ออยู่บนพื้นแดงเท่านั้น */}
       <div class="plaque-board hero__plaque">
         <span class="plaque-board__prefix han">{site.plaque_prefix_zh}</span>
         <h1 class="plaque-board__zh han foil foil--live">{site.name_zh}</h1>
         <span class="plaque-board__th">{site.name_th}</span>
       </div>
 
-      <p class="eyebrow hero__eyebrow">
-        <span>พุทธมณฑลสาย ๒</span>
+      {/* บรรทัดเดียวตอบสองคำถามแรกของคนที่เพิ่งมาถึง: อยู่ที่ไหน ไหว้อะไร */}
+      <p class="hero__where">
+        <span class="han hero__where-zh">{site.motto_zh}</span>
+        <span class="hero__where-sep" aria-hidden="true">·</span>
+        <span>ถนนพุทธมณฑลสาย ๒ เขตทวีวัฒนา</span>
       </p>
-
-      <div class="hero__orn"><Ornament /></div>
-
-      <p class="hero__motto">
-        <span class="han carved">{site.motto_zh}</span>
-        <span class="hero__motto-th">{site.motto_th}</span>
-      </p>
-
       <p class="hero__lede">{site.tagline}</p>
 
       <div class="hero__cta">
         {preOpening ? (
           <>
-            <a class="btn btn--gold" href="/opening">
-              พิธีเปิด {thaiDate(openingDate, 'short')}
+            <a class="btn btn--plaque hero__btn" href="/opening">
+              <span>พิธีเปิด {thaiDate(openingDate, 'short')}</span>
               {daysToOpening > 0 && <span class="hero__count mono">อีก {daysToOpening} วัน</span>}
             </a>
-            <a class="btn btn--ghost" href="/33-pang">ดู ๓๓ ปาง</a>
+            <a class="btn btn--ghost hero__btn" href="/33-pang">ดู ๓๓ ปาง</a>
           </>
         ) : (
           <>
-            <a class="btn btn--gold" href="/33-pang">ดู ๓๓ ปางทั้งหมด</a>
-            <a class="btn btn--ghost" href="/worship/how-to">วิธีไหว้</a>
+            <a class="btn btn--plaque hero__btn" href="/33-pang">ดู ๓๓ ปางทั้งหมด</a>
+            <a class="btn btn--ghost hero__btn" href="/worship/how-to">วิธีไหว้</a>
           </>
         )}
       </div>
-
-      <p class="hero__couplet han">
-        {site.couplet.map((c) => <span>{c.zh}</span>)}
-      </p>
     </div>
   </section>
 
@@ -248,85 +238,100 @@ const schema = preOpening
   /* ---------- hero ---------- */
   .hero { position: relative; overflow: hidden; }
 
-  /* ภาพหน้าอาคารวางเป็นแถบของตัวเองเหนือชื่อ ไม่ใช่ฉากหลังใต้ตัวอักษร
-     ภาพนี้สว่างมาก (ฟ้า ผนังขาว) ถ้าคลุมดำให้อ่านตัวหนังสือได้
-     จะเหลือแต่ภาพเทา ๆ — เสียของ และป้ายทองบนภาพก็จะจมหายไปด้วย */
-  /* อาคารในภาพสูงเกือบเต็มเฟรม ตัดบน–ล่างเมื่อไรก็เสียสันหลังคามังกร
-     หรือไม่ก็เสียประตูทอง จึงคุมด้วย "ความกว้าง" แทนการครอป
-     แล้วผูกความกว้างไว้กับความสูงจอด้วย ภาพจะได้ไม่ดันชื่อตำหนักตกจอ */
+  /* ภาพกับป้ายต้องซ้อนกัน ป้ายจึงยื่นขึ้นไปทับขอบล่างของภาพ
+     ค่าลบนี้คือ "ความลึกที่ป้ายแขวนอยู่บนตัวอาคาร" */
+  .hero { --hang: clamp(34px, 6vw, 52px); }
+
+  /* มือถือ: ภาพเต็มขอบจอ ไม่มีกรอบ — จอเล็กทุกพิกเซลต้องเป็นภาพ ไม่ใช่ขอบ
+     อาคารในภาพสูงเกือบเต็มเฟรม จึงไม่ครอปบน–ล่าง คุมด้วยความกว้างเสมอ */
   .hero__photo {
     position: relative;
-    width: min(100% - 32px, 760px, 58vh * 1.407);
-    margin: clamp(28px, 5vw, 52px) auto 0;
+    width: 100%;
+    margin: 0 auto;
   }
   .hero__photo :global(.shrine-photo) {
     width: 100%;
     aspect-ratio: 1086 / 772 !important;
-    border-radius: 3px;
-    box-shadow:
-      0 0 0 1px rgba(142, 106, 22, .34),
-      0 0 0 7px #FFFDF8,
-      0 0 0 9px rgba(216, 169, 63, .55),
-      0 22px 48px -20px rgba(90, 62, 20, .38);
   }
-
-  /* มีภาพจริงอยู่ข้างบนแล้ว ชื่อจีนไม่ต้องตะโกนซ้ำป้ายในภาพ */
-  .hero--photo .hero__inner { padding-block: clamp(26px, 4.5vw, 44px) clamp(40px, 7vw, 72px); }
-  .hero--photo .hero__orn { margin-top: 22px; width: min(340px, 74%); }
+  /* จอกว้าง: ภาพจำกัดความกว้างและผูกกับความสูงจอ ให้ป้ายยังอยู่ในจอแรก
+     กรอบเป็นเส้นทองบาง ๆ เส้นเดียวพอ กรอบหนา ๆ อ่านเป็นรูปในร้านขายกรอบ */
+  @media (min-width: 720px) {
+    .hero__photo {
+      width: min(100% - 64px, 880px, 56vh * 1.407);
+      margin-top: clamp(20px, 3.4vw, 36px);
+    }
+    .hero__photo :global(.shrine-photo) {
+      border-radius: 2px;
+      box-shadow: 0 0 0 1px rgba(134, 99, 18, .38), 0 22px 48px -22px rgba(90, 62, 20, .4);
+    }
+  }
 
   .hero__inner {
     position: relative;
-    padding-block: clamp(52px, 10vw, 104px) clamp(40px, 7vw, 72px);
+    z-index: 1;
+    padding-block: 0 clamp(36px, 6vw, 60px);
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
   }
+  /* ไม่มีภาพ: ป้ายอยู่บนพื้นเปล่า ไม่ต้องยื่น */
+  .hero:not(.hero--photo) .hero__inner { padding-top: clamp(44px, 8vw, 80px); }
 
-  .hero__plaque { margin-top: 4px; }
-  .hero__eyebrow {
-    display: flex; align-items: center; gap: 10px;
-    margin-top: 20px;
-    color: var(--gold);
-    letter-spacing: .34em;
-    padding-right: .34em;
+  .hero__plaque {
+    width: min(100% - 32px, 520px);
+    margin-top: calc(-1 * var(--hang));
+    /* ป้ายที่แขวนทับภาพต้องมีเงาตกลงบนภาพ ไม่งั้นดูเหมือนวางแปะ */
+    box-shadow:
+      0 1px 1px rgba(60, 8, 6, .3),
+      0 8px 18px rgba(60, 8, 6, .26),
+      0 28px 56px -18px rgba(60, 8, 6, .5),
+      inset 0 1px 0 rgba(246, 227, 176, .22);
+  }
+  .hero--photo .hero__plaque { margin-top: calc(-1 * var(--hang)); }
+  @media (min-width: 720px) {
+    .hero__plaque { width: min(100% - 64px, 500px); padding-block: 22px 24px; }
+    .hero__plaque :global(.plaque-board__zh) { font-size: clamp(34px, 4.6vw, 50px); }
   }
 
-  .hero__orn { width: min(420px, 80%); margin: 30px 0 0; }
-
-  .hero__motto {
+  .hero__where {
     display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline;
-    gap: 4px 18px;
-    margin: 24px 0 0;
-    font-size: 15.5px;
-    letter-spacing: .26em;
-    padding-left: .26em;
+    gap: 4px 12px;
+    margin: 22px 0 0;
+    font-family: var(--sans);
+    font-size: clamp(13px, 1.7vw, 14.5px);
+    font-weight: 600;
+    letter-spacing: .14em;
+    color: var(--gold);
+    text-transform: uppercase;
   }
-  .hero__motto-th {
-    font-family: var(--display);
-    letter-spacing: normal;
-    padding-left: 0;
-    color: var(--ink-3);
-  }
+  .hero__where-zh { letter-spacing: .3em; padding-left: .3em; }
+  .hero__where-sep { opacity: .5; }
 
+  /* ประโยคเดียว ตัวไม่มีเชิง ตัดบรรทัดให้สมดุล
+     เซอริฟบางที่ 17px บนจอ Android จะสั่นและอ่านยาก */
   .hero__lede {
-    margin: 20px 0 0;
-    max-width: 42ch;
-    font-family: var(--display);
-    font-weight: 300;
-    font-size: clamp(16.5px, 2.2vw, 19.5px);
-    line-height: 1.8;
+    margin: 14px 0 0;
+    max-width: 30ch;
+    font-family: var(--sans);
+    font-weight: 400;
+    font-size: clamp(17px, 2.1vw, 19px);
+    line-height: 1.7;
     color: var(--ink-2);
+    text-wrap: balance;
   }
 
-  .hero__cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 32px; }
-  .hero__count { font-size: 14px; opacity: .78; margin-left: 4px; }
-
-  .hero__couplet {
-    display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 28px;
-    margin: 40px 0 0;
-    font-size: 14.5px; letter-spacing: .2em; color: var(--ink-3);
+  /* ปุ่มสองปุ่มกว้างเท่ากันเสมอ ปุ่มกว้างไม่เท่ากันอ่านเป็นงานยังไม่เสร็จ */
+  .hero__cta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    width: min(100%, 460px);
+    margin-top: 26px;
   }
+  .hero__btn { width: 100%; flex-direction: column; gap: 1px; padding-inline: 12px; line-height: 1.25; }
+  .hero__count { font-size: 12.5px; font-weight: 500; opacity: .82; letter-spacing: .04em; }
+  @media (max-width: 380px) { .hero__cta { grid-template-columns: 1fr; } }
 
   /* ---------- bands ---------- */
   .band--sunk { background: var(--surface-2); }

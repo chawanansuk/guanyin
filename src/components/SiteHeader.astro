@@ -75,9 +75,9 @@ const isOn = (href: string) => path === href || path.startsWith(href + '/');
     align-items: center;
     justify-content: space-between;
     gap: 12px 16px;
-    min-height: 64px;
-    padding-block: 10px;
-    flex-wrap: wrap;
+    min-height: 60px;
+    padding-block: 8px;
+    flex-wrap: nowrap;
   }
   .site-head__right { display: flex; align-items: center; gap: 6px 12px; flex: none; }
 
@@ -97,6 +97,9 @@ const isOn = (href: string) => path === href || path.startsWith(href + '/');
   .brand__th { font-family: var(--display); font-size: 13.5px; letter-spacing: .02em; color: var(--ink-2); line-height: 1.35; }
 
   .site-head__nav-btn { flex: none; font-size: 15.5px; min-height: 44px; padding-inline: 16px; }
+  /* มือถือ: ปุ่มนำทางอยู่ในแถบเวลาเปิด–ปิดใต้ฮีโร่แล้ว
+     ซ้ำในหัวเว็บอีกจะดันเนื้อหาลงไปอีกแถบทั้งแถบ */
+  @media (max-width: 899px) { .site-head__nav-btn { display: none; } }
 
   .site-nav {
     background: #FFFDF8;
@@ -105,7 +108,16 @@ const isOn = (href: string) => path === href || path.startsWith(href + '/');
     top: 0;
     z-index: 20;
   }
-  .site-nav__inner { padding-inline: 0; }
+  .site-nav__inner { padding-inline: 0; position: relative; }
+  /* ขอบขวาจางลง บอกว่าเมนูเลื่อนต่อได้ — ไม่งั้นรายการที่ถูกตัดจะดูเหมือนไม่มีอยู่ */
+  .site-nav__inner::after {
+    content: "";
+    position: absolute; top: 0; right: 0; bottom: 0;
+    width: 44px;
+    background: linear-gradient(90deg, rgba(255, 253, 248, 0), #FFFDF8 78%);
+    pointer-events: none;
+  }
+  @media (min-width: 640px) { .site-nav__inner::after { display: none; } }
   .site-nav__list {
     display: flex;
     gap: 0;
@@ -139,6 +151,8 @@ const isOn = (href: string) => path === href || path.startsWith(href + '/');
 
   @media (max-width: 560px) {
     .brand__zh { font-size: 18px; }
-    .site-head__nav-btn { font-size: 14.5px; padding-inline: 13px; }
+    .brand__th { font-size: 12.5px; }
+    .brand :global(.brand__mark) { width: 36px; }
+    .site-nav__list a { min-height: 46px; padding-inline: 12px; font-size: 15.5px; }
   }
 </style>

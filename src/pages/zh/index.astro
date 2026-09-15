@@ -4,7 +4,6 @@ import HoursBar from '../../components/HoursBar.astro';
 import PangCard from '../../components/PangCard.astro';
 import VisitPanel from '../../components/VisitPanel.astro';
 import VideoBand from '../../components/VideoBand.astro';
-import Ornament from '../../components/Ornament.astro';
 import ShrinePhoto from '../../components/ShrinePhoto.astro';
 import photos from '../../data/photos.json';
 import site from '../../lib/site';
@@ -44,38 +43,35 @@ const hasFacade = 'shrine-exterior' in (photos.images as Record<string, unknown>
       </div>
     )}
     <div class="wrap hero__inner">
-      {/* ชื่อตำหนักเป็นป้ายชาดอักษรทอง รูปเดียวกับป้ายจริงบนอาคาร */}
       <div class="plaque-board hero__plaque">
         <span class="plaque-board__prefix han">佛城二段</span>
         <h1 class="plaque-board__zh han foil foil--live">{site.name_zh}</h1>
         <span class="plaque-board__th han">觀音菩薩三十三法相</span>
       </div>
 
-      <p class="hero__motto han">{site.motto_zh}</p>
+      <p class="hero__where han">
+        <span class="hero__where-zh">{site.motto_zh}</span>
+        <span class="hero__where-sep" aria-hidden="true">·</span>
+        <span>曼谷 佛城二段路</span>
+      </p>
       <p class="hero__lede">{site.tagline_zh}</p>
 
       <div class="hero__cta">
         {preOpening ? (
           <>
-            <a class="btn btn--gold" href="/zh/opening">
-              開光大典 {zhDate(openingDate)}
+            <a class="btn btn--plaque hero__btn" href="/zh/opening">
+              <span>開光大典 {openingDate.getUTCMonth() + 1}月{openingDate.getUTCDate()}日</span>
               {daysToOpening > 0 && <span class="hero__count mono">尚餘 {daysToOpening} 天</span>}
             </a>
-            <a class="btn btn--ghost" href="/zh/33-pang">三十三觀音</a>
+            <a class="btn btn--ghost hero__btn" href="/zh/33-pang">三十三觀音</a>
           </>
         ) : (
           <>
-            <a class="btn btn--gold" href="/zh/33-pang">瀏覽三十三觀音</a>
-            <a class="btn btn--ghost" href="/zh/worship/how-to">參拜方式</a>
+            <a class="btn btn--plaque hero__btn" href="/zh/33-pang">瀏覽三十三觀音</a>
+            <a class="btn btn--ghost hero__btn" href="/zh/worship/how-to">參拜方式</a>
           </>
         )}
       </div>
-
-      <div class="hero__orn"><Ornament /></div>
-
-      <p class="hero__couplet han">
-        {site.couplet.map((c) => <span>{c.zh}</span>)}
-      </p>
     </div>
   </section>
 
@@ -174,39 +170,106 @@ const hasFacade = 'shrine-exterior' in (photos.images as Record<string, unknown>
 </BaseLayout>
 
 <style>
-  /* overflow ต้องไม่เป็น visible — ไม่งั้น margin-top ของกรอบภาพจะทะลุออกนอกฮีโร่
-     (margin collapse) แล้วจะเห็นพื้นสีครีมของหน้าเว็บโผล่คั่นใต้แถบเมนู */
-  .hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--gold-line); }
-  /* กรอบภาพเดียวกับฉบับไทย — คุมด้วยความกว้าง ไม่ครอปบน–ล่าง
-     มิฉะนั้นจะเสียสันหลังคามังกรหรือประตูทองไปอย่างใดอย่างหนึ่ง */
+  /* ---------- hero ---------- */
+  .hero { position: relative; overflow: hidden; }
+
+  /* ภาพกับป้ายต้องซ้อนกัน ป้ายจึงยื่นขึ้นไปทับขอบล่างของภาพ
+     ค่าลบนี้คือ "ความลึกที่ป้ายแขวนอยู่บนตัวอาคาร" */
+  .hero { --hang: clamp(34px, 6vw, 52px); }
+
+  /* มือถือ: ภาพเต็มขอบจอ ไม่มีกรอบ — จอเล็กทุกพิกเซลต้องเป็นภาพ ไม่ใช่ขอบ
+     อาคารในภาพสูงเกือบเต็มเฟรม จึงไม่ครอปบน–ล่าง คุมด้วยความกว้างเสมอ */
   .hero__photo {
     position: relative;
-    width: min(100% - 32px, 760px, 58vh * 1.407);
-    margin: clamp(28px, 5vw, 52px) auto 0;
+    width: 100%;
+    margin: 0 auto;
   }
   .hero__photo :global(.shrine-photo) {
     width: 100%;
     aspect-ratio: 1086 / 772 !important;
-    border-radius: 3px;
-    box-shadow:
-      0 0 0 1px rgba(142, 106, 22, .34),
-      0 0 0 7px #FFFDF8,
-      0 0 0 9px rgba(216, 169, 63, .55),
-      0 22px 48px -20px rgba(90, 62, 20, .38);
   }
+  /* จอกว้าง: ภาพจำกัดความกว้างและผูกกับความสูงจอ ให้ป้ายยังอยู่ในจอแรก
+     กรอบเป็นเส้นทองบาง ๆ เส้นเดียวพอ กรอบหนา ๆ อ่านเป็นรูปในร้านขายกรอบ */
+  @media (min-width: 720px) {
+    .hero__photo {
+      width: min(100% - 64px, 880px, 56vh * 1.407);
+      margin-top: clamp(20px, 3.4vw, 36px);
+    }
+    .hero__photo :global(.shrine-photo) {
+      border-radius: 2px;
+      box-shadow: 0 0 0 1px rgba(134, 99, 18, .38), 0 22px 48px -22px rgba(90, 62, 20, .4);
+    }
+  }
+
   .hero__inner {
     position: relative;
-    padding-block: clamp(44px, 8vw, 82px) clamp(36px, 6vw, 60px);
-    display: flex; flex-direction: column; align-items: center; text-align: center;
+    z-index: 1;
+    padding-block: 0 clamp(36px, 6vw, 60px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
-  .hero--photo .hero__inner { padding-block: clamp(26px, 4.5vw, 44px) clamp(36px, 6vw, 60px); }
-  .hero__plaque { margin-top: 4px; }
-  .hero__motto { margin: 26px 0 0; font-size: 16px; letter-spacing: .3em; padding-left: .3em; color: var(--gold); }
-  .hero__lede { margin: 18px 0 0; max-width: 38ch; font-size: clamp(16.5px, 2.2vw, 19px); line-height: 1.85; color: var(--ink-2); }
-  .hero__cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 28px; }
+  /* ไม่มีภาพ: ป้ายอยู่บนพื้นเปล่า ไม่ต้องยื่น */
+  .hero:not(.hero--photo) .hero__inner { padding-top: clamp(44px, 8vw, 80px); }
+
+  .hero__plaque {
+    width: min(100% - 32px, 520px);
+    margin-top: calc(-1 * var(--hang));
+    /* ป้ายที่แขวนทับภาพต้องมีเงาตกลงบนภาพ ไม่งั้นดูเหมือนวางแปะ */
+    box-shadow:
+      0 1px 1px rgba(60, 8, 6, .3),
+      0 8px 18px rgba(60, 8, 6, .26),
+      0 28px 56px -18px rgba(60, 8, 6, .5),
+      inset 0 1px 0 rgba(246, 227, 176, .22);
+  }
+  .hero--photo .hero__plaque { margin-top: calc(-1 * var(--hang)); }
+  @media (min-width: 720px) {
+    .hero__plaque { width: min(100% - 64px, 500px); padding-block: 22px 24px; }
+    .hero__plaque :global(.plaque-board__zh) { font-size: clamp(34px, 4.6vw, 50px); }
+  }
+
+  .hero__where {
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline;
+    gap: 4px 12px;
+    margin: 22px 0 0;
+    font-family: var(--sans);
+    font-size: clamp(13px, 1.7vw, 14.5px);
+    font-weight: 600;
+    letter-spacing: .14em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+  .hero__where-zh { letter-spacing: .3em; padding-left: .3em; }
+  .hero__where-sep { opacity: .5; }
+
+  /* ประโยคเดียว ตัวไม่มีเชิง ตัดบรรทัดให้สมดุล
+     เซอริฟบางที่ 17px บนจอ Android จะสั่นและอ่านยาก */
+  .hero__lede {
+    margin: 14px 0 0;
+    max-width: 30ch;
+    font-family: var(--sans);
+    font-weight: 400;
+    font-size: clamp(17px, 2.1vw, 19px);
+    line-height: 1.7;
+    color: var(--ink-2);
+    text-wrap: balance;
+  }
+
+  /* ปุ่มสองปุ่มกว้างเท่ากันเสมอ ปุ่มกว้างไม่เท่ากันอ่านเป็นงานยังไม่เสร็จ */
+  .hero__cta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    width: min(100%, 460px);
+    margin-top: 26px;
+  }
+  .hero__btn { width: 100%; flex-direction: column; gap: 1px; padding-inline: 12px; line-height: 1.25; }
+  .hero__count { font-size: 12.5px; font-weight: 500; opacity: .82; letter-spacing: .04em; }
+  @media (max-width: 380px) { .hero__cta { grid-template-columns: 1fr; } }
+
+
   .hero__count { font-size: 14px; opacity: .85; margin-left: 4px; }
-  .hero__orn { width: 100%; max-width: 460px; margin-top: 34px; }
-  .hero__couplet { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 26px; margin: 18px 0 0; font-size: 15.5px; letter-spacing: .16em; color: var(--ink-3); }
 
   .band--sunk { background: var(--surface-2); }
   .band--sunk + .band, .band + .band--sunk { border-top: 0; }
