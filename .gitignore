@@ -12,6 +12,7 @@ photos-src/**
 !photos-src/README.md
 # ยกเว้นภาพที่ใช้อยู่จริงตอนนี้ — ไฟล์ไม่ใหญ่ และยังไม่มีคลังกลางให้ sync
 !photos-src/shrine-exterior.jpg
+!photos-src/visit-map.jpg
 !photos-src/pang-*.jpg
 
 # แผ่นพิมพ์ป้าย QR — สร้างใหม่ได้เสมอด้วย npm run qr
@@ -26,6 +27,7 @@ public/og/*.jpg
 public/images/pang/*
 # ยกเว้นภาพที่เว็บใช้อยู่ เพราะเครื่องที่ deploy อาจไม่มีต้นฉบับ
 !public/images/pang/shrine-exterior-*.webp
+!public/images/pang/visit-map-*.webp
 !public/images/pang/pang-*.webp
 
 # วิดีโอต้นฉบับความละเอียดเต็ม — ไฟล์ใหญ่ ไม่ commit
