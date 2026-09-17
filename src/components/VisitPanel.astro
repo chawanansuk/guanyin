@@ -29,7 +29,7 @@ const mapAlt = lang === 'zh'
       <a class="visit__map-link" href={site.maps_url} target="_blank" rel="noopener">
         <img src={`/images/pang/visit-map-${map.widths[0]}.webp`} srcset={mapSrcset}
              sizes="(max-width: 760px) 100vw, 60vw" width={map.w} height={map.h}
-             alt={mapAlt} loading="lazy" decoding="async" />
+             alt={mapAlt} decoding="async" />
         <span class="visit__map-tag">{lang === 'zh' ? '示意圖，非實際比例' : 'แผนผังประกอบ ไม่ใช่มาตราส่วนจริง'}</span>
       </a>
     ) : (
@@ -116,9 +116,16 @@ const mapAlt = lang === 'zh'
 
   .visit__map { background: #F2E6CE; position: relative; }
   .visit__map svg { width: 100%; height: 100%; min-height: 250px; display: block; object-fit: cover; }
-  .visit__map-link { display: block; height: 100%; }
-  .visit__map img { width: 100%; height: 100%; display: block; object-fit: cover; object-position: center 40%; }
-  @media (max-width: 760px) { .visit__map img { height: auto; } }
+  /* ภาพแผนที่: บนมือถือวางตามปกติ สูงตามสัดส่วนภาพ — ไม่พึ่ง height:100%
+     เพราะเบราว์เซอร์ในแอป (LINE/Facebook) บางตัวคำนวณเป็น 0 แล้วภาพหายทั้งก้อน */
+  .visit__map-link { display: block; }
+  .visit__map img { width: 100%; height: auto; display: block; }
+  /* จอกว้าง: ให้ภาพเต็มช่องเท่าความสูงของคอลัมน์ข้อมูล ด้วย absolute ซึ่งได้ขนาดแน่นอนจากกล่องแม่ */
+  @media (min-width: 761px) {
+    .visit__map { min-height: 380px; }
+    .visit__map-link { position: absolute; inset: 0; }
+    .visit__map img { height: 100%; object-fit: cover; object-position: center 40%; }
+  }
   .visit__map-tag {
     position: absolute; right: 10px; top: 10px; padding: 3px 9px;
     font: 600 11px/1.5 var(--sans); letter-spacing: .06em;
