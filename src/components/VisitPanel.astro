@@ -11,11 +11,28 @@ const groups = groupedHours();
 const shut = closedDays();
 const ZH_DAYS = ['日', '一', '二', '三', '四', '五', '六'];
 const dayName = (d: number) => (lang === 'zh' ? ZH_DAYS[d] : dayNameShort(d));
+
+// แผนที่ภาพจากตำหนัก — วางไฟล์ visit-map.jpg ใน photos-src/ แล้ว npm run images
+// ถ้ายังไม่มี ใช้ผังลายเส้นด้านล่างแทน
+import photos from '../data/photos.json';
+const map = (photos.images as Record<string, { widths: number[]; w: number; h: number }>)['visit-map'];
+const mapSrcset = map ? map.widths.map((w) => `/images/pang/visit-map-${w}.webp ${w}w`).join(', ') : '';
+const mapAlt = lang === 'zh'
+  ? '本堂交通示意圖：佛城二段路 11 巷與 12 巷之間，入口在 Haew Seafood 與 Sai Song 輪胎行之間'
+  : 'แผนที่การเดินทางไปตำหนัก: ถนนพุทธมณฑลสาย ๒ ระหว่างซอย ๑๑ กับซอย ๑๒ ทางเข้าอยู่ระหว่างร้านแห้วซีฟู้ดกับร้านยางสายสอง';
 ---
 <div class="visit">
   <div class="visit__map">
     {/* ไม่ฝัง iframe แผนที่ เพราะ iframe ตัวเดียวหนักกว่าทั้งหน้ารวมกัน
-        วาดเป็นผังลายเส้นทองแทน แล้วให้ปุ่มพาไป Google Maps ของจริง */}
+        มีภาพแผนที่จากตำหนักก็ใช้ภาพ ไม่มีก็วาดเป็นผังลายเส้นทอง แล้วให้ปุ่มพาไป Google Maps ของจริง */}
+    {map ? (
+      <a class="visit__map-link" href={site.maps_url} target="_blank" rel="noopener">
+        <img src={`/images/pang/visit-map-${map.widths[0]}.webp`} srcset={mapSrcset}
+             sizes="(max-width: 760px) 100vw, 60vw" width={map.w} height={map.h}
+             alt={mapAlt} loading="lazy" decoding="async" />
+        <span class="visit__map-tag">{lang === 'zh' ? '示意圖，非實際比例' : 'แผนผังประกอบ ไม่ใช่มาตราส่วนจริง'}</span>
+      </a>
+    ) : (
     <svg viewBox="0 0 400 300" role="img"
          aria-label={lang === 'zh' ? '本堂位於佛城二段路旁的位置示意圖' : 'แผนผังตำแหน่งตำหนักริมถนนพุทธมณฑลสาย ๒'}>
       <defs>
@@ -50,6 +67,7 @@ const dayName = (d: number) => (lang === 'zh' ? ZH_DAYS[d] : dayNameShort(d));
       <text x="200" y="216" text-anchor="middle" fill="#7C1512" font-size="14"
             font-family="var(--display)">{lang === 'zh' ? '本堂' : 'ตำหนัก'}</text>
     </svg>
+    )}
   </div>
 
   <div class="visit__info panel">
@@ -96,8 +114,16 @@ const dayName = (d: number) => (lang === 'zh' ? ZH_DAYS[d] : dayNameShort(d));
   }
   @media (max-width: 760px) { .visit { grid-template-columns: 1fr; } }
 
-  .visit__map { background: #F2E6CE; }
+  .visit__map { background: #F2E6CE; position: relative; }
   .visit__map svg { width: 100%; height: 100%; min-height: 250px; display: block; object-fit: cover; }
+  .visit__map-link { display: block; height: 100%; }
+  .visit__map img { width: 100%; height: 100%; display: block; object-fit: cover; object-position: center 40%; }
+  @media (max-width: 760px) { .visit__map img { height: auto; } }
+  .visit__map-tag {
+    position: absolute; left: 10px; bottom: 10px; padding: 3px 9px;
+    font: 600 11px/1.5 var(--sans); letter-spacing: .06em;
+    color: var(--gold-pale); background: rgba(11, 7, 8, .72); pointer-events: none;
+  }
 
   .visit__info { border: 0; border-radius: 0; padding: 26px; display: flex; flex-direction: column; gap: 14px; border-left: 1px solid var(--line); }
   @media (max-width: 760px) { .visit__info { border-left: 0; border-top: 1px solid var(--line); } }
