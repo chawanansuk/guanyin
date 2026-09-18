@@ -10,6 +10,21 @@ const all = (await getCollection('events')).sort((a, b) => +a.data.date - +b.dat
 const upcoming = all.filter((e) => daysFromToday(e.data.end_date ?? e.data.date) >= 0);
 const past = all.filter((e) => daysFromToday(e.data.end_date ?? e.data.date) < 0).reverse();
 const hasApprox = all.some((e) => e.data.approx);
+// ข้อมูลวันจันทรคติเก็บเป็นไทย ("๑๙ ค่ำ เดือน ๒") — หน้าจีนต้องแปลงเป็น 農曆二月十九
+// ไม่งั้นผู้อ่านจีนเจออักษรไทยกลางหน้า
+const CN = ['','一','二','三','四','五','六','七','八','九','十'];
+const cnDay = (d: number) => d <= 10 ? `初${CN[d]}` : d < 20 ? `十${CN[d - 10]}` : d === 20 ? '二十' : d < 30 ? `廿${CN[d - 20]}` : '三十';
+const cnMonth = (m: number) => m === 1 ? '正月' : m <= 10 ? `${CN[m]}月` : m === 11 ? '十一月' : '十二月';
+const thDigit = (t: string) => t.replace(/[๐-๙]/g, (c) => String('๐๑๒๓๔๕๖๗๘๙'.indexOf(c)));
+const lunarZh = (th: string) => {
+  const mid = thDigit(th).match(/ช่วงกลางเดือน\s*(\d+)/);
+  if (mid) return `農曆${cnMonth(+mid[1])}中旬`;
+  const m = thDigit(th).match(/^(\d+)(?:[–-](\d+))?\s*ค่ำ\s*เดือน\s*(\d+)$/);
+  if (!m) return th;
+  const [, a, b, mo] = m;
+  return `農曆${cnMonth(+mo)}${cnDay(+a)}${b ? `至${cnDay(+b)}` : ''}`;
+};
+
 
 const zhDate = (d: Date) => `${d.getUTCFullYear()}年${d.getUTCMonth() + 1}月${d.getUTCDate()}日`;
 const zhRange = (a: Date, b?: Date) =>
@@ -56,7 +71,7 @@ const schema = upcoming.map((e) => ({
                 </time>
                 <div class="evt__main">
                   <span class="evt__title han">{e.data.title_zh || e.data.title}</span>
-                  {e.data.lunar && <span class="evt__lunar">{e.data.lunar}</span>}
+                  {e.data.lunar && <span class="evt__lunar">{lunarZh(e.data.lunar)}</span>}
                 </div>
                 <span class="evt__rel mono">{n <= 0 ? '進行中' : `尚餘 ${n} 天`}</span>
               </li>

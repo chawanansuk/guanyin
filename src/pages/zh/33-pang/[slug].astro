@@ -95,7 +95,6 @@ const cn = (n: number) => (n <= 10 ? CN_NUM[n] : n < 20 ? `十${CN_NUM[n - 10]}`
           <dl class="pang__names-dl">
             <dt>依形取名</dt><dd>{d.name_th}</dd>
             {d.name_th_scholarly && (<><dt>依義譯經</dt><dd>{d.name_th_scholarly}</dd></>)}
-            {d.name_thai_reading && (<><dt>音譯</dt><dd>{d.name_thai_reading}</dd></>)}
             {d.name_sanskrit && (<><dt>梵名</dt><dd>{d.name_sanskrit}</dd></>)}
           </dl>
         </section>
@@ -116,7 +115,7 @@ const cn = (n: number) => (n <= 10 ? CN_NUM[n] : n < 20 ? `十${CN_NUM[n - 10]}`
         </div>
 
         <div class="pang__share">
-          <ShareBar title={d.name_zh} path={path} />
+          <ShareBar title={d.name_zh} path={path} lang="zh" />
         </div>
       </div>
     </div>

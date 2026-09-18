@@ -22,11 +22,14 @@ interface Props {
   loading?: 'lazy' | 'eager';
   priority?: boolean;
   lang?: Lang;
+  /** ขนาดกว้างสุดที่ยอมให้เบราว์เซอร์เลือก — การ์ดเล็กไม่ควรดึงไฟล์ 960px
+   *  เพราะจอ 3x จะเลือกไฟล์ใหญ่ทั้ง ๓๓ ใบ หน้ารวมหนักเกิน 1.5 MB */
+  maxWidth?: number;
 }
 const {
   photo, order, nameTh, nameZh,
   enshrined = true, sizes = '(max-width: 640px) 45vw, 300px',
-  loading = 'lazy', priority = false, lang = 'th',
+  loading = 'lazy', priority = false, lang = 'th', maxWidth,
 } = Astro.props;
 
 const L = lang === 'zh'
@@ -47,7 +50,10 @@ const L = lang === 'zh'
       noPhoto: (n: string) => `ยังไม่มีภาพถ่ายองค์${n} ${nameZh}`,
     };
 
-const entry = (photos.images as Record<string, { widths: number[]; ext: string }>)[photo];
+const raw = (photos.images as Record<string, { widths: number[]; ext: string }>)[photo];
+const entry = raw && maxWidth
+  ? { ...raw, widths: raw.widths.filter((w) => w <= maxWidth).length ? raw.widths.filter((w) => w <= maxWidth) : raw.widths.slice(0, 1) }
+  : raw;
 const srcset = entry
   ? entry.widths.map((w) => `/images/pang/${photo}-${w}.webp ${w}w`).join(', ')
   : null;

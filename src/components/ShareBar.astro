@@ -1,16 +1,19 @@
 ---
 import site from '../lib/site';
-interface Props { title: string; path: string }
-const { title, path } = Astro.props;
+interface Props { title: string; path: string; lang?: 'th' | 'zh' }
+const { title, path, lang = 'th' } = Astro.props;
+const L = lang === 'zh'
+  ? { label: '分享此頁', line: 'LINE', fb: 'Facebook', copy: '複製連結', copied: '已複製', failed: '複製失敗' }
+  : { label: 'ส่งต่อหน้านี้', line: 'ไลน์', fb: 'เฟซบุ๊ก', copy: 'คัดลอกลิงก์', copied: 'คัดลอกแล้ว', failed: 'คัดลอกไม่สำเร็จ' };
 const url = new URL(path, site.url).href;
 const line = `https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}`;
 const fb = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
 ---
-<div class="share" data-share-url={url}>
-  <span class="share__label">ส่งต่อหน้านี้</span>
-  <a class="share__btn" href={line} target="_blank" rel="noopener">ไลน์</a>
-  <a class="share__btn" href={fb} target="_blank" rel="noopener">เฟซบุ๊ก</a>
-  <button class="share__btn" type="button" data-copy>คัดลอกลิงก์</button>
+<div class="share" data-share-url={url} data-copied={L.copied} data-failed={L.failed}>
+  <span class="share__label">{L.label}</span>
+  <a class="share__btn" href={line} target="_blank" rel="noopener">{L.line}</a>
+  <a class="share__btn" href={fb} target="_blank" rel="noopener">{L.fb}</a>
+  <button class="share__btn" type="button" data-copy>{L.copy}</button>
 </div>
 
 <script is:inline>
@@ -21,10 +24,10 @@ const fb = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(ur
       try {
         await navigator.clipboard.writeText(box.dataset.shareUrl);
         const was = btn.textContent;
-        btn.textContent = 'คัดลอกแล้ว';
+        btn.textContent = box.dataset.copied;
         setTimeout(() => { btn.textContent = was; }, 1800);
       } catch (e) {
-        btn.textContent = 'คัดลอกไม่สำเร็จ';
+        btn.textContent = box.dataset.failed;
       }
     });
   }

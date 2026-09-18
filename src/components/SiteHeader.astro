@@ -10,20 +10,22 @@ const t = useT(lang);
 
 /** เมนู ๕ ช่อง — ตัดเหลือเท่าที่คนใช้จริง เมนูยาวทำให้เลือกไม่ถูก
  *  ฝั่งจีนยังไม่มีหน้า /worship รวม จึงชี้ตรงไปหน้าวิธีไหว้ที่แปลแล้ว */
+// short = คำสั้นสำหรับจอแคบ — จอ 390px ใส่คำเต็มแล้ว "การเดินทาง" หลุดขอบ
+// โดยไม่มีสัญญาณว่าเลื่อนได้ หน้าที่คนมาใหม่ต้องการที่สุดจึงหาไม่เจอ
 const NAV = lang === 'zh'
   ? [
-      { href: '/zh/about', label: t('nav.about') },
-      { href: '/zh/33-pang', label: t('nav.pang') },
-      { href: '/zh/worship/how-to', label: t('nav.worship') },
-      { href: '/zh/calendar', label: t('nav.calendar') },
-      { href: '/zh/visit', label: t('nav.visit') },
+      { href: '/zh/about', label: t('nav.about'), short: '本堂' },
+      { href: '/zh/33-pang', label: t('nav.pang'), short: '三十三觀音' },
+      { href: '/zh/worship/how-to', label: t('nav.worship'), short: '參拜' },
+      { href: '/zh/calendar', label: t('nav.calendar'), short: '節日' },
+      { href: '/zh/visit', label: t('nav.visit'), short: '交通' },
     ]
   : [
-      { href: '/about', label: t('nav.about') },
-      { href: '/33-pang', label: t('nav.pang') },
-      { href: '/worship', label: t('nav.worship') },
-      { href: '/calendar', label: t('nav.calendar') },
-      { href: '/visit', label: t('nav.visit') },
+      { href: '/about', label: t('nav.about'), short: 'ตำหนัก' },
+      { href: '/33-pang', label: t('nav.pang'), short: '๓๓ ปาง' },
+      { href: '/worship', label: t('nav.worship'), short: 'บูชา' },
+      { href: '/calendar', label: t('nav.calendar'), short: 'ปฏิทิน' },
+      { href: '/visit', label: t('nav.visit'), short: 'เดินทาง' },
     ];
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
@@ -53,7 +55,9 @@ const isOn = (href: string) => path === href || path.startsWith(href + '/');
       <ul class="site-nav__list">
         {NAV.map((item) => (
           <li>
-            <a href={item.href} aria-current={isOn(item.href) ? 'page' : undefined}>{item.label}</a>
+            <a href={item.href} aria-current={isOn(item.href) ? 'page' : undefined} aria-label={item.label}>
+              <span class="nav-long">{item.label}</span><span class="nav-short" aria-hidden="true">{item.short}</span>
+            </a>
           </li>
         ))}
       </ul>
@@ -153,6 +157,9 @@ const isOn = (href: string) => path === href || path.startsWith(href + '/');
     .brand__zh { font-size: 18px; }
     .brand__th { font-size: 12.5px; }
     .brand :global(.brand__mark) { width: 36px; }
-    .site-nav__list a { min-height: 46px; padding-inline: 12px; font-size: 15.5px; }
+    .site-nav__list a { min-height: 46px; padding-inline: 10px; font-size: 15.5px; }
+    .nav-long { display: none; }
   }
+  .nav-short { display: none; }
+  @media (max-width: 560px) { .nav-short { display: inline; } }
 </style>

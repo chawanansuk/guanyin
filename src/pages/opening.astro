@@ -68,13 +68,17 @@ const schema = [{
         </div>
       )}
 
-      <div class="note note--lacquer">
-        <p>
-          <strong>กำหนดการโดยละเอียดรอการยืนยันจากทางตำหนัก</strong>{' '}
-          หน้านี้จะปรับปรุงทันทีที่ได้ข้อมูล — เวลาเริ่มพิธี ลำดับพิธีการ
-          ช่วงที่ประชาชนร่วมได้ จุดจอดรถ และของที่ควรเตรียมมา
-        </p>
-      </div>
+      <h2 class="sec sec--first">ร่างกำหนดการ</h2>
+      <p class="draft-note">
+        ลำดับพิธีตามธรรมเนียมพิธีเปิดตำหนักกวนอิม (開光) ทั่วไป — <strong>เวลาและรายละเอียดจริง
+        รอทางตำหนักยืนยัน</strong> จะปรับให้ตรงทันทีที่ได้กำหนดการ
+      </p>
+      <ol class="agenda">
+        <li><strong>พิธีเปิดเบิกเนตร (開光)</strong> ผู้ประกอบพิธีเบิกเนตรองค์ประธานและองค์ ๓๓ ปาง — ช่วงพิธีสงฆ์ ประชาชนร่วมสังเกตการณ์อยู่ด้านนอกบริเวณพิธี</li>
+        <li><strong>สวดมนต์ถวาย</strong> บท<a href="/worship/prayers/da-bei-zhou">มหากรุณาธารณี</a>และ<a href="/worship/prayers/pu-men-pin">ผู่เหมินผิ่น</a></li>
+        <li><strong>เปิดให้ประชาชนเข้ากราบ</strong> ไหว้ตาม<a href="/worship/how-to">ลำดับจุด</a> — ตำหนักนี้ไม่จุดธูปเทียน กราบด้วยการพนมมือ</li>
+        <li><strong>ถวายเครื่องบูชา</strong> ดอกไม้และผลไม้มงคลที่โต๊ะหน้าองค์ (ไม่มีเนื้อสัตว์)</li>
+      </ol>
 
       <h2 class="sec">สิ่งที่ทราบแล้ว</h2>
       <dl class="facts">
@@ -113,6 +117,11 @@ const schema = [{
   .hero__cta { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 28px; }
 
   .sec { font-size: 21px; margin: 44px 0 14px; }
+  .sec--first { margin-top: 0; }
+  .draft-note { color: var(--ink-2); margin: 0 0 14px; }
+  .agenda { margin: 0; padding-left: 1.3em; color: var(--ink-2); }
+  .agenda li { margin-bottom: 10px; }
+  .agenda strong { color: var(--ink); }
   .shots { margin-bottom: 34px; }
   .shots ul { margin: 12px 0 0; padding-left: 1.2em; }
 

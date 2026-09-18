@@ -20,7 +20,7 @@ const secondary = lang === 'zh' ? '' : d.name_zh;
 >
   <PangArt
     photo={d.photo} order={d.order} nameTh={displayName(pang)} nameZh={d.name_zh}
-    enshrined={d.enshrined} priority={priority} lang={lang}
+    enshrined={d.enshrined} priority={priority} lang={lang} maxWidth={480}
   />
   <span class="pang-card__body">
     <span class="pang-card__no mono">{pangNo(d.order)}</span>

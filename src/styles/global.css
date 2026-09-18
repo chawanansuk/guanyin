@@ -418,6 +418,11 @@ section.band + section.band { border-top: 1px solid var(--line); }
 }
 .tablebox tbody tr:last-child td { border-bottom: none; }
 .tablebox td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* ตารางสองคอลัมน์ข้อความ: บนมือถือให้ตัดบรรทัด ไม่ให้เลื่อนข้างจนความหมายโดนหั่น */
+@media (max-width: 640px) {
+  .tablebox--wrap table { min-width: 0; font-size: 15px; }
+  .tablebox--wrap th, .tablebox--wrap td { padding: 10px 12px; }
+}
 
 /* ============================================================ ป้ายรักดำ 匾額 */
 .plaque {

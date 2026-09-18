@@ -25,7 +25,6 @@ const t = useT(lang);
         title={!current && !alt ? t('lang.noTranslation') : undefined}
       >
         {LANG_META[l].label}
-        {!current && !alt && <span class="lang__partial" aria-hidden="true">·</span>}
       </a>
     );
   })}
@@ -49,7 +48,6 @@ const t = useT(lang);
     width: 1px; height: 15px; transform: translateY(-50%);
     background: currentColor; opacity: .35;
   }
-  .lang__partial { opacity: .6; margin-left: 2px; }
 
   /* ตัวเลือกภาษาเป็นของเล็กที่ต้องหาเจอ ไม่ใช่ปุ่มใหญ่ที่แย่งความสนใจ
      ภาษาปัจจุบันขีดเส้นใต้สีชาดพอ แผ่นทองเต็มแผ่นทำให้ดูเป็นปุ่มหลัก */
