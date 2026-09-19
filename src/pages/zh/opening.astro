@@ -18,7 +18,13 @@ const schema = [{
   name: o.headline_zh || o.headline,
   startDate: o.date,
   eventStatus: 'https://schema.org/EventScheduled',
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
   location: { '@id': `${site.url}/#shrine` },
+  endDate: o.date,
+  image: [new URL('/og/default.jpg', site.url).href],
+  organizer: { '@type': 'Organization', name: site.name_zh, url: site.url },
+  performer: { '@type': 'Organization', name: site.name_zh },
+  offers: { '@type': 'Offer', price: 0, priceCurrency: 'THB', availability: 'https://schema.org/InStock', url: `${site.url}/zh/opening`, validFrom: '2026-09-01' },
   isAccessibleForFree: true,
 }];
 ---
