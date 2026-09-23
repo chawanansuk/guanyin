@@ -96,5 +96,19 @@ const LINKS = lang === 'zh'
   .site-foot a:hover { color: var(--gold-bright); text-decoration-color: var(--gold-bright); }
 
   .site-foot__lang { padding-top: var(--space-6); border-top: 1px solid var(--gold-line); }
+
+  /* จอกว้าง: ตราและชื่ออยู่ซ้าย ที่ตั้งกับทางลัดกระจายเต็มความกว้างตามแบบ V2
+     เดิมทุกอย่างกองอยู่ครึ่งซ้าย เหลือพื้นที่ว่างทางขวาเกือบครึ่งหน้า */
+  @media (min-width: 760px) {
+    .site-foot__inner {
+      display: grid;
+      grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+      gap: var(--space-4) clamp(var(--space-12), 7vw, 96px);
+      align-items: start;
+    }
+    .site-foot__cols { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); }
+    .site-foot__lang, .site-foot__legal { grid-column: 1 / -1; }
+    .site-foot__lang { margin-top: var(--space-8); }
+  }
   .site-foot__legal { font-size: var(--fs-sm); line-height: 1.7; color: var(--ink-3); max-width: 62ch; margin: 0; }
 </style>

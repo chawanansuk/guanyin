@@ -124,15 +124,17 @@ const hasFacade = 'shrine-exterior' in (photos.images as Record<string, unknown>
   </section>
 
   <section class="band band--sunk">
-    <div class="wrap">
-      <div class="section-head">
+    <div class="wrap featured__inner">
+      <div class="section-head featured__head">
         <p class="eyebrow eyebrow--marked">一 — 三十三</p>
         <h2>堂內所奉觀音法相</h2>
       </div>
+      <a class="btn btn--ghost featured__more han" href="/zh/33-pang">
+        查看全部三十三尊 <span aria-hidden="true">›</span>
+      </a>
       <div class="pang-grid pang-grid--eight">
         {featured.map((p, i) => <PangCard pang={p} priority={i < 4} lang={lang} />)}
       </div>
-      <p class="grid-more"><a class="btn btn--ghost" href="/zh/33-pang">查看全部三十三尊 ›</a></p>
     </div>
   </section>
 
@@ -195,7 +197,6 @@ const hasFacade = 'shrine-exterior' in (photos.images as Record<string, unknown>
   .intro__aside p:last-child { margin-top: 16px; }
   @media (max-width: 759px) { .intro { grid-template-columns: 1fr; } }
 
-  .grid-more { margin: 22px 0 0; text-align: center; }
 
   .evt { list-style: none; margin: 0; padding: 0; }
   .evt__row { display: grid; grid-template-columns: 190px 1fr auto; gap: 6px 20px; align-items: baseline; padding: 15px 0; border-top: 1px solid var(--line); }

@@ -525,6 +525,28 @@ section.band + section.band { border-top: 1px solid var(--line); }
   .hero--home .hero__ribbon:hover { box-shadow: inset 0 0 0 1px var(--gold-bright), 0 3px 6px rgba(60, 8, 6, .28), 0 18px 34px -10px rgba(60, 8, 6, .54); }
 }
 
+/* ============================================================ แถบ ๘ ปางหน้าแรก
+   ลิงก์ "ดูครบทั้ง ๓๓ ปาง" อยู่ที่เดียวในหน้า แต่ย้ายตำแหน่งตามความกว้าง
+   จอกว้างอยู่ท้ายหัวข้อ มือถืออยู่ใต้ตารางเป็นปุ่มเต็มความกว้าง ตามแบบ V2
+   ไม่ได้เขียนสองชุดแล้วซ่อนชุดหนึ่ง ลิงก์ซ้ำในหน้าเดียวกันสร้างปัญหาให้โปรแกรมอ่านหน้าจอ */
+.featured__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-6);
+}
+.featured__head { order: 1; margin-bottom: 0; }
+.featured__inner .pang-grid { order: 2; }
+.featured__more { order: 3; }
+@media (min-width: 760px) {
+  .featured__inner {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+  }
+  .featured__head { grid-column: 1; }
+  .featured__more { grid-column: 2; justify-self: end; }
+  .featured__inner .pang-grid { grid-column: 1 / -1; }
+}
+
 /* ============================================================ ตาราง ๓๓ ปาง
    ใช้ร่วมกันทั้งหน้าไทยและหน้าจีน เดิมเขียนแยกกันห้าที่
    จนระยะห่างระหว่างใบฝั่งจีนเหลือ 1px ส่วนฝั่งไทยเป็น 18px */
