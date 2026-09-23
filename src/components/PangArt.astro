@@ -65,7 +65,7 @@ const widest = entry ? entry.widths[entry.widths.length - 1] : null;
 const isArt = (photoMeta.illustrations as string[]).includes(photo);
 const uid = `pa${order}`;
 ---
-<span class="pang-figure">
+<span class:list={['pang-figure', srcset && !isArt && 'pang-figure--lit']}>
   {srcset ? (
     <img
       class="pang-art"
@@ -91,7 +91,28 @@ const uid = `pa${order}`;
 </span>
 
 <style>
-  .pang-figure { position: relative; display: block; }
+  .pang-figure { position: relative; display: block; isolation: isolate; }
+
+  /* ไฟส่ององค์พระ — ภาพถ่ายในสตูดิโอเป็นพื้นแดงเรียบ แสงเท่ากันทั้งผืน
+     อ่านเป็นภาพสินค้า ไม่ใช่องค์พระ จึงเติมแสงอุ่นจากด้านบนตกที่พระพักตร์
+     กับมุมห้องที่มืดลง เหมือนตู้พระที่มีไฟส่องลงมา
+     ใส่เฉพาะภาพถ่ายจริง ภาพประกอบกับตู้พระที่ยังไม่มีภาพไม่ต้องใส่ */
+  .pang-figure--lit::before,
+  .pang-figure--lit::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .pang-figure--lit::before {
+    background: radial-gradient(52% 40% at 50% 20%, rgba(255, 228, 184, .34) 0%, rgba(255, 228, 184, 0) 72%);
+    mix-blend-mode: soft-light;
+  }
+  .pang-figure--lit::after {
+    background:
+      radial-gradient(120% 88% at 50% 36%, rgba(20, 3, 3, 0) 50%, rgba(20, 3, 3, .46) 100%),
+      linear-gradient(180deg, rgba(20, 3, 3, 0) 74%, rgba(20, 3, 3, .22) 100%);
+  }
 
   /* ป้ายบอกว่าเป็นภาพประกอบ — วางทับมุมล่างซ้ายของภาพ
      ต้องอ่านได้บนพื้นแดงสดของภาพ จึงใช้พื้นรักเข้มทึบ ไม่ใช่แค่ตัวอักษรลอย */

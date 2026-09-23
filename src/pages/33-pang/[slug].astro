@@ -62,7 +62,7 @@ const description =
 
   <article class="pang">
     <div class="wrap pang__grid">
-      <div class="pang__art">
+      <div class="pang__art zone-hall">
         <PangArt
           photo={d.photo} order={d.order} nameTh={name} nameZh={d.name_zh}
           enshrined={d.enshrined} priority sizes="(max-width: 820px) 92vw, 420px"
@@ -212,7 +212,7 @@ const description =
     align-items: start;
     padding-block: clamp(28px, 5vw, 48px);
   }
-  @media (max-width: 899px) { .pang__grid { grid-template-columns: 1fr; gap: 26px; } }
+  @media (max-width: 899px) { .pang__grid { grid-template-columns: 1fr; gap: 26px; padding-top: 0; } }
 
   .pang__art { position: sticky; top: 68px; }
   /* ภาพองค์บนหน้าปางคือภาพเดียวที่คนจ้องดูนาน จึงใส่กรอบทองลาย 回紋
@@ -223,7 +223,18 @@ const description =
     box-shadow: var(--shadow-lift);
   }
   .pang__art :global(.pang-art) { box-shadow: 0 0 0 1px rgba(134, 99, 18, .3); }
-  @media (max-width: 899px) { .pang__art { position: static; } }
+  @media (max-width: 899px) { .pang__art { position: relative; top: auto; } }
+
+  /* องค์พระตั้งอยู่ในหอ — พื้นเข้มชุดเดียวกับแถบ ๘ ปางหน้าแรก
+     มีแค่ภาพกับป้ายสั้นอยู่บนพื้นมืด เนื้อหาให้อ่านยังอยู่บนพื้นครีมทั้งหมด */
+  .pang__art.zone-hall { padding: var(--space-6); border: 1px solid var(--gold-line); overflow: hidden; }
+  @media (max-width: 899px) {
+    .pang__art.zone-hall {
+      margin-inline: calc(-1 * var(--gutter));
+      padding: var(--space-8) var(--gutter);
+      border-inline: 0;
+    }
+  }
   /* หน้าปางคือหน้าที่คนดูภาพนานที่สุด ป้ายเล็กมุมภาพอย่างเดียวไม่พอ
      ต้องบอกเป็นประโยคเต็มใต้ภาพด้วยว่าไม่ใช่องค์จริง */
   .pang__artnote {

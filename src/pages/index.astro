@@ -152,7 +152,7 @@ const schema = preOpening
 
   <!-- ๘ องค์เด่น: ตู้จัดแสดงบนพื้นรักเข้ม ไม่ใช่กำแพงซุ้ม ๓๓ ช่อง
        ๓๓ ช่องที่หน้าตาเหมือนกันหมดทำให้หน้าแรกอ่านเป็นตารางที่ยังไม่ได้ใส่ของ -->
-  <section class="band zone-gilt featured">
+  <section class="band zone-hall featured">
     <div class="wrap featured__inner">
       <div class="section-head featured__head">
         <p class="eyebrow eyebrow--marked">๐๑ — ๓๓</p>
@@ -240,6 +240,8 @@ const schema = preOpening
   /* โซนมืดเป็นก้อนของตัวเอง ไม่ต้องมีเส้นคั่นซ้อนอีก */
   .band.zone-gilt { border-top: 0; }
   .band.zone-gilt + .band { border-top: 0; }
+  .band.zone-hall, .band.zone-hall + .band { border-top: 0; }
+  .band.zone-hall { border-top: 1px solid var(--gold-line); }
 
   /* ๙ ส่วนเด่นสูงกว่าส่วนรอง เพื่อให้หน้ามีจังหวะ ไม่ใช่บล็อกระยะเท่ากันหมด */
   .featured { padding-block: clamp(52px, 8vw, 92px); }

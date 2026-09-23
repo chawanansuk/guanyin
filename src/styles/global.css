@@ -864,6 +864,59 @@ section.band + section.band { border-top: 1px solid var(--line); }
     radial-gradient(124% 94% at 50% 44%, transparent 42%, rgba(70, 8, 6, .42) 100%);
 }
 
+/* โซนหอพระ — พื้นไม้รักเข้มมีแสงส่องจากเพดาน ใช้กับที่ที่องค์พระเป็นพระเอกเท่านั้น
+   องค์กระเบื้องขาวบนพื้นแดงจะเด่นที่สุดเมื่อรอบตัวมืดลง อย่างตู้จัดแสดงในหอพระจริง
+   ใช้ได้กับเนื้อหาสั้น (ชื่อ ป้ายกำกับ) เท่านั้น เนื้อหายาวยังต้องอยู่บนพื้นครีม
+   คนสูงวัยอ่านมือถือกลางแดด พื้นมืดทั้งหน้าจะสะท้อนแสงจนอ่านไม่ออก */
+.zone-hall {
+  --ground: #1C0F0B;
+  --surface: #2A1812;
+  --surface-2: #34201A;
+  --surface-sunk: #140A07;
+
+  --ink: #F7ECD6;      /* 16.0:1 บนพื้นหอ */
+  --ink-2: #E2CFAE;    /* 12.3:1 */
+  --ink-3: #BFA682;    /* 7.3:1 บนพื้นการ์ด */
+
+  --line: rgba(242, 220, 166, .14);
+  --line-strong: rgba(242, 220, 166, .32);
+
+  --lacquer: #F0CC72;
+  --lacquer-deep: #E9B98A;  /* วลีแก่นของปางบนการ์ด — 9.5:1 บนพื้นการ์ด */
+  --lacquer-ink: #1C0F0B;
+  --lacquer-soft: #34201A;
+
+  --gold: #E3B75A;
+  --gold-bright: #F0CC72;
+  --gold-soft: #34201A;
+  --gold-line: rgba(227, 183, 90, .4);
+  --gold-glow: rgba(227, 183, 90, .14);
+
+  --shadow: 0 1px 1px rgba(0, 0, 0, .4), 0 8px 18px rgba(0, 0, 0, .34);
+  --shadow-lift: 0 2px 3px rgba(0, 0, 0, .44), 0 12px 24px rgba(0, 0, 0, .4), 0 28px 56px rgba(0, 0, 0, .42);
+
+  position: relative;
+  isolation: isolate;
+  background: var(--ground);
+  color: var(--ink);
+  border-block: 1px solid var(--gold-line);
+}
+/* แสงจากเพดานตกกลางหอ ขอบห้องมืดลง — ไม่ใช่ไล่เฉดทั้งผืน */
+.zone-hall::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 46% at 50% 0%, rgba(240, 204, 114, .16) 0%, rgba(240, 204, 114, 0) 72%),
+    radial-gradient(130% 90% at 50% 40%, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, .38) 100%);
+}
+.zone-hall .btn--ghost { color: var(--ink); border-color: var(--line-strong); }
+.zone-hall .btn--ghost:hover { border-color: var(--gold-bright); color: var(--gold-bright); background: rgba(240, 204, 114, .08); }
+/* การ์ดในหอเป็นป้ายกำกับใต้ตู้ มีขีดทองคั่นระหว่างภาพกับชื่อ */
+.zone-hall .pang-card__body { border-top: 1px solid var(--gold-line); }
+
 /* ============================================================
    เกรนละเอียด — พื้นสีเรียบ ๆ กับไล่เฉดจะขึ้นแถบและดูเป็นเวกเตอร์
    เกรน 4% ทำให้พื้นกว้างอ่านเป็นผิวรักหรือผิวกระดาษ
