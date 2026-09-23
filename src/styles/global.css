@@ -542,9 +542,11 @@ section.band + section.band { border-top: 1px solid var(--line); }
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: end;
   }
-  .featured__head { grid-column: 1; }
-  .featured__more { grid-column: 2; justify-self: end; }
-  .featured__inner .pang-grid { grid-column: 1 / -1; }
+  /* ต้องตรึงแถวเอง — order ของมือถือยังมีผล ถ้าปล่อยให้วางอัตโนมัติ
+     ลิงก์จะตกไปอยู่แถวหลังตาราง ไม่ขึ้นมาอยู่ข้างหัวข้อ */
+  .featured__head { grid-column: 1; grid-row: 1; }
+  .featured__more { grid-column: 2; grid-row: 1; justify-self: end; }
+  .featured__inner .pang-grid { grid-column: 1 / -1; grid-row: 2; }
 }
 
 /* ============================================================ ตาราง ๓๓ ปาง
