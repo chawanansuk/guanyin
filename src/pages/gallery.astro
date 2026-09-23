@@ -80,11 +80,9 @@ const real = (await allPang()).filter(
   .shot { margin: 0; }
   .shot :global(.shrine-photo), .shot img {
     display: block; width: 100%; height: auto;
-    border-radius: 2px;
+    border-radius: var(--radius);
     box-shadow: 0 0 0 1px var(--gold-line), var(--shadow-lift);
   }
-  .shot figcaption { margin-top: 12px; font-size: 14.5px; color: var(--ink-3); }
+  .shot figcaption { margin-top: 12px; font-size: var(--fs-sm); color: var(--ink-3); }
   .lede-sm { margin: -8px 0 24px; color: var(--ink-2); max-width: var(--measure); }
-  .pang-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(178px, 1fr)); gap: 1px; }
-  @media (max-width: 420px) { .pang-grid { grid-template-columns: repeat(2, 1fr); } }
 </style>

@@ -38,8 +38,8 @@ const news = (await getCollection('news')).sort((a, b) => +b.data.date - +a.data
   .list li:last-child { border-bottom: 1px solid var(--line); }
   .list a { display: grid; grid-template-columns: 116px 1fr; gap: 4px 18px; padding: 20px 0; text-decoration: none; color: inherit; }
   .list a:hover .list__t { color: var(--lacquer); }
-  .list time { font-size: 15px; color: var(--ink-3); }
-  .list__t { font-family: var(--serif); font-size: 19px; font-weight: 600; line-height: 1.45; }
-  .list__s { grid-column: 2; font-size: 16px; color: var(--ink-2); line-height: 1.65; }
-  @media (max-width: 560px) { .list a { grid-template-columns: 1fr; } .list__s { grid-column: 1; } }
+  .list time { font-size: var(--fs-sm); color: var(--ink-3); }
+  .list__t { font-family: var(--serif); font-size: var(--fs-h4); font-weight: 600; line-height: 1.45; }
+  .list__s { grid-column: 2; font-size: var(--fs-md); color: var(--ink-2); line-height: 1.65; }
+  @media (max-width: 559px) { .list a { grid-template-columns: 1fr; } .list__s { grid-column: 1; } }
 </style>

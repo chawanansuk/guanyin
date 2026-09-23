@@ -94,15 +94,15 @@ const toc = headings.filter((h: any) => h.depth === 3);
 <style>
   .full-head { border: 0; border-bottom: 1px solid var(--gold-line); }
   .full-head__inner { padding-block: 28px 38px; display: flex; flex-direction: column; }
-  .full-head__back { color: var(--ink-3); font-size: 15.5px; text-decoration: none; margin-bottom: 22px; transition: color .3s var(--ease-lux); }
+  .full-head__back { color: var(--ink-3); font-size: var(--fs-sm); text-decoration: none; margin-bottom: 22px; transition: color .3s var(--ease-lux); }
   .full-head__back:hover { color: var(--gold); }
-  .full-head__no { font-size: 12px; letter-spacing: .3em; padding-right: .3em; text-transform: uppercase; color: var(--gold); margin: 0 0 10px; }
+  .full-head__no { font-size: var(--fs-caption); letter-spacing: .3em; padding-right: .3em; text-transform: uppercase; color: var(--gold); margin: 0 0 10px; }
   .full-head h1 { color: var(--ink); }
-  .full-head__zh { margin: 10px 0 0; font-size: 24px; font-weight: 700; color: var(--lacquer); letter-spacing: .1em; padding-left: .1em; }
-  .full-head__var { font-size: 15.5px; color: var(--ink-3); font-weight: 400; letter-spacing: normal; }
+  .full-head__zh { margin: 10px 0 0; font-size: var(--fs-h3); font-weight: 700; color: var(--lacquer); letter-spacing: .1em; padding-left: .1em; }
+  .full-head__var { font-size: var(--fs-sm); color: var(--ink-3); font-weight: 400; letter-spacing: normal; }
   .full-head__essence {
     margin: 18px 0 0; max-width: 56ch;
-    font-family: var(--display); font-weight: 300; font-size: 18.5px; line-height: 1.8;
+    font-family: var(--display); font-weight: 300; font-size: var(--fs-h4); line-height: 1.8;
     color: var(--ink-2);
   }
 
@@ -113,10 +113,10 @@ const toc = headings.filter((h: any) => h.depth === 3);
     align-items: start;
     padding-block: clamp(28px, 5vw, 48px);
   }
-  @media (max-width: 900px) { .full-body { grid-template-columns: 1fr; gap: 28px; } }
+  @media (max-width: 899px) { .full-body { grid-template-columns: 1fr; gap: 28px; } }
 
   .full-toc__inner { position: sticky; top: 68px; display: flex; flex-direction: column; gap: 18px; }
-  @media (max-width: 900px) {
+  @media (max-width: 899px) {
     .full-toc__inner { position: static; }
     .full-toc__inner :global(.pang-art) { max-width: 180px; }
   }
@@ -124,29 +124,29 @@ const toc = headings.filter((h: any) => h.depth === 3);
   .full-toc ol { list-style: none; margin: 0; padding: 0; counter-reset: t; }
   .full-toc li { counter-increment: t; padding: 5px 0; border-top: 1px solid var(--line); }
   .full-toc li:first-child { border-top: 0; }
-  .full-toc a { font-size: 15px; line-height: 1.5; color: var(--ink-2); text-decoration: none; display: block; }
+  .full-toc a { font-size: var(--fs-sm); line-height: 1.5; color: var(--ink-2); text-decoration: none; display: block; }
   .full-toc a:hover { color: var(--lacquer); }
-  .full-toc__meta { font-size: 12.5px; color: var(--ink-3); margin: 0; }
+  .full-toc__meta { font-size: var(--fs-caption); color: var(--ink-3); margin: 0; }
 
   .evidence { margin-bottom: 30px; }
   .evidence em { font-style: normal; font-weight: 600; color: var(--ink); }
 
   .full-article :global(.prose h3) {
-    font-size: 21px;
+    font-size: var(--fs-h3);
     margin-top: 2em;
     padding-bottom: 8px;
     border-bottom: 1px solid var(--line);
     scroll-margin-top: 70px;
   }
-  .full-article :global(.prose h4) { font-size: 18px; margin-top: 1.6em; }
-  .full-article :global(.prose p) { font-size: 17px; line-height: 1.82; }
-  .full-article :global(.prose sup a) { font-size: 12px; text-decoration: none; padding: 0 2px; }
+  .full-article :global(.prose h4) { font-size: var(--fs-h4); margin-top: 1.6em; }
+  .full-article :global(.prose p) { font-size: var(--fs-md); line-height: 1.82; }
+  .full-article :global(.prose sup a) { font-size: var(--fs-caption); text-decoration: none; padding: 0 2px; }
   .full-article :global(.prose ol li), .full-article :global(.prose ul li) { line-height: 1.75; }
   .full-article :global(.prose a) { word-break: break-word; }
 
   .full-alts, .full-source { margin-top: 26px; color: var(--ink-2); }
   .full-alts__label {
-    font-family: var(--mono); font-size: 11.5px; letter-spacing: .1em;
+    font-family: var(--mono); font-size: var(--fs-caption); letter-spacing: .1em;
     text-transform: uppercase; color: var(--ink-3); margin-right: 8px;
   }
   .full-source { color: var(--ink-3); padding-top: 20px; border-top: 1px solid var(--line); }

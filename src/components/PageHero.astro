@@ -20,12 +20,12 @@ const { eyebrow, title, lede, narrow = false } = Astro.props;
   /* หัวเรื่องของหน้า ต่อจากแถบเมนูเป็นก้อนมืดก้อนเดียว
      เนื้อหาด้านล่างยังเป็นพื้นสว่าง เพราะเป็นส่วนที่ต้องอ่านยาว */
   .page-hero {
-    padding-block: clamp(38px, 6.4vw, 66px) clamp(32px, 4.6vw, 48px);
+    padding-block: clamp(40px, 6.4vw, var(--space-16)) clamp(var(--space-8), 4.6vw, var(--space-12));
     border-bottom: 1px solid var(--gold-line);
   }
-  .page-hero .eyebrow { margin-bottom: 14px; }
+  .page-hero .eyebrow { margin-bottom: var(--space-4); }
   .page-hero h1 { color: var(--ink); }
-  .page-hero h1 + .lede { margin-top: 16px; }
+  .page-hero h1 + .lede { margin-top: var(--space-4); }
   .page-hero .lede { font-family: var(--display); font-weight: 300; color: var(--ink-2); }
   .page-hero :global(.mono) { color: var(--gold); }
 </style>

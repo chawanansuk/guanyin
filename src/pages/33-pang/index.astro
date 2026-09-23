@@ -191,19 +191,12 @@ const schema = [{
 
 <style>
   .confuse__rule { margin-top: 20px; }
-  .hero-status { margin-top: 16px; font-size: 15.5px; color: var(--celadon); }
+  .hero-status { margin-top: 16px; font-size: var(--fs-sm); color: var(--celadon); }
 
   .filter { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
   .filter__label { margin: 0; }
   .filter__count { margin: 0; }
   .filter__empty { margin: 28px 0 0; color: var(--ink-3); }
-
-  .pang-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(178px, 1fr));
-    gap: 16px;
-  }
-  @media (max-width: 560px) { .pang-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
 
   .after { margin-top: 32px; }
 </style>

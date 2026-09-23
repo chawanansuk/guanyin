@@ -99,7 +99,45 @@
 
   --gutter: 20px;
   --measure: 66ch;
+
+  /* ============================================================
+     สเกลที่จัดระบบใหม่ (V2)
+     ก่อนหน้านี้ขนาดตัวอักษรกระจายอยู่ ๒๔ ค่า — 15px กับ 15.5px ถูกใช้
+     อย่างละ ๒๑ ครั้งทั้งที่ตาแยกไม่ออก ระยะห่าง ๒๐ ค่า และมุม ๕ ค่า
+     รวบเหลือชุดเดียวเพื่อให้หน้าใหม่ ๆ ไม่ต้องเดาว่าจะใช้ค่าไหน
+     ============================================================ */
+
+  /* ตัวอักษร — ๑๐ ขั้น ไล่ประมาณ 1.25 ต่อขั้นในช่วงหัวเรื่อง */
+  --fs-display: 50px;
+  --fs-h1: 40px;
+  --fs-h2: 30px;
+  --fs-h3: 23px;
+  --fs-h4: 19px;
+  --fs-lg: 19px;   /* คำนำ */
+  --fs-md: 17px;   /* เนื้อความ — ขั้นต่ำของเว็บนี้ */
+  --fs-sm: 15px;   /* ข้อความรอง */
+  --fs-label: 13px;
+  --fs-caption: 12px;
+
+  /* ระยะห่าง — ฐาน 4px
+     1–3px สงวนไว้สำหรับเส้นตารางบาง ไม่ใช่ระยะห่าง จึงไม่มีในสเกลนี้ */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* มุม — คงความคมไว้ เพราะเป็นลักษณะของงานไม้และป้ายจริง */
   --radius: 3px;
+  --radius-md: 6px;
+  --radius-pill: 999px;
+
+  /* จุดตัดหน้าจอ — เดิมมี ๑๕ ค่า หลายค่าห่างกันไม่ถึง ๒๐px
+     (ใช้อ้างอิงในคอมเมนต์ CSS ใช้ค่าตัวแปรใน media query ไม่ได้) */
+  /* sm 560 · md 760 · lg 900 · xl 1100 */
 }
 
 /* โหมดมืดอัตโนมัติถูกถอดออกโดยตั้งใจ
@@ -118,7 +156,7 @@ body {
   background: var(--ground);
   color: var(--ink);
   /* 17px ขั้นต่ำ — ผู้ใช้จำนวนมากเป็นผู้สูงอายุ อ่านบนมือถือกลางแจ้ง */
-  font: 400 17px/1.75 var(--sans);
+  font: 400 var(--fs-md)/1.75 var(--sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -146,7 +184,7 @@ h1 {
 }
 h2 { font-size: clamp(24px, 3.8vw, 33px); }
 h3 { font-size: clamp(19px, 2.6vw, 23px); }
-h4 { font-size: 18px; font-weight: 600; }
+h4 { font-size: var(--fs-h4); font-weight: 600; }
 /* อักษรจีนขนาดใหญ่ต้องการช่องไฟบวก ไม่ใช่ลบ */
 h1 .han, h2 .han, .display .han { letter-spacing: .08em; }
 /* หน้าภาษาจีน: หัวเรื่องใช้เซอริฟจีนน้ำหนัก 400
@@ -187,7 +225,7 @@ a:hover { text-decoration-thickness: 2px; }
 :where(a, button, summary, input, select, textarea, [tabindex]):focus-visible {
   outline: 2px solid var(--lacquer);
   outline-offset: 3px;
-  border-radius: 2px;
+  border-radius: var(--radius);
 }
 
 .han { font-family: var(--han); }
@@ -216,7 +254,7 @@ a:hover { text-decoration-thickness: 2px; }
 }
 
 .muted { color: var(--ink-3); }
-.small { font-size: 15px; line-height: 1.65; }
+.small { font-size: var(--fs-sm); line-height: 1.65; }
 
 /* ============================================================ layout */
 .wrap {
@@ -228,24 +266,24 @@ a:hover { text-decoration-thickness: 2px; }
 .wrap--narrow { max-width: 760px; }
 
 .stack { display: flex; flex-direction: column; }
-.stack > * + * { margin-top: var(--gap, 16px); }
+.stack > * + * { margin-top: var(--gap, var(--space-4)); }
 
 section.band { padding-block: clamp(40px, 7vw, 72px); }
 section.band + section.band { border-top: 1px solid var(--line); }
 
-.section-head { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+.section-head { display: flex; flex-direction: column; gap: var(--space-2); margin-bottom: var(--space-6); }
 
 /* ============================================================ buttons */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--space-2);
   min-height: 48px;             /* พื้นที่กดอย่างน้อย 44px */
-  padding: 10px 22px;
+  padding: var(--space-2) var(--space-6);
   border: 1px solid transparent;
   border-radius: var(--radius);
-  font: 500 16.5px/1.3 var(--sans);
+  font: 500 var(--fs-md)/1.3 var(--sans);
   text-decoration: none;
   cursor: pointer;
   transition: background .25s var(--ease-lux), border-color .25s var(--ease-lux), color .25s var(--ease-lux), box-shadow .35s var(--ease-lux), transform .35s var(--ease-lux);
@@ -307,18 +345,191 @@ section.band + section.band { border-top: 1px solid var(--line); }
 .zone-plaque .btn--ghost { color: var(--ink); border-color: var(--line-strong); }
 .zone-plaque .btn--ghost:hover { border-color: var(--gold-bright); color: var(--gold); background: rgba(246, 227, 176, .1); }
 
+/* ============================================================ hero หน้าแรก
+   ใช้ร่วมกันทั้งหน้าไทยและหน้าจีน โครงเดียวกัน ต่างแค่ข้อความ
+   เคยเขียนซ้ำในสองไฟล์ แล้วแก้ไฟล์เดียวจนสองภาษาเพี้ยนจากกัน */
+.hero--home { position: relative; overflow: hidden; }
+
+/* ภาพกับป้ายต้องซ้อนกัน ป้ายจึงยื่นขึ้นไปทับขอบล่างของภาพ
+   ค่าลบนี้คือ "ความลึกที่ป้ายแขวนอยู่บนตัวอาคาร" */
+.hero--home { --hang: clamp(var(--space-8), 6vw, var(--space-12)); }
+
+/* ภาพเต็มขอบจอทุกขนาด และสูงตามจอ ไม่ใช่ตามสัดส่วนไฟล์
+   จอแรกต้องเป็นตัวอาคาร ไม่ใช่ภาพเล็ก ๆ ลอยอยู่กลางพื้นครีม
+   ครอปด้วย object-fit แทนการบีบความกว้าง เพื่อให้ได้ความสูงที่ต้องการทุกจอ */
+.hero--home .hero__photo {
+  position: relative;
+  width: 100%;
+  height: min(66vh, 92vw);
+  height: min(66svh, 92vw);
+  min-height: 280px;
+}
+.hero--home .hero__photo .shrine-photo {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto !important;
+  object-fit: cover;
+  /* ยอดอาคารกับป้ายจริงอยู่ครึ่งบน จึงถ่วงจุดครอปขึ้นเล็กน้อย */
+  object-position: 50% 38%;
+}
+/* จอกว้าง: สูงน้อยลงตามสัดส่วน เพราะยังต้องเหลือที่ให้ป้ายกับปุ่มอยู่ในจอแรก
+   ภาพสูงเต็มจอบนเดสก์ท็อปจะดันปุ่มนำทางตกขอบล่าง */
+@media (min-width: 760px) {
+  .hero--home .hero__photo { height: min(62vh, 46vw); height: min(62svh, 46vw); min-height: 340px; }
+  .hero--home .hero__photo .shrine-photo { object-position: 50% 46%; }
+}
+@media (min-width: 1100px) {
+  .hero--home .hero__photo { height: min(64vh, 40vw); height: min(64svh, 40vw); }
+}
+
+/* ขอบล่างของภาพต้องจางเข้าพื้นครีม ป้ายชาดจึงแขวนอยู่บนรอยต่อได้
+   ถ้าตัดตรง ๆ ป้ายจะดูเหมือนแปะทับภาพ ไม่ใช่แขวนอยู่กับอาคาร */
+.hero--home .hero__fade {
+  position: absolute;
+  inset: auto 0 0;
+  height: calc(var(--hang) + var(--space-4));
+  background: linear-gradient(180deg, rgba(249, 241, 225, 0) 0%, rgba(249, 241, 225, .55) 70%, var(--ground) 100%);
+  pointer-events: none;
+}
+
+/* ป้ายนับถอยหลัง — มุมภาพ ไม่ใช่ปุ่ม จึงไม่แย่งสายตากับปุ่มนำทาง */
+.hero--home .hero__ribbon {
+  position: absolute;
+  top: var(--space-4);
+  inset-inline-end: var(--space-4);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+  min-height: 44px;
+  justify-content: center;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius);
+  background: linear-gradient(175deg, var(--plaque) 0%, var(--plaque-2) 100%);
+  box-shadow:
+    inset 0 0 0 1px var(--gold-line),
+    0 2px 4px rgba(60, 8, 6, .24), 0 10px 22px -8px rgba(60, 8, 6, .4);
+  color: var(--plaque-ink);
+  font-family: var(--sans);
+  text-decoration: none;
+  text-align: end;
+  transition: box-shadow .35s var(--ease-lux), transform .35s var(--ease-lux);
+}
+.hero--home .hero__ribbon:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 0 0 1px var(--gold-bright),
+    0 3px 6px rgba(60, 8, 6, .28), 0 14px 28px -8px rgba(60, 8, 6, .44);
+}
+.hero--home .hero__ribbon-label { font-size: var(--fs-label); font-weight: 600; letter-spacing: .02em; line-height: 1.35; }
+.hero--home .hero__ribbon-count { font-size: var(--fs-caption); font-weight: 500; opacity: .86; letter-spacing: .04em; line-height: 1.35; }
+/* ยังไม่มีภาพอาคาร ป้ายนับถอยหลังจึงลงมาอยู่ใต้ปุ่มแทนมุมภาพ */
+.hero--home .hero__ribbon--flat {
+  position: static;
+  margin-top: var(--space-4);
+  flex-direction: row;
+  align-items: baseline;
+  gap: var(--space-2);
+  text-align: center;
+}
+
+.hero--home .hero__inner {
+  position: relative;
+  z-index: 1;
+  padding-block: 0 clamp(var(--space-8), 6vw, 60px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+/* ไม่มีภาพ: ป้ายอยู่บนพื้นเปล่า ไม่ต้องยื่น */
+.hero--home:not(.hero--photo) .hero__inner { padding-top: clamp(44px, 8vw, 80px); }
+
+.hero--home .hero__plaque {
+  width: min(100% - var(--space-8), 520px);
+  margin-top: calc(-1 * var(--hang));
+  /* ป้ายที่แขวนทับภาพต้องมีเงาตกลงบนภาพ ไม่งั้นดูเหมือนวางแปะ */
+  box-shadow:
+    0 1px 1px rgba(60, 8, 6, .3),
+    0 8px 18px rgba(60, 8, 6, .26),
+    0 28px 56px -18px rgba(60, 8, 6, .5),
+    inset 0 1px 0 rgba(246, 227, 176, .22);
+}
+.hero--home.hero--photo .hero__plaque { margin-top: calc(-1 * var(--hang)); }
+@media (min-width: 760px) {
+  .hero--home .hero__plaque { width: min(100% - var(--space-16), 500px); padding-block: var(--space-6) var(--space-6); }
+  .hero--home .hero__plaque .plaque-board__zh { font-size: clamp(34px, 4.6vw, 50px); }
+}
+
+.hero--home .hero__where {
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline;
+  gap: var(--space-1) var(--space-3);
+  margin: var(--space-6) 0 0;
+  font-family: var(--sans);
+  font-size: clamp(13px, 1.7vw, 14.5px);
+  font-weight: 600;
+  letter-spacing: .14em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+.hero--home .hero__where-zh { letter-spacing: .3em; padding-left: .3em; }
+.hero--home .hero__where-sep { opacity: .5; }
+
+/* ประโยคเดียว ตัวไม่มีเชิง ตัดบรรทัดให้สมดุล
+   เซอริฟบางที่ 17px บนจอ Android จะสั่นและอ่านยาก */
+.hero--home .hero__lede {
+  margin: var(--space-4) 0 0;
+  max-width: 30ch;
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: clamp(17px, 2.1vw, 19px);
+  line-height: 1.7;
+  color: var(--ink-2);
+  text-wrap: balance;
+}
+
+/* ปุ่มหลักหนึ่งปุ่ม ปุ่มรองหนึ่งปุ่ม กว้างเท่ากันเสมอ
+   ปุ่มกว้างไม่เท่ากันอ่านเป็นงานยังไม่เสร็จ */
+.hero--home .hero__cta {
+  display: grid;
+  /* auto-fit แทนจุดตัดเฉพาะกิจ: จอไหนวางสองปุ่มไม่พอ มันซ้อนลงมาเอง */
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-3);
+  width: min(100%, 460px);
+  margin-top: var(--space-6);
+}
+.hero--home .hero__btn { width: 100%; padding-inline: var(--space-3); line-height: 1.25; }
+
+/* ============================================================ ตาราง ๓๓ ปาง
+   ใช้ร่วมกันทั้งหน้าไทยและหน้าจีน เดิมเขียนแยกกันห้าที่
+   จนระยะห่างระหว่างใบฝั่งจีนเหลือ 1px ส่วนฝั่งไทยเป็น 18px */
+.pang-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(178px, 1fr));
+  gap: var(--space-4);
+}
+@media (max-width: 559px) {
+  .pang-grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-3); }
+}
+/* หน้าแรกโชว์ ๘ ใบ จำนวนคอลัมน์จึงตรึงไว้ ไม่ปล่อยให้ auto-fill จัดเอง
+   ไม่งั้นจอบางขนาดจะได้แถวสุดท้ายเหลือใบเดียว */
+.pang-grid--eight { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 899px) { .pang-grid--eight { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 559px) { .pang-grid--eight { grid-template-columns: repeat(2, 1fr); } }
+
 /* ============================================================ chips */
-.chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; margin: 0; list-style: none; }
+.chips { display: flex; flex-wrap: wrap; gap: var(--space-2); padding: 0; margin: 0; list-style: none; }
 .chip {
   display: inline-flex;
   align-items: center;
   min-height: 34px;
-  padding: 4px 15px;
+  padding: var(--space-1) var(--space-4);
   border: 1px solid var(--line-strong);
-  border-radius: 100px;
+  border-radius: var(--radius-pill);
   color: var(--ink-2);
   background: transparent;
-  font-size: 15px;
+  font-size: var(--fs-sm);
   text-decoration: none;
   white-space: nowrap;
   transition: border-color .3s var(--ease-lux), color .3s var(--ease-lux), background .3s var(--ease-lux);
@@ -332,7 +543,7 @@ section.band + section.band { border-top: 1px solid var(--line); }
   font-weight: 600;
   box-shadow: inset 0 1px 0 rgba(255, 247, 220, .5);
 }
-.chip--filter { min-height: 44px; padding-inline: 18px; }
+.chip--filter { min-height: 44px; padding-inline: var(--space-4); }
 
 /* ============================================================ surfaces */
 .panel {
@@ -344,9 +555,9 @@ section.band + section.band { border-top: 1px solid var(--line); }
   position: relative;
   background: var(--gold-soft);
   border-radius: var(--radius);
-  padding: 18px 22px;
+  padding: var(--space-4) var(--space-6);
   color: var(--ink-2);
-  font-size: 16px;
+  font-size: var(--fs-md);
   line-height: 1.75;
 }
 /* ขอบทองไล่เฉดรอบกล่อง อ่านเป็นแผ่นปิดทอง ไม่ใช่กล่องข้อความระบบ */
@@ -376,7 +587,7 @@ section.band + section.band { border-top: 1px solid var(--line); }
 /* เขียวศิลาดลเหลือใช้เฉพาะสถานะ "เปิดอยู่" — ที่อื่นใช้ทองให้เป็นสองสีทั้งเว็บ */
 .note--celadon { background: var(--gold-soft); }
 .note strong { color: var(--ink); font-weight: 600; }
-.note > * + * { margin-top: 10px; }
+.note > * + * { margin-top: var(--space-2); }
 
 /* ============================================================ prose */
 .prose { max-width: var(--measure); }
@@ -394,22 +605,22 @@ section.band + section.band { border-top: 1px solid var(--line); }
 .prose li + li { margin-top: .45em; }
 .prose blockquote {
   margin: 0;
-  padding-left: 18px;
+  padding-left: var(--space-4);
   border-left: 3px solid var(--gold);
   color: var(--ink-2);
   font-family: var(--serif);
 }
-.prose code { font-family: var(--mono); font-size: .9em; background: var(--surface-2); padding: 1px 5px; border-radius: 2px; }
+.prose code { font-family: var(--mono); font-size: .9em; background: var(--surface-2); padding: 1px var(--space-1); border-radius: var(--radius); }
 .prose hr { border: 0; border-top: 1px solid var(--line); margin-block: 2em; }
 
 /* ============================================================ tables */
 .tablebox { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
-.tablebox table { border-collapse: collapse; width: 100%; min-width: 480px; font-size: 16px; }
-.tablebox th, .tablebox td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.tablebox table { border-collapse: collapse; width: 100%; min-width: 480px; font-size: var(--fs-md); }
+.tablebox th, .tablebox td { text-align: left; padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--line); vertical-align: top; }
 .tablebox thead th {
   background: var(--surface-2);
   border-bottom: 1px solid var(--gold-line);
-  font: 600 11.5px/1.4 var(--sans);
+  font: 600 var(--fs-caption)/1.4 var(--sans);
   letter-spacing: .26em;
   padding-right: 20px;
   text-transform: uppercase;
@@ -419,9 +630,9 @@ section.band + section.band { border-top: 1px solid var(--line); }
 .tablebox tbody tr:last-child td { border-bottom: none; }
 .tablebox td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
 /* ตารางสองคอลัมน์ข้อความ: บนมือถือให้ตัดบรรทัด ไม่ให้เลื่อนข้างจนความหมายโดนหั่น */
-@media (max-width: 640px) {
-  .tablebox--wrap table { min-width: 0; font-size: 15px; }
-  .tablebox--wrap th, .tablebox--wrap td { padding: 10px 12px; }
+@media (max-width: 759px) {
+  .tablebox--wrap table { min-width: 0; font-size: var(--fs-sm); }
+  .tablebox--wrap th, .tablebox--wrap td { padding: var(--space-2) var(--space-3); }
 }
 
 /* ============================================================ ป้ายรักดำ 匾額 */
@@ -438,7 +649,7 @@ section.band + section.band { border-top: 1px solid var(--line); }
   left: 8px;
   top: -60px;
   z-index: 100;
-  padding: 12px 18px;
+  padding: var(--space-3) var(--space-4);
   background: var(--lacquer);
   color: var(--lacquer-ink);
   border-radius: var(--radius);
@@ -465,8 +676,8 @@ section.band + section.band { border-top: 1px solid var(--line); }
   display: inline-flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: clamp(18px, 3vw, 26px) clamp(22px, 4.6vw, 44px);
+  gap: var(--space-2);
+  padding: clamp(var(--space-4), 3vw, var(--space-6)) clamp(var(--space-6), 4.6vw, 44px);
   background: linear-gradient(175deg, var(--plaque) 0%, var(--plaque-2) 100%);
   /* พื้นต้องแผ่ไปใต้กรอบด้วย ไม่งั้นลาย 回紋 จะลอยอยู่บนพื้นของหน้า ไม่ใช่บนป้าย */
   background-clip: border-box;
@@ -504,7 +715,7 @@ section.band + section.band { border-top: 1px solid var(--line); }
 .eyebrow--marked {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
+  gap: var(--space-2);
 }
 .eyebrow--marked::before {
   content: "";
@@ -815,7 +1026,7 @@ body::after {
   background: var(--surface);
   color: var(--gold);
   font-family: var(--display);
-  font-size: 20px;
+  font-size: var(--fs-h4);
   font-weight: 500;
   line-height: 1;
   box-shadow:

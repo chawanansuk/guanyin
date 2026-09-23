@@ -38,9 +38,9 @@ const rel = (n: number) =>
   .evt__row {
     display: grid;
     grid-template-columns: 190px 1fr auto;
-    gap: 6px 20px;
+    gap: var(--space-2) 20px;
     align-items: baseline;
-    padding: 15px 0;
+    padding: var(--space-4) 0;
     border-top: 1px solid var(--line);
   }
   .evt__row:last-child { border-bottom: 1px solid var(--line); }
@@ -49,19 +49,19 @@ const rel = (n: number) =>
   .evt__row--past { color: var(--ink-3); }
   .evt__row--past .evt__title { color: var(--ink-3); }
 
-  .evt__date { font-size: 15.5px; color: var(--ink); white-space: nowrap; }
+  .evt__date { font-size: var(--fs-sm); color: var(--ink); white-space: nowrap; }
   .evt__row--past .evt__date { color: var(--ink-3); }
-  .evt__approx { color: var(--gold); text-decoration: none; margin-left: 4px; cursor: help; }
+  .evt__approx { color: var(--gold); text-decoration: none; margin-left: var(--space-1); cursor: help; }
 
-  .evt__main { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
-  .evt__title { font-size: 17px; }
-  .evt__zh { font-size: 14.5px; color: var(--ink-3); }
-  .evt__lunar { font-family: var(--mono); font-size: 13px; color: var(--ink-3); }
-  .evt__note { flex-basis: 100%; font-size: 15px; color: var(--ink-2); line-height: 1.6; }
+  .evt__main { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-2); }
+  .evt__title { font-size: var(--fs-md); }
+  .evt__zh { font-size: var(--fs-sm); color: var(--ink-3); }
+  .evt__lunar { font-family: var(--mono); font-size: var(--fs-label); color: var(--ink-3); }
+  .evt__note { flex-basis: 100%; font-size: var(--fs-sm); color: var(--ink-2); line-height: 1.6; }
 
-  .evt__rel { font-size: 13.5px; color: var(--ink-3); white-space: nowrap; }
+  .evt__rel { font-size: var(--fs-label); color: var(--ink-3); white-space: nowrap; }
 
-  @media (max-width: 620px) {
+  @media (max-width: 759px) {
     .evt__row { grid-template-columns: 1fr auto; }
     .evt__date { grid-column: 1 / -1; }
   }

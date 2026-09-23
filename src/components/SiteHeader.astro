@@ -78,17 +78,17 @@ const isOn = (href: string) => path === href || path.startsWith(href + '/');
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px 16px;
+    gap: var(--space-3) var(--space-4);
     min-height: 60px;
-    padding-block: 8px;
+    padding-block: var(--space-2);
     flex-wrap: nowrap;
   }
-  .site-head__right { display: flex; align-items: center; gap: 6px 12px; flex: none; }
+  .site-head__right { display: flex; align-items: center; gap: var(--space-2) var(--space-3); flex: none; }
 
   .brand {
     display: flex;
     align-items: center;
-    gap: 11px;
+    gap: var(--space-3);
     text-decoration: none;
     color: var(--lacquer);
   }
@@ -97,10 +97,10 @@ const isOn = (href: string) => path === href || path.startsWith(href + '/');
   .brand :global(.brand__mark) { width: 42px; flex: none; color: var(--gold); transition: color .3s var(--ease-lux); }
   .brand:hover :global(.brand__mark) { color: var(--lacquer); }
   /* ชื่อจีนสีชาด ตรงกับป้ายบนอาคาร — ทองบนพื้นครีมอ่านไม่ขึ้นที่ขนาดนี้ */
-  .brand__zh { font-size: 21px; font-weight: 700; letter-spacing: .16em; padding-left: .16em; line-height: 1.25; color: var(--lacquer); }
-  .brand__th { font-family: var(--display); font-size: 13.5px; letter-spacing: .02em; color: var(--ink-2); line-height: 1.35; }
+  .brand__zh { font-size: var(--fs-h3); font-weight: 700; letter-spacing: .16em; padding-left: .16em; line-height: 1.25; color: var(--lacquer); }
+  .brand__th { font-family: var(--display); font-size: var(--fs-label); letter-spacing: .02em; color: var(--ink-2); line-height: 1.35; }
 
-  .site-head__nav-btn { flex: none; font-size: 15.5px; min-height: 44px; padding-inline: 16px; }
+  .site-head__nav-btn { flex: none; font-size: var(--fs-sm); min-height: 44px; padding-inline: var(--space-4); }
   /* มือถือ: ปุ่มนำทางอยู่ในแถบเวลาเปิด–ปิดใต้ฮีโร่แล้ว
      ซ้ำในหัวเว็บอีกจะดันเนื้อหาลงไปอีกแถบทั้งแถบ */
   @media (max-width: 899px) { .site-head__nav-btn { display: none; } }
@@ -121,7 +121,7 @@ const isOn = (href: string) => path === href || path.startsWith(href + '/');
     background: linear-gradient(90deg, rgba(255, 253, 248, 0), #FFFDF8 78%);
     pointer-events: none;
   }
-  @media (min-width: 640px) { .site-nav__inner::after { display: none; } }
+  @media (min-width: 560px) { .site-nav__inner::after { display: none; } }
   .site-nav__list {
     display: flex;
     gap: 0;
@@ -136,9 +136,9 @@ const isOn = (href: string) => path === href || path.startsWith(href + '/');
     display: flex;
     align-items: center;
     min-height: 50px;
-    padding-inline: 15px;
+    padding-inline: var(--space-4);
     color: var(--ink-2);
-    font-size: 16px;
+    font-size: var(--fs-md);
     letter-spacing: .02em;
     text-decoration: none;
     white-space: nowrap;
@@ -153,13 +153,13 @@ const isOn = (href: string) => path === href || path.startsWith(href + '/');
     font-weight: 600;
   }
 
-  @media (max-width: 560px) {
-    .brand__zh { font-size: 18px; }
-    .brand__th { font-size: 12.5px; }
+  @media (max-width: 559px) {
+    .brand__zh { font-size: var(--fs-h4); }
+    .brand__th { font-size: var(--fs-caption); }
     .brand :global(.brand__mark) { width: 36px; }
-    .site-nav__list a { min-height: 46px; padding-inline: 10px; font-size: 15.5px; }
+    .site-nav__list a { min-height: 46px; padding-inline: var(--space-2); font-size: var(--fs-sm); }
     .nav-long { display: none; }
   }
   .nav-short { display: none; }
-  @media (max-width: 560px) { .nav-short { display: inline; } }
+  @media (max-width: 559px) { .nav-short { display: inline; } }
 </style>

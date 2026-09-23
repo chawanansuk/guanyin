@@ -34,12 +34,12 @@ const fb = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(ur
 </script>
 
 <style>
-  .share { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
-  .share__label { font-size: 15px; color: var(--ink-3); }
+  .share { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); }
+  .share__label { font-size: var(--fs-sm); color: var(--ink-3); }
   .share__btn {
     display: inline-flex; align-items: center;
-    min-height: 44px; padding: 4px 16px;
-    border: 1px solid var(--line-strong); border-radius: 100px;
+    min-height: 44px; padding: var(--space-1) var(--space-4);
+    border: 1px solid var(--line-strong); border-radius: var(--radius-pill);
     background: transparent; color: var(--ink);
     font: 400 15.5px var(--sans); text-decoration: none; cursor: pointer;
   }

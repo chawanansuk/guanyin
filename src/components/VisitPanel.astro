@@ -112,7 +112,7 @@ const mapAlt = lang === 'zh'
     overflow: hidden;
     box-shadow: var(--shadow);
   }
-  @media (max-width: 760px) { .visit { grid-template-columns: 1fr; } }
+  @media (max-width: 759px) { .visit { grid-template-columns: 1fr; } }
 
   .visit__map { background: #F2E6CE; position: relative; }
   .visit__map svg { width: 100%; height: 100%; min-height: 250px; display: block; object-fit: cover; }
@@ -121,35 +121,35 @@ const mapAlt = lang === 'zh'
   .visit__map-link { display: block; }
   .visit__map img { width: 100%; height: auto; display: block; }
   /* จอกว้าง: ให้ภาพเต็มช่องเท่าความสูงของคอลัมน์ข้อมูล ด้วย absolute ซึ่งได้ขนาดแน่นอนจากกล่องแม่ */
-  @media (min-width: 761px) {
+  @media (min-width: 760px) {
     .visit__map { min-height: 380px; }
     .visit__map-link { position: absolute; inset: 0; }
     .visit__map img { height: 100%; object-fit: cover; object-position: center 40%; }
   }
   .visit__map-tag {
-    position: absolute; right: 10px; top: 10px; padding: 3px 9px;
-    font: 600 11px/1.5 var(--sans); letter-spacing: .06em;
+    position: absolute; right: 10px; top: 10px; padding: var(--space-1) var(--space-2);
+    font: 600 var(--fs-caption)/1.5 var(--sans); letter-spacing: .06em;
     color: var(--gold-pale); background: rgba(11, 7, 8, .72); pointer-events: none;
   }
 
-  .visit__info { border: 0; border-radius: 0; padding: 26px; display: flex; flex-direction: column; gap: 14px; border-left: 1px solid var(--line); }
-  @media (max-width: 760px) { .visit__info { border-left: 0; border-top: 1px solid var(--line); } }
-  .visit__info h3 { font-size: 20px; }
-  .visit__addr { font-size: 16.5px; color: var(--ink-2); margin: 0; }
+  .visit__info { border: 0; border-radius: 0; padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-4); border-left: 1px solid var(--line); }
+  @media (max-width: 759px) { .visit__info { border-left: 0; border-top: 1px solid var(--line); } }
+  .visit__info h3 { font-size: var(--fs-h4); }
+  .visit__addr { font-size: var(--fs-md); color: var(--ink-2); margin: 0; }
 
   .visit__hours { border-collapse: collapse; width: 100%; }
   .visit__caption {
     text-align: left;
-    font: 600 11.5px/1.4 var(--sans);
+    font: 600 var(--fs-caption)/1.4 var(--sans);
     letter-spacing: .28em; padding-right: .28em; text-transform: uppercase;
-    color: var(--gold); padding-bottom: 10px;
+    color: var(--gold); padding-bottom: var(--space-2);
   }
-  .visit__hours th { text-align: left; font-weight: 400; color: var(--ink-2); padding: 7px 0; font-size: 16px; border-top: 1px solid var(--line); }
-  .visit__hours td { text-align: right; padding: 7px 0; font-size: 16px; font-variant-numeric: tabular-nums; border-top: 1px solid var(--line); }
+  .visit__hours th { text-align: left; font-weight: 400; color: var(--ink-2); padding: var(--space-2) 0; font-size: var(--fs-md); border-top: 1px solid var(--line); }
+  .visit__hours td { text-align: right; padding: var(--space-2) 0; font-size: var(--fs-md); font-variant-numeric: tabular-nums; border-top: 1px solid var(--line); }
 
   /* แถววันปิดต้องอ่านออกทันทีว่าเป็นวันหยุด ไม่ใช่เวลาที่ลืมกรอก */
   .visit__shut th, .visit__shut td { color: var(--lacquer); }
   .visit__shut td { font-weight: 600; }
   .visit__note { margin: 0; }
-  .visit__cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+  .visit__cta { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-1); }
 </style>

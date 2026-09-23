@@ -100,12 +100,12 @@ const uid = `pa${order}`;
     left: 8px;
     bottom: 8px;
     z-index: 1;
-    padding: 3px 8px 4px;
+    padding: var(--space-1) var(--space-2) var(--space-1);
     font-family: var(--sans);
-    font-size: 10.5px;
+    font-size: var(--fs-caption);
     font-weight: 600;
     letter-spacing: .12em;
-    padding-right: calc(8px + .12em);
+    padding-right: calc(var(--space-2) + .12em);
     line-height: 1.45;
     color: #F2DCA6;
     background: rgba(11, 7, 8, .82);
@@ -128,7 +128,7 @@ const uid = `pa${order}`;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: var(--space-2);
     background:
       radial-gradient(78% 58% at 50% 26%, rgba(216, 169, 63, .14) 0%, transparent 64%),
       linear-gradient(178deg, #2A1015 0%, #14080A 100%);
@@ -155,7 +155,7 @@ const uid = `pa${order}`;
   .pang-case__no {
     position: relative;
     z-index: 1;
-    font-size: 12.5px;
+    font-size: var(--fs-caption);
     letter-spacing: .34em;
     padding-left: .34em;
     color: #D8A93F;
@@ -173,7 +173,7 @@ const uid = `pa${order}`;
   .pang-case__hint {
     position: relative;
     z-index: 1;
-    font-size: 13px;
+    font-size: var(--fs-label);
     letter-spacing: .04em;
     color: rgba(242, 220, 166, .48);
   }

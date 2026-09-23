@@ -69,14 +69,14 @@ const byWish = wishes.map((w) => ({
   .wsec { padding-block: 30px; border-top: 1px solid var(--line); scroll-margin-top: 70px; }
   .wsec:first-child { border-top: 0; padding-top: 0; }
   .wsec__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 20px; }
-  .wsec__more { font-size: 15.5px; white-space: nowrap; }
+  .wsec__more { font-size: var(--fs-sm); white-space: nowrap; }
   .wsec__lede { margin: 8px 0 18px; color: var(--ink-2); }
   .wsec__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
   .wsec__list li { background: var(--surface); padding: 15px 17px 17px; display: flex; flex-direction: column; gap: 5px; }
   .wsec__list a { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; text-decoration: none; color: inherit; }
   .wsec__list a:hover .wsec__name { color: var(--lacquer); text-decoration: underline; }
-  .wsec__no { font-size: 12px; color: var(--gold); letter-spacing: .1em; }
-  .wsec__name { font-family: var(--serif); font-size: 18px; font-weight: 600; }
-  .wsec__zh { font-size: 14.5px; color: var(--ink-3); }
-  .wsec__why { margin: 0; font-size: 15.5px; line-height: 1.6; color: var(--ink-2); }
+  .wsec__no { font-size: var(--fs-caption); color: var(--gold); letter-spacing: .1em; }
+  .wsec__name { font-family: var(--serif); font-size: var(--fs-h4); font-weight: 600; }
+  .wsec__zh { font-size: var(--fs-sm); color: var(--ink-3); }
+  .wsec__why { margin: 0; font-size: var(--fs-sm); line-height: 1.6; color: var(--ink-2); }
 </style>

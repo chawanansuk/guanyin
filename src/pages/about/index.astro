@@ -70,18 +70,18 @@ const count = enshrinedCount(await allPang());
   .zh { font-size: clamp(30px, 6vw, 44px); font-weight: 700; letter-spacing: .18em; color: var(--lacquer); margin-top: 10px; }
 
   .couplet { margin: 44px 0; padding: 30px 28px; text-align: center; }
-  .couplet__title { font-size: 26px; letter-spacing: .28em; padding-left: .28em; margin: 0; color: var(--plaque-ink); }
-  .couplet__title-th { font-family: var(--serif); font-size: 16px; color: var(--plaque-ink-2); margin: 8px 0 0; }
+  .couplet__title { font-size: var(--fs-h2); letter-spacing: .28em; padding-left: .28em; margin: 0; color: var(--plaque-ink); }
+  .couplet__title-th { font-family: var(--serif); font-size: var(--fs-md); color: var(--plaque-ink-2); margin: 8px 0 0; }
   .couplet__lines { list-style: none; margin: 24px 0 0; padding: 22px 0 0; border-top: 1px solid var(--plaque-line); display: flex; flex-direction: column; gap: 14px; }
   .couplet__lines li { display: flex; flex-direction: column; gap: 4px; color: var(--plaque-ink); }
-  .couplet__lines .han { font-size: 19px; letter-spacing: .16em; }
-  .couplet__th { font-size: 15px; color: var(--plaque-ink-2); }
-  .couplet__src { margin: 22px 0 0; font-family: var(--mono); font-size: 12px; letter-spacing: .1em; color: var(--plaque-ink-2); }
+  .couplet__lines .han { font-size: var(--fs-h4); letter-spacing: .16em; }
+  .couplet__th { font-size: var(--fs-sm); color: var(--plaque-ink-2); }
+  .couplet__src { margin: 22px 0 0; font-family: var(--mono); font-size: var(--fs-caption); letter-spacing: .1em; color: var(--plaque-ink-2); }
 
   .sub { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); }
   .sub a { display: flex; flex-direction: column; gap: 5px; padding: 20px 22px; background: var(--surface); text-decoration: none; color: inherit; }
   .sub a:hover { background: var(--surface-2); }
   .sub a:hover .sub__t { color: var(--lacquer); }
-  .sub__t { font-family: var(--serif); font-size: 19px; font-weight: 600; }
-  .sub__d { font-size: 15.5px; color: var(--ink-2); }
+  .sub__t { font-family: var(--serif); font-size: var(--fs-h4); font-weight: 600; }
+  .sub__d { font-size: var(--fs-sm); color: var(--ink-2); }
 </style>

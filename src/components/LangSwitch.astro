@@ -36,10 +36,10 @@ const t = useT(lang);
     display: inline-flex;
     align-items: center;
     min-height: 44px;
-    padding: 4px 11px;
-    font-size: 15px;
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--fs-sm);
     text-decoration: none;
-    border-radius: 2px;
+    border-radius: var(--radius);
   }
   .lang__item + .lang__item { position: relative; }
   .lang__item + .lang__item::before {
@@ -51,7 +51,7 @@ const t = useT(lang);
 
   /* ตัวเลือกภาษาเป็นของเล็กที่ต้องหาเจอ ไม่ใช่ปุ่มใหญ่ที่แย่งความสนใจ
      ภาษาปัจจุบันขีดเส้นใต้สีชาดพอ แผ่นทองเต็มแผ่นทำให้ดูเป็นปุ่มหลัก */
-  .lang--plaque .lang__item { color: var(--ink-2); padding: 4px 9px; transition: color .3s var(--ease-lux); }
+  .lang--plaque .lang__item { color: var(--ink-2); padding: var(--space-1) var(--space-2); transition: color .3s var(--ease-lux); }
   .lang--plaque .lang__item:hover { color: var(--lacquer); }
   .lang--plaque .lang__item[aria-current="true"] {
     color: var(--lacquer);

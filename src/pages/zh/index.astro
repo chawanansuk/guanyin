@@ -41,7 +41,10 @@ const hasFacade = 'shrine-exterior' in (photos.images as Record<string, unknown>
   suffix={false}
   description="供奉觀音菩薩三十三法相的道場，位於曼谷佛城二段路。三十三法相之名號、辨識標記與要旨，開放時間與交通資訊。"
 >
-  <section class:list={['hero zone-gilt', hasFacade && 'hero--photo']}>
+  <!-- 首屏即正面外觀，紅底金字匾額懸於照片下緣
+       主要行動只有一個：導航前往本堂
+       開光倒數移至照片一角，不與主要按鈕爭奪視線 -->
+  <section class:list={['hero hero--home zone-gilt', hasFacade && 'hero--photo']}>
     {hasFacade && (
       <div class="hero__photo">
         <ShrinePhoto
@@ -49,6 +52,13 @@ const hasFacade = 'shrine-exterior' in (photos.images as Record<string, unknown>
           alt={`${site.name_zh} 正面`}
           ratio="1086 / 772" sizes="100vw" priority
         />
+        <span class="hero__fade" aria-hidden="true"></span>
+        {preOpening && (
+          <a class="hero__ribbon" href="/zh/opening">
+            <span class="hero__ribbon-label han">開光大典 {openingDate.getUTCMonth() + 1}月{openingDate.getUTCDate()}日</span>
+            {daysToOpening > 0 && <span class="hero__ribbon-count mono">尚餘 {daysToOpening} 天</span>}
+          </a>
+        )}
       </div>
     )}
     <div class="wrap hero__inner">
@@ -66,21 +76,15 @@ const hasFacade = 'shrine-exterior' in (photos.images as Record<string, unknown>
       <p class="hero__lede">{site.tagline_zh}</p>
 
       <div class="hero__cta">
-        {preOpening ? (
-          <>
-            <a class="btn btn--plaque hero__btn" href="/zh/opening">
-              <span>開光大典 {openingDate.getUTCMonth() + 1}月{openingDate.getUTCDate()}日</span>
-              {daysToOpening > 0 && <span class="hero__count mono">尚餘 {daysToOpening} 天</span>}
-            </a>
-            <a class="btn btn--ghost hero__btn" href="/zh/33-pang">三十三觀音</a>
-          </>
-        ) : (
-          <>
-            <a class="btn btn--plaque hero__btn" href="/zh/33-pang">瀏覽三十三觀音</a>
-            <a class="btn btn--ghost hero__btn" href="/zh/worship/how-to">參拜方式</a>
-          </>
-        )}
+        <a class="btn btn--gold hero__btn han" href={site.maps_url} target="_blank" rel="noopener">導航前往本堂</a>
+        <a class="btn btn--ghost hero__btn han" href="/zh/33-pang">三十三觀音</a>
       </div>
+      {!hasFacade && preOpening && (
+        <a class="hero__ribbon hero__ribbon--flat" href="/zh/opening">
+          <span class="hero__ribbon-label han">開光大典 {openingDate.getUTCMonth() + 1}月{openingDate.getUTCDate()}日</span>
+          {daysToOpening > 0 && <span class="hero__ribbon-count mono">尚餘 {daysToOpening} 天</span>}
+        </a>
+      )}
     </div>
   </section>
 
@@ -130,7 +134,7 @@ const hasFacade = 'shrine-exterior' in (photos.images as Record<string, unknown>
         <p class="eyebrow eyebrow--marked">一 — 三十三</p>
         <h2>堂內所奉觀音法相</h2>
       </div>
-      <div class="pang-grid">
+      <div class="pang-grid pang-grid--eight">
         {featured.map((p, i) => <PangCard pang={p} priority={i < 4} lang={lang} />)}
       </div>
       <p class="grid-more"><a class="btn btn--ghost" href="/zh/33-pang">查看全部三十三尊 ›</a></p>
@@ -180,111 +184,6 @@ const hasFacade = 'shrine-exterior' in (photos.images as Record<string, unknown>
 </BaseLayout>
 
 <style>
-  /* ---------- hero ---------- */
-  .hero { position: relative; overflow: hidden; }
-
-  /* ภาพกับป้ายต้องซ้อนกัน ป้ายจึงยื่นขึ้นไปทับขอบล่างของภาพ
-     ค่าลบนี้คือ "ความลึกที่ป้ายแขวนอยู่บนตัวอาคาร" */
-  .hero { --hang: clamp(34px, 6vw, 52px); }
-
-  /* มือถือ: ภาพเต็มขอบจอ ไม่มีกรอบ — จอเล็กทุกพิกเซลต้องเป็นภาพ ไม่ใช่ขอบ
-     อาคารในภาพสูงเกือบเต็มเฟรม จึงไม่ครอปบน–ล่าง คุมด้วยความกว้างเสมอ */
-  .hero__photo {
-    position: relative;
-    width: 100%;
-    margin: 0 auto;
-  }
-  .hero__photo :global(.shrine-photo) {
-    width: 100%;
-    aspect-ratio: 1086 / 772 !important;
-  }
-  /* จอกว้าง: ภาพจำกัดความกว้างและผูกกับความสูงจอ ให้ป้ายยังอยู่ในจอแรก
-     กรอบเป็นเส้นทองบาง ๆ เส้นเดียวพอ กรอบหนา ๆ อ่านเป็นรูปในร้านขายกรอบ */
-  @media (min-width: 720px) {
-    .hero__photo {
-      width: min(100% - 64px, 880px, 56vh * 1.407);
-      margin-top: clamp(20px, 3.4vw, 36px);
-    }
-    /* กรอบทองลาย 回紋 รอบภาพอาคาร — ใส่เฉพาะจอที่ภาพไม่ชนขอบจอ
-       บนมือถือภาพเต็มความกว้าง กรอบจะกลายเป็นขอบจอ ไม่ใช่กรอบภาพ */
-    .hero__photo {
-      border: 14px solid transparent;
-      border-image: var(--fret-light) 26 round;
-      box-shadow: 0 22px 48px -22px rgba(90, 62, 20, .4);
-    }
-    .hero__photo :global(.shrine-photo) { box-shadow: 0 0 0 1px rgba(134, 99, 18, .3); }
-  }
-
-  .hero__inner {
-    position: relative;
-    z-index: 1;
-    padding-block: 0 clamp(36px, 6vw, 60px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-  /* ไม่มีภาพ: ป้ายอยู่บนพื้นเปล่า ไม่ต้องยื่น */
-  .hero:not(.hero--photo) .hero__inner { padding-top: clamp(44px, 8vw, 80px); }
-
-  .hero__plaque {
-    width: min(100% - 32px, 520px);
-    margin-top: calc(-1 * var(--hang));
-    /* ป้ายที่แขวนทับภาพต้องมีเงาตกลงบนภาพ ไม่งั้นดูเหมือนวางแปะ */
-    box-shadow:
-      0 1px 1px rgba(60, 8, 6, .3),
-      0 8px 18px rgba(60, 8, 6, .26),
-      0 28px 56px -18px rgba(60, 8, 6, .5),
-      inset 0 1px 0 rgba(246, 227, 176, .22);
-  }
-  .hero--photo .hero__plaque { margin-top: calc(-1 * var(--hang)); }
-  @media (min-width: 720px) {
-    .hero__plaque { width: min(100% - 64px, 500px); padding-block: 22px 24px; }
-    .hero__plaque :global(.plaque-board__zh) { font-size: clamp(34px, 4.6vw, 50px); }
-  }
-
-  .hero__where {
-    display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline;
-    gap: 4px 12px;
-    margin: 22px 0 0;
-    font-family: var(--sans);
-    font-size: clamp(13px, 1.7vw, 14.5px);
-    font-weight: 600;
-    letter-spacing: .14em;
-    color: var(--gold);
-    text-transform: uppercase;
-  }
-  .hero__where-zh { letter-spacing: .3em; padding-left: .3em; }
-  .hero__where-sep { opacity: .5; }
-
-  /* ประโยคเดียว ตัวไม่มีเชิง ตัดบรรทัดให้สมดุล
-     เซอริฟบางที่ 17px บนจอ Android จะสั่นและอ่านยาก */
-  .hero__lede {
-    margin: 14px 0 0;
-    max-width: 30ch;
-    font-family: var(--sans);
-    font-weight: 400;
-    font-size: clamp(17px, 2.1vw, 19px);
-    line-height: 1.7;
-    color: var(--ink-2);
-    text-wrap: balance;
-  }
-
-  /* ปุ่มสองปุ่มกว้างเท่ากันเสมอ ปุ่มกว้างไม่เท่ากันอ่านเป็นงานยังไม่เสร็จ */
-  .hero__cta {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-    width: min(100%, 460px);
-    margin-top: 26px;
-  }
-  .hero__btn { width: 100%; flex-direction: column; gap: 1px; padding-inline: 12px; line-height: 1.25; }
-  .hero__count { font-size: 12.5px; font-weight: 500; opacity: .82; letter-spacing: .04em; }
-  @media (max-width: 380px) { .hero__cta { grid-template-columns: 1fr; } }
-
-
-  .hero__count { font-size: 14px; opacity: .85; margin-left: 4px; }
-
   .band--sunk { background: var(--surface-2); }
   .band--sunk + .band, .band + .band--sunk { border-top: 0; }
   .section-head--row { flex-direction: row; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
@@ -293,24 +192,22 @@ const hasFacade = 'shrine-exterior' in (photos.images as Record<string, unknown>
   .intro__text > * + * { margin-top: 16px; }
   .intro__text h2 { margin-top: 8px; }
   .intro__text p { line-height: 1.9; }
-  .intro__status { font-size: 15px; color: var(--celadon); }
+  .intro__status { font-size: var(--fs-sm); color: var(--celadon); }
   .intro__aside { padding: 22px; border-top: 3px solid var(--gold-bright); }
-  .intro__aside h3 { font-size: 19px; margin-bottom: 10px; }
+  .intro__aside h3 { font-size: var(--fs-h4); margin-bottom: 10px; }
   .intro__aside .small { color: var(--ink-2); line-height: 1.85; }
   .intro__aside .small + .small { margin-top: 10px; }
   .intro__aside p:last-child { margin-top: 16px; }
-  @media (max-width: 780px) { .intro { grid-template-columns: 1fr; } }
+  @media (max-width: 759px) { .intro { grid-template-columns: 1fr; } }
 
-  .pang-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(178px, 1fr)); gap: 1px; background: transparent; }
   .grid-more { margin: 22px 0 0; text-align: center; }
-  @media (max-width: 420px) { .pang-grid { grid-template-columns: repeat(2, 1fr); } }
 
   .evt { list-style: none; margin: 0; padding: 0; }
   .evt__row { display: grid; grid-template-columns: 190px 1fr auto; gap: 6px 20px; align-items: baseline; padding: 15px 0; border-top: 1px solid var(--line); }
   .evt__row:last-child { border-bottom: 1px solid var(--line); }
-  .evt__date { font-size: 15.5px; white-space: nowrap; }
+  .evt__date { font-size: var(--fs-sm); white-space: nowrap; }
   .evt__approx { color: var(--gold); text-decoration: none; margin-left: 4px; cursor: help; }
-  .evt__title { font-size: 17px; }
-  .evt__rel { font-size: 13.5px; color: var(--ink-3); white-space: nowrap; }
-  @media (max-width: 620px) { .evt__row { grid-template-columns: 1fr auto; } .evt__date { grid-column: 1 / -1; } }
+  .evt__title { font-size: var(--fs-md); }
+  .evt__rel { font-size: var(--fs-label); color: var(--ink-3); white-space: nowrap; }
+  @media (max-width: 759px) { .evt__row { grid-template-columns: 1fr auto; } .evt__date { grid-column: 1 / -1; } }
 </style>
