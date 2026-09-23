@@ -347,22 +347,25 @@ section.band + section.band { border-top: 1px solid var(--line); }
 
 /* ============================================================ hero หน้าแรก
    ใช้ร่วมกันทั้งหน้าไทยและหน้าจีน โครงเดียวกัน ต่างแค่ข้อความ
-   เคยเขียนซ้ำในสองไฟล์ แล้วแก้ไฟล์เดียวจนสองภาษาเพี้ยนจากกัน */
+   ขอบเขตอยู่ใต้ .hero--home จะได้ไม่ไปชนกับฮีโร่ของหน้าอื่นที่ใช้ชื่อคลาสเดียวกัน */
 .hero--home { position: relative; overflow: hidden; }
 
-/* ภาพกับป้ายต้องซ้อนกัน ป้ายจึงยื่นขึ้นไปทับขอบล่างของภาพ
-   ค่าลบนี้คือ "ความลึกที่ป้ายแขวนอยู่บนตัวอาคาร" */
-.hero--home { --hang: clamp(var(--space-8), 6vw, var(--space-12)); }
-
-/* ภาพเต็มขอบจอทุกขนาด และสูงตามจอ ไม่ใช่ตามสัดส่วนไฟล์
-   จอแรกต้องเป็นตัวอาคาร ไม่ใช่ภาพเล็ก ๆ ลอยอยู่กลางพื้นครีม
-   ครอปด้วย object-fit แทนการบีบความกว้าง เพื่อให้ได้ความสูงที่ต้องการทุกจอ */
-.hero--home .hero__photo {
+/* เวทีของฮีโร่: ภาพเป็นฉากหลังเต็มพื้นที่ ตัวหนังสือวางทับอยู่ข้างใน
+   สูงตามจอ ไม่ใช่ตามสัดส่วนไฟล์ภาพ จอแรกจึงเป็นตัวอาคารเสมอ */
+.hero--home .hero__stage {
   position: relative;
-  width: 100%;
-  height: min(66vh, 92vw);
-  height: min(66svh, 92vw);
-  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.hero--home.hero--photo .hero__stage {
+  min-height: min(472px, 78vh);
+  min-height: min(472px, 78svh);
+}
+.hero--home .hero__photo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
 }
 .hero--home .hero__photo .shrine-photo {
   width: 100%;
@@ -372,109 +375,39 @@ section.band + section.band { border-top: 1px solid var(--line); }
   /* ยอดอาคารกับป้ายจริงอยู่ครึ่งบน จึงถ่วงจุดครอปขึ้นเล็กน้อย */
   object-position: 50% 38%;
 }
-/* จอกว้าง: สูงน้อยลงตามสัดส่วน เพราะยังต้องเหลือที่ให้ป้ายกับปุ่มอยู่ในจอแรก
-   ภาพสูงเต็มจอบนเดสก์ท็อปจะดันปุ่มนำทางตกขอบล่าง */
-@media (min-width: 760px) {
-  .hero--home .hero__photo { height: min(62vh, 46vw); height: min(62svh, 46vw); min-height: 340px; }
-  .hero--home .hero__photo .shrine-photo { object-position: 50% 46%; }
-}
-@media (min-width: 1100px) {
-  .hero--home .hero__photo { height: min(64vh, 40vw); height: min(64svh, 40vw); }
-}
 
-/* ขอบล่างของภาพต้องจางเข้าพื้นครีม ป้ายชาดจึงแขวนอยู่บนรอยต่อได้
-   ถ้าตัดตรง ๆ ป้ายจะดูเหมือนแปะทับภาพ ไม่ใช่แขวนอยู่กับอาคาร */
-.hero--home .hero__fade {
+/* ม่านเงา — มือถือ: ตัวหนังสืออยู่กลางภาพ จึงคลุมทั้งผืนแล้วเข้มขึ้นด้านล่าง
+   ไม่ใช้ดำล้วน ใช้น้ำตาลไม้เข้ม สีของอาคารจึงไม่หม่น */
+.hero--home .hero__scrim {
   position: absolute;
-  inset: auto 0 0;
-  height: calc(var(--hang) + var(--space-4));
-  background: linear-gradient(180deg, rgba(249, 241, 225, 0) 0%, rgba(249, 241, 225, .55) 70%, var(--ground) 100%);
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(38, 22, 12, .34) 0%, rgba(38, 22, 12, .5) 46%, rgba(38, 22, 12, .72) 100%);
   pointer-events: none;
-}
-
-/* ป้ายนับถอยหลัง — มุมภาพ ไม่ใช่ปุ่ม จึงไม่แย่งสายตากับปุ่มนำทาง */
-.hero--home .hero__ribbon {
-  position: absolute;
-  top: var(--space-4);
-  inset-inline-end: var(--space-4);
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 1px;
-  min-height: 44px;
-  justify-content: center;
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius);
-  background: linear-gradient(175deg, var(--plaque) 0%, var(--plaque-2) 100%);
-  box-shadow:
-    inset 0 0 0 1px var(--gold-line),
-    0 2px 4px rgba(60, 8, 6, .24), 0 10px 22px -8px rgba(60, 8, 6, .4);
-  color: var(--plaque-ink);
-  font-family: var(--sans);
-  text-decoration: none;
-  text-align: end;
-  transition: box-shadow .35s var(--ease-lux), transform .35s var(--ease-lux);
-}
-.hero--home .hero__ribbon:hover {
-  transform: translateY(-1px);
-  box-shadow:
-    inset 0 0 0 1px var(--gold-bright),
-    0 3px 6px rgba(60, 8, 6, .28), 0 14px 28px -8px rgba(60, 8, 6, .44);
-}
-.hero--home .hero__ribbon-label { font-size: var(--fs-label); font-weight: 600; letter-spacing: .02em; line-height: 1.35; }
-.hero--home .hero__ribbon-count { font-size: var(--fs-caption); font-weight: 500; opacity: .86; letter-spacing: .04em; line-height: 1.35; }
-/* ยังไม่มีภาพอาคาร ป้ายนับถอยหลังจึงลงมาอยู่ใต้ปุ่มแทนมุมภาพ */
-.hero--home .hero__ribbon--flat {
-  position: static;
-  margin-top: var(--space-4);
-  flex-direction: row;
-  align-items: baseline;
-  gap: var(--space-2);
-  text-align: center;
 }
 
 .hero--home .hero__inner {
   position: relative;
   z-index: 1;
-  padding-block: 0 clamp(var(--space-8), 6vw, 60px);
+  padding-block: clamp(var(--space-8), 9vw, 56px);
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
 }
-/* ไม่มีภาพ: ป้ายอยู่บนพื้นเปล่า ไม่ต้องยื่น */
-.hero--home:not(.hero--photo) .hero__inner { padding-top: clamp(44px, 8vw, 80px); }
+/* ยังไม่มีภาพอาคาร: ตัวหนังสือกลับไปอยู่บนพื้นครีมตามเดิม */
+.hero--home:not(.hero--photo) .hero__inner { padding-block: clamp(44px, 8vw, 80px); }
 
-.hero--home .hero__plaque {
-  width: min(100% - var(--space-8), 520px);
-  margin-top: calc(-1 * var(--hang));
-  /* ป้ายที่แขวนทับภาพต้องมีเงาตกลงบนภาพ ไม่งั้นดูเหมือนวางแปะ */
+.hero--home .hero__plaque { max-width: 100%; }
+/* ชื่อจีนห้ามตกบรรทัด — ป้ายจริงบนอาคารเป็นบรรทัดเดียว */
+.hero--home .hero__plaque .plaque-board__zh { white-space: nowrap; }
+.hero--home.hero--photo .hero__plaque {
   box-shadow:
     0 1px 1px rgba(60, 8, 6, .3),
     0 8px 18px rgba(60, 8, 6, .26),
     0 28px 56px -18px rgba(60, 8, 6, .5),
     inset 0 1px 0 rgba(246, 227, 176, .22);
 }
-.hero--home.hero--photo .hero__plaque { margin-top: calc(-1 * var(--hang)); }
-@media (min-width: 760px) {
-  .hero--home .hero__plaque { width: min(100% - var(--space-16), 500px); padding-block: var(--space-6) var(--space-6); }
-  .hero--home .hero__plaque .plaque-board__zh { font-size: clamp(34px, 4.6vw, 50px); }
-}
-
-.hero--home .hero__where {
-  display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline;
-  gap: var(--space-1) var(--space-3);
-  margin: var(--space-6) 0 0;
-  font-family: var(--sans);
-  font-size: clamp(13px, 1.7vw, 14.5px);
-  font-weight: 600;
-  letter-spacing: .14em;
-  color: var(--gold);
-  text-transform: uppercase;
-}
-.hero--home .hero__where-zh { letter-spacing: .3em; padding-left: .3em; }
-.hero--home .hero__where-sep { opacity: .5; }
 
 /* ประโยคเดียว ตัวไม่มีเชิง ตัดบรรทัดให้สมดุล
    เซอริฟบางที่ 17px บนจอ Android จะสั่นและอ่านยาก */
@@ -488,18 +421,109 @@ section.band + section.band { border-top: 1px solid var(--line); }
   color: var(--ink-2);
   text-wrap: balance;
 }
+.hero--home.hero--photo .hero__lede {
+  color: #F7EBD4;
+  text-shadow: 0 1px 2px rgba(30, 14, 6, .5);
+}
 
-/* ปุ่มหลักหนึ่งปุ่ม ปุ่มรองหนึ่งปุ่ม กว้างเท่ากันเสมอ
-   ปุ่มกว้างไม่เท่ากันอ่านเป็นงานยังไม่เสร็จ */
+/* ปุ่มหลักหนึ่งปุ่ม ปุ่มรองหนึ่งปุ่ม */
 .hero--home .hero__cta {
-  display: grid;
-  /* auto-fit แทนจุดตัดเฉพาะกิจ: จอไหนวางสองปุ่มไม่พอ มันซ้อนลงมาเอง */
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: var(--space-3);
-  width: min(100%, 460px);
   margin-top: var(--space-6);
 }
-.hero--home .hero__btn { width: 100%; padding-inline: var(--space-3); line-height: 1.25; }
+.hero--home .hero__btn { padding-inline: var(--space-6); line-height: 1.25; }
+.hero--home .hero__btn-caret { opacity: .7; }
+/* ปุ่มรองบนภาพ: ขอบครีมโปร่ง ขอบชาดบนภาพเข้มจะจมหายไป */
+.hero--home .hero__btn--outline {
+  background: rgba(255, 252, 244, .1);
+  color: #FBF3E2;
+  border-color: rgba(251, 243, 226, .55);
+  backdrop-filter: blur(2px);
+}
+.hero--home .hero__btn--outline:hover {
+  background: rgba(255, 252, 244, .2);
+  border-color: #FBF3E2;
+}
+.hero--home:not(.hero--photo) .hero__btn--outline {
+  background: transparent;
+  color: var(--lacquer-deep);
+  border-color: rgba(160, 32, 28, .4);
+}
+/* มือถือตามแบบ V2 เหลือปุ่มเดียว — ๓๓ ปางอยู่ทั้งในเมนูและหัวข้อถัดลงไปแล้ว
+   สองปุ่มบนจอแคบทำให้ปุ่มหลักเล็กลงโดยไม่ได้อะไรกลับมา */
+@media (max-width: 559px) {
+  .hero--home.hero--photo .hero__btn--outline { display: none; }
+  .hero--home .hero__btn { width: min(100%, 260px); }
+}
+
+/* ป้ายนับถอยหลัง — จอกว้างเป็นป้ายมุมขวาบน มือถือเป็นแถบเต็มความกว้างใต้ภาพ */
+.hero--home .hero__ribbon {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--gutter);
+  background: linear-gradient(175deg, var(--plaque) 0%, var(--plaque-2) 100%);
+  box-shadow: inset 0 1px 0 rgba(246, 227, 176, .18);
+  color: var(--plaque-ink);
+  font-family: var(--sans);
+  text-decoration: none;
+}
+.hero--home .hero__ribbon-label { font-size: var(--fs-sm); font-weight: 600; }
+.hero--home .hero__ribbon-date { font-size: var(--fs-sm); font-weight: 600; }
+.hero--home .hero__ribbon-count { font-size: var(--fs-label); opacity: .86; letter-spacing: .04em; white-space: nowrap; }
+.hero--home .hero__ribbon-label::after { content: " "; }
+
+@media (min-width: 560px) {
+  .hero--home .hero__lede { font-size: 19px; }
+}
+
+/* จอกว้าง: เนื้อหาชิดซ้ายตามแบบ ป้ายนับถอยหลังลอยมุมขวาบน
+   ภาพกว้าง 1440 ที่ครอปเหลือ 600 จะตัดฐานอาคารทิ้ง จึงถ่วงจุดครอปลงมา */
+@media (min-width: 760px) {
+  .hero--home.hero--photo .hero__stage {
+    min-height: min(600px, 82vh);
+    min-height: min(600px, 82svh);
+  }
+  .hero--home .hero__photo .shrine-photo { object-position: 50% 46%; }
+  .hero--home.hero--photo .hero__scrim {
+    background:
+      linear-gradient(90deg, rgba(38, 22, 12, .82) 0%, rgba(38, 22, 12, .7) 28%, rgba(38, 22, 12, .26) 62%, rgba(38, 22, 12, .06) 100%),
+      linear-gradient(0deg, rgba(38, 22, 12, .34) 0%, rgba(38, 22, 12, 0) 42%);
+  }
+  .hero--home.hero--photo .hero__inner {
+    align-items: flex-start;
+    text-align: start;
+  }
+  .hero--home .hero__plaque .plaque-board__zh { font-size: clamp(34px, 4.6vw, 50px); }
+  .hero--home .hero__lede { margin-top: var(--space-6); max-width: 36ch; }
+  .hero--home .hero__cta { justify-content: flex-start; margin-top: var(--space-6); }
+
+  .hero--home.hero--photo .hero__ribbon {
+    position: absolute;
+    top: clamp(var(--space-6), 7vw, 96px);
+    inset-inline-end: clamp(var(--space-6), 4vw, 48px);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-width: 199px;
+    padding: var(--space-4) var(--space-6);
+    border-radius: var(--radius);
+    box-shadow:
+      inset 0 0 0 1px var(--gold-line),
+      0 2px 4px rgba(60, 8, 6, .24), 0 14px 30px -10px rgba(60, 8, 6, .5);
+    text-align: center;
+  }
+  .hero--home .hero__ribbon-label { font-size: var(--fs-label); font-weight: 500; letter-spacing: .06em; }
+  .hero--home .hero__ribbon-date { font-size: var(--fs-h4); font-weight: 600; }
+  .hero--home .hero__ribbon:hover { box-shadow: inset 0 0 0 1px var(--gold-bright), 0 3px 6px rgba(60, 8, 6, .28), 0 18px 34px -10px rgba(60, 8, 6, .54); }
+}
 
 /* ============================================================ ตาราง ๓๓ ปาง
    ใช้ร่วมกันทั้งหน้าไทยและหน้าจีน เดิมเขียนแยกกันห้าที่

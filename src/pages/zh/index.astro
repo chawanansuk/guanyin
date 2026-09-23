@@ -41,51 +41,46 @@ const hasFacade = 'shrine-exterior' in (photos.images as Record<string, unknown>
   suffix={false}
   description="供奉觀音菩薩三十三法相的道場，位於曼谷佛城二段路。三十三法相之名號、辨識標記與要旨，開放時間與交通資訊。"
 >
-  <!-- 首屏即正面外觀，紅底金字匾額懸於照片下緣
+  <!-- 首屏即正面外觀，匾額、引言與按鈕疊在照片之上
        主要行動只有一個：導航前往本堂
-       開光倒數移至照片一角，不與主要按鈕爭奪視線 -->
+       開光倒數在寬螢幕為右上角小牌，在手機為照片下方整條 -->
   <section class:list={['hero hero--home zone-gilt', hasFacade && 'hero--photo']}>
-    {hasFacade && (
-      <div class="hero__photo">
-        <ShrinePhoto
-          name="shrine-exterior"
-          alt={`${site.name_zh} 正面`}
-          ratio="1086 / 772" sizes="100vw" priority
-        />
-        <span class="hero__fade" aria-hidden="true"></span>
-        {preOpening && (
-          <a class="hero__ribbon" href="/zh/opening">
-            <span class="hero__ribbon-label han">開光大典 {openingDate.getUTCMonth() + 1}月{openingDate.getUTCDate()}日</span>
-            {daysToOpening > 0 && <span class="hero__ribbon-count mono">尚餘 {daysToOpening} 天</span>}
-          </a>
-        )}
-      </div>
-    )}
-    <div class="wrap hero__inner">
-      <div class="plaque-board fret hero__plaque">
-        <span class="plaque-board__prefix han">佛城二段</span>
-        <h1 class="plaque-board__zh han foil foil--live">{site.name_zh}</h1>
-        <span class="plaque-board__th han">觀音菩薩三十三法相</span>
-      </div>
-
-      <p class="hero__where han">
-        <span class="hero__where-zh">{site.motto_zh}</span>
-        <span class="hero__where-sep" aria-hidden="true">·</span>
-        <span>曼谷 佛城二段路</span>
-      </p>
-      <p class="hero__lede">{site.tagline_zh}</p>
-
-      <div class="hero__cta">
-        <a class="btn btn--gold hero__btn han" href={site.maps_url} target="_blank" rel="noopener">導航前往本堂</a>
-        <a class="btn btn--ghost hero__btn han" href="/zh/33-pang">三十三觀音</a>
-      </div>
-      {!hasFacade && preOpening && (
-        <a class="hero__ribbon hero__ribbon--flat" href="/zh/opening">
-          <span class="hero__ribbon-label han">開光大典 {openingDate.getUTCMonth() + 1}月{openingDate.getUTCDate()}日</span>
-          {daysToOpening > 0 && <span class="hero__ribbon-count mono">尚餘 {daysToOpening} 天</span>}
-        </a>
+    <div class="hero__stage">
+      {hasFacade && (
+        <div class="hero__photo">
+          <ShrinePhoto
+            name="shrine-exterior"
+            alt={`${site.name_zh} 正面`}
+            ratio="1086 / 772" sizes="100vw" priority
+          />
+          <span class="hero__scrim" aria-hidden="true"></span>
+        </div>
       )}
+      <div class="wrap hero__inner">
+        <div class="plaque-board fret hero__plaque">
+          <span class="plaque-board__prefix han">佛城二段</span>
+          <h1 class="plaque-board__zh han foil foil--live">{site.name_zh}</h1>
+          <span class="plaque-board__th han">觀音菩薩三十三法相</span>
+        </div>
+
+        <p class="hero__lede han">{site.tagline_zh}</p>
+
+        <div class="hero__cta">
+          <a class="btn btn--gold hero__btn han" href={site.maps_url} target="_blank" rel="noopener">
+            導航前往本堂 <span class="hero__btn-caret" aria-hidden="true">›</span>
+          </a>
+          <a class="btn hero__btn hero__btn--outline han" href="/zh/33-pang">三十三觀音</a>
+        </div>
+      </div>
     </div>
+
+    {preOpening && (
+      <a class="hero__ribbon" href="/zh/opening">
+        <span class="hero__ribbon-label han">開光大典</span>
+        <span class="hero__ribbon-date han">{openingDate.getUTCMonth() + 1}月{openingDate.getUTCDate()}日</span>
+        {daysToOpening > 0 && <span class="hero__ribbon-count mono">尚餘 {daysToOpening} 天</span>}
+      </a>
+    )}
   </section>
 
   <HoursBar lang={lang} />
