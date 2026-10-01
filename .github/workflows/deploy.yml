@@ -46,6 +46,20 @@ jobs:
           test -f dist/zh/33-pang/yang-liu.html || { echo "ไม่พบหน้าปางฉบับภาษาจีน"; exit 1; }
           test -f dist/sitemap-index.xml || { echo "ไม่พบ sitemap"; exit 1; }
 
+      # Vercel ขึ้นเว็บใหม่เฉพาะตอนมี commit — รอบตี ๗ ที่ไม่มี commit จึงต้องสะกิดเอง
+      # ไม่งั้น "อีก N วัน" บนเว็บจริงจะค้างอยู่ที่วันที่แก้โค้ดครั้งล่าสุด
+      # ใส่ Deploy Hook URL ของ Vercel ไว้ที่ Settings → Secrets → VERCEL_DEPLOY_HOOK
+      - name: สะกิด Vercel ให้ขึ้นเว็บใหม่
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "::warning::ยังไม่ได้ตั้ง VERCEL_DEPLOY_HOOK — เว็บจริงจะไม่ได้สร้างใหม่รายวัน"
+            exit 0
+          fi
+          curl -fsS -X POST "$HOOK" -o /dev/null && echo "ส่งคำสั่งขึ้นเว็บใหม่แล้ว"
+
       - uses: actions/upload-artifact@v4
         with:
           name: site

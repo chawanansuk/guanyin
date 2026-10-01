@@ -84,14 +84,16 @@ const LINKS = lang === 'zh'
 
   .site-foot__cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 28px 40px; }
   .site-foot__cols h2 {
-    font-family: var(--sans); font-size: var(--fs-caption); font-weight: 600;
-    letter-spacing: .3em; padding-right: .3em; text-transform: uppercase;
+    font-family: var(--sans); font-size: var(--fs-label); font-weight: 600;
+    letter-spacing: .14em; padding-right: .14em;
     color: var(--gold); margin-bottom: var(--space-3);
   }
   .site-foot__cols p, .site-foot__cols li { font-size: var(--fs-md); line-height: 1.75; color: var(--ink-2); }
   .site-foot__cols p + p { margin-top: var(--space-2); }
   .site-foot__cols ul { list-style: none; margin: 0; padding: 0; }
-  .site-foot__cols li + li { margin-top: var(--space-1); }
+  .site-foot__cols li + li { margin-top: 0; }
+  /* ลิงก์ท้ายเว็บต้องกดได้ด้วยนิ้ว ไม่ใช่แค่บรรทัดตัวหนังสือสูง 19px */
+  .site-foot__cols a { display: inline-block; padding-block: var(--space-2); min-height: 44px; }
   .site-foot a { color: var(--ink); text-decoration-color: var(--gold-line); text-underline-offset: 4px; transition: color .3s var(--ease-lux); }
   .site-foot a:hover { color: var(--gold-bright); text-decoration-color: var(--gold-bright); }
 

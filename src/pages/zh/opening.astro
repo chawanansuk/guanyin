@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import HoursBar from '../../components/HoursBar.astro';
 import site from '../../lib/site';
-import { daysFromToday, parseDay } from '../../lib/format';
+import { daysFromToday, parseDay, relDays } from '../../lib/format';
 
 const lang = 'zh' as const;
 const o = site.opening_ceremony;
@@ -38,12 +38,14 @@ const schema = [{
   <section class="hero zone-gilt">
     <div class="wrap hero__inner">
       <p class="hero__eyebrow">{past ? '紀實' : '典禮資訊'}</p>
-      <h1 class="han">{o.headline_zh}</h1>
+      <h1 class="han">{o.headline_zh.includes(site.name_zh)
+        ? <>{o.headline_zh.split(site.name_zh)[0]}<span class="nowrap">{site.name_zh}</span>{o.headline_zh.split(site.name_zh)[1]}</>
+        : o.headline_zh}</h1>
       <p class="hero__date mono">{zhDate}</p>
-      {!past && left >= 0 && <p class="hero__count">{left === 0 ? '今日' : left === 1 ? '明日' : `尚餘 ${left} 天`}</p>}
+      {!past && left >= 0 && <p class="hero__count" data-days={o.date} data-days-hide-past>{relDays(left, 'zh')}</p>}
       <div class="hero__cta">
         <a class="btn btn--gold" href={site.maps_url} target="_blank" rel="noopener">導航前往本堂</a>
-        <a class="btn btn--plaque" href="/zh/33-pang">先認識三十三觀音</a>
+        <a class="btn btn--ghost" href="/zh/33-pang">先認識三十三觀音</a>
       </div>
     </div>
   </section>

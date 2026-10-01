@@ -36,7 +36,7 @@ const cn = (n: number) => (n <= 10 ? CN_NUM[n] : n < 20 ? `十${CN_NUM[n - 10]}`
 <BaseLayout
   lang={lang}
   title={`${d.name_zh}`}
-  description={`${d.name_zh}（${d.name_th}）三十三觀音第${cn(d.order)}尊。辨識標記：${marks}。要旨：${essence}。曼谷普陀觀音堂。`}
+  description={`${d.name_zh} 三十三觀音第${cn(d.order)}尊。辨識標記：${marks}。要旨：${essence}。曼谷普陀觀音堂。`}
   breadcrumbs={[
     { label: '首頁', href: '/zh' },
     { label: '三十三觀音', href: '/zh/33-pang' },
@@ -206,7 +206,7 @@ const cn = (n: number) => (n <= 10 ? CN_NUM[n] : n < 20 ? `十${CN_NUM[n - 10]}`
   .pang__nav-dir { font-size: var(--fs-label); letter-spacing: .18em; text-transform: uppercase; color: var(--gold); }
   .pang__nav-name { font-family: var(--display); font-size: var(--fs-md); color: var(--ink-2); margin-top: 3px; transition: color .3s var(--ease-lux); }
   .pang__nav-link:hover .pang__nav-name { color: var(--lacquer); }
-  .pang__nav-all { font-size: var(--fs-sm); white-space: nowrap; color: var(--gold); text-decoration: none; border-bottom: 1px solid var(--gold-line); padding-bottom: 2px; }
+  .pang__nav-all { font-size: var(--fs-sm); white-space: nowrap; color: var(--gold); text-decoration: none; border-bottom: 1px solid var(--gold-line); padding-block: var(--space-3) 2px; min-height: 44px; display: inline-flex; align-items: flex-end; }
   @media (max-width: 559px) {
     .pang__nav-inner { grid-template-columns: 1fr 1fr; }
     .pang__nav-all { grid-column: 1 / -1; grid-row: 1; text-align: center; }

@@ -146,5 +146,34 @@ const graphs = [place, ...crumbs, ...schema];
       <slot />
     </main>
     <SiteFooter lang={lang} />
+    {/* นับวันในเครื่องของคนดู ไม่พึ่งเวลาที่สร้างเว็บ
+        เว็บเป็น HTML คงที่ ถ้าไม่ได้สร้างใหม่ทุกวัน "อีก N วัน" จะค้าง
+        ทุกจุดที่มี data-days จะถูกคำนวณใหม่ตามเวลาไทยตอนเปิดหน้า
+        และกล่องที่มี data-days-hide-past จะซ่อนตัวเองเมื่อวันนั้นผ่านไปแล้ว */}
+    <script is:inline>
+      (function () {
+        var L = {
+          th: { today: 'วันนี้', tmr: 'พรุ่งนี้', past: 'ผ่านไปแล้ว', on: 'กำลังจัดอยู่', in: function (n) { return 'อีก ' + n + ' วัน'; } },
+          zh: { today: '今日', tmr: '明日', past: '已過', on: '進行中', in: function (n) { return '尚餘 ' + n + ' 天'; } }
+        };
+        var bkk, today;
+        try {
+          bkk = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Bangkok' }));
+          today = Date.UTC(bkk.getFullYear(), bkk.getMonth(), bkk.getDate());
+        } catch (e) { return; }
+        function days(iso) { var p = iso.split('-'); return Math.round((Date.UTC(+p[0], +p[1] - 1, +p[2]) - today) / 864e5); }
+        var els = document.querySelectorAll('[data-days]');
+        for (var i = 0; i < els.length; i++) {
+          var el = els[i];
+          var lang = L[el.getAttribute('data-days-lang') || document.documentElement.lang.slice(0, 2)] || L.th;
+          var n = days(el.getAttribute('data-days'));
+          var end = el.getAttribute('data-days-end');
+          var ne = end ? days(end) : n;
+          el.textContent = n > 1 ? lang.in(n) : n === 1 ? lang.tmr : n === 0 ? lang.today : ne >= 0 ? lang.on : lang.past;
+          var box = el.closest('[data-days-hide-past]');
+          if (box && ne < 0) box.hidden = true;
+        }
+      })();
+    </script>
   </body>
 </html>

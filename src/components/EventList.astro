@@ -1,5 +1,5 @@
 ---
-import { thaiDateRange, daysFromToday, isoDate } from '../lib/format';
+import { thaiDateRange, daysFromToday, isoDate, relDays } from '../lib/format';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -8,8 +8,6 @@ interface Props {
   compact?: boolean;
 }
 const { events, compact = false } = Astro.props;
-const rel = (n: number) =>
-  n === 0 ? 'วันนี้' : n === 1 ? 'พรุ่งนี้' : n > 0 ? `อีก ${n} วัน` : 'ผ่านไปแล้ว';
 ---
 <ol class:list={['evt', compact && 'evt--compact']}>
   {events.map((e) => {
@@ -27,7 +25,9 @@ const rel = (n: number) =>
           {d.lunar && <span class="evt__lunar">{d.lunar}</span>}
           {!compact && d.note && <span class="evt__note">{d.note}</span>}
         </div>
-        <span class="evt__rel mono">{rel(n)}</span>
+        <span class="evt__rel mono" data-days={isoDate(d.date)} data-days-end={d.end_date && isoDate(d.end_date)}>
+          {relDays(n, 'th', d.end_date ? daysFromToday(d.end_date) : n)}
+        </span>
       </li>
     );
   })}

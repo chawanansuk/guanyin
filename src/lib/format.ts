@@ -67,6 +67,15 @@ export function isoDate(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
 
+/** ข้อความ "อีก N วัน" — ต้องให้คำเดียวกับสคริปต์ใน BaseLayout ที่คำนวณใหม่ในเบราว์เซอร์
+ *  n = วันถึงวันเริ่ม, ne = วันถึงวันสิ้นสุด (งานหลายวัน) */
+export function relDays(n: number, lang: 'th' | 'zh' = 'th', ne = n): string {
+  const L = lang === 'zh'
+    ? { today: '今日', tmr: '明日', past: '已過', on: '進行中', in: (d: number) => `尚餘 ${d} 天` }
+    : { today: 'วันนี้', tmr: 'พรุ่งนี้', past: 'ผ่านไปแล้ว', on: 'กำลังจัดอยู่', in: (d: number) => `อีก ${d} วัน` };
+  return n > 1 ? L.in(n) : n === 1 ? L.tmr : n === 0 ? L.today : ne >= 0 ? L.on : L.past;
+}
+
 /** จำนวนวันจาก "วันนี้ตามเวลาไทย" — ลบคือผ่านไปแล้ว */
 export function daysFromToday(d: Date, today = todayBangkok()): number {
   const a = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());

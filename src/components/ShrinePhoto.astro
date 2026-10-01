@@ -27,6 +27,9 @@ const srcset = entry
   ? entry.widths.map((w) => `/images/pang/${name}-${w}.webp ${w}w`).join(', ')
   : null;
 const widest = entry ? entry.widths[entry.widths.length - 1] : null;
+// width/height จากสัดส่วน ให้เบราว์เซอร์จองพื้นที่ก่อนภาพมา
+const [rw, rh] = ratio.split('/').map((x) => parseFloat(x));
+const dims = rw && rh ? { width: Math.round(rw), height: Math.round(rh) } : {};
 ---
 {srcset && (
   <img
@@ -34,6 +37,7 @@ const widest = entry ? entry.widths[entry.widths.length - 1] : null;
     src={`/images/pang/${name}-${widest}.webp`}
     srcset={srcset}
     sizes={sizes}
+    {...dims}
     alt={alt}
     style={`aspect-ratio:${ratio}`}
     loading={priority ? 'eager' : 'lazy'}

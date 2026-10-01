@@ -201,6 +201,8 @@ p { margin: 0; max-width: var(--measure); }
 
 /* ขีดทองกวาดเข้าจากซ้ายตอนชี้ลิงก์ในเนื้อความ
    แทนเส้นใต้ของเบราว์เซอร์ซึ่งอ่านเป็นเอกสารราชการ */
+/* ลิงก์ท้ายหัวข้อ (ปฏิทินทั้งปี › ฯลฯ) ต้องสูงพอให้นิ้วกด ไม่ใช่แค่บรรทัดตัวหนังสือ */
+.link-gold { display: inline-block; padding-block: var(--space-2); }
 .prose a, .link-gold {
   position: relative;
   text-decoration: none;
@@ -233,13 +235,14 @@ a:hover { text-decoration-thickness: 2px; }
 
 /* ป้ายหัวข้อเล็กสีทอง — ช่องไฟกว้างมากเพื่อให้ตัดกับหัวเรื่องใหญ่
    padding-right ชดเชยช่องไฟตัวสุดท้ายที่ดันข้อความให้ดูเยื้องซ้าย */
+/* ป้ายหัวข้อเล็ก — ตัวไทย 11px ช่องไฟ .3em คนสูงวัยอ่านไม่ออก
+   13px ช่องไฟพอให้ดูเป็นป้าย ไม่ใช่กระจายจนเป็นจุด ๆ (ไทยไม่มีตัวพิมพ์ใหญ่ จึงไม่ต้อง uppercase) */
 .eyebrow {
   font-family: var(--sans);
-  font-size: clamp(11px, .18vw + 10.4px, 12.5px);
+  font-size: var(--fs-label);
   font-weight: 600;
-  letter-spacing: .3em;
-  padding-right: .3em;
-  text-transform: uppercase;
+  letter-spacing: .14em;
+  padding-right: .14em;
   color: var(--gold);
   margin: 0;
 }
@@ -566,12 +569,17 @@ section.band + section.band { border-top: 1px solid var(--line); }
 @media (max-width: 899px) { .pang-grid--eight { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 559px) { .pang-grid--eight { grid-template-columns: repeat(2, 1fr); } }
 
+/* ชื่อเฉพาะที่ห้ามตัดบรรทัด เช่น ชื่อตำหนัก */
+.nowrap { white-space: nowrap; }
+/* hidden ต้องชนะ display:flex ของคลาสอื่น ไม่งั้นกล่องที่สคริปต์ซ่อนจะยังโผล่ */
+[hidden] { display: none !important; }
+
 /* ============================================================ chips */
 .chips { display: flex; flex-wrap: wrap; gap: var(--space-2); padding: 0; margin: 0; list-style: none; }
 .chip {
   display: inline-flex;
   align-items: center;
-  min-height: 34px;
+  min-height: 44px;             /* พื้นที่กดสำหรับนิ้วผู้สูงวัย */
   padding: var(--space-1) var(--space-4);
   border: 1px solid var(--line-strong);
   border-radius: var(--radius-pill);

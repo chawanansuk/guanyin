@@ -74,6 +74,8 @@ for (const file of files.sort()) {
   const input = join(SRC, file);
   const outMp4 = join(OUT, `${name}.mp4`);
   const outPoster = join(OUT, `${name}-poster.jpg`);
+  // ปกแบบ WebP เล็กกว่า JPEG ราวครึ่ง — หน้าแรกโหลดปกทันทีแม้ยังไม่กดเล่น
+  const outPosterWebp = join(OUT, `${name}-poster.webp`);
   const info = probe(input);
 
   const size = info.match(/,\s(\d{2,5})x(\d{2,5})[\s,]/);
@@ -105,6 +107,7 @@ for (const file of files.sort()) {
   // ภาพปกต้องเป็นเฟรมแรกของคลิปเอง ไม่ใช่ภาพอื่นที่สัดส่วนไม่ตรง
   // ไม่งั้นตอนกดเล่นภาพจะกระตุกเปลี่ยนสัดส่วนต่อหน้าคนดู
   run(['-y', '-hide_banner', '-loglevel', 'error', '-i', input, '-frames:v', '1', '-q:v', '3', outPoster]);
+  run(['-y', '-hide_banner', '-loglevel', 'error', '-i', outPoster, '-c:v', 'libwebp', '-quality', '60', outPosterWebp]);
 
   const before = (await stat(input)).size;
   const after = (await stat(outMp4)).size;
@@ -112,5 +115,5 @@ for (const file of files.sort()) {
     `${file}: ${size ? `${size[1]}×${size[2]}` : '?'} · ${seconds.toFixed(1)} วินาที · ` +
     `${(before / 1e6).toFixed(1)} → ${(after / 1e6).toFixed(1)} MB (${Math.round((1 - after / before) * 100)}% เล็กลง)`,
   );
-  console.log(`  ใส่ค่านี้ใน src/data/site.json → video: { file: "${name}.mp4", bytes: ${after}, width: ${size?.[1]}, height: ${size?.[2]} }`);
+  console.log(`  ใส่ค่านี้ใน src/data/site.json → video: { file: "${name}.mp4", poster: "${name}-poster.webp", bytes: ${after}, width: ${size?.[1]}, height: ${size?.[2]} }`);
 }

@@ -9,7 +9,7 @@ import photos from '../../data/photos.json';
 import site from '../../lib/site';
 import { allPang, enshrinedCount } from '../../lib/pang';
 import { getCollection } from 'astro:content';
-import { daysFromToday, parseDay, isoDate } from '../../lib/format';
+import { daysFromToday, parseDay, isoDate, relDays } from '../../lib/format';
 
 const lang = 'zh' as const;
 const pang = await allPang();
@@ -75,10 +75,10 @@ const hasFacade = 'shrine-exterior' in (photos.images as Record<string, unknown>
     </div>
 
     {preOpening && (
-      <a class="hero__ribbon" href="/zh/opening">
+      <a class="hero__ribbon" href="/zh/opening" data-days-hide-past>
         <span class="hero__ribbon-label han">開光大典</span>
         <span class="hero__ribbon-date han">{openingDate.getUTCMonth() + 1}月{openingDate.getUTCDate()}日</span>
-        {daysToOpening > 0 && <span class="hero__ribbon-count mono">尚餘 {daysToOpening} 天</span>}
+        <span class="hero__ribbon-count mono" data-days={o.date}>{relDays(daysToOpening, 'zh')}</span>
       </a>
     )}
   </section>
@@ -158,7 +158,7 @@ const hasFacade = 'shrine-exterior' in (photos.images as Record<string, unknown>
                   {e.data.approx && <abbr class="evt__approx" title="依農曆推算，尚待堂方核對">≈</abbr>}
                 </time>
                 <span class="evt__title han">{e.data.title_zh || e.data.title}</span>
-                <span class="evt__rel mono">{n === 0 ? '今日' : n === 1 ? '明日' : `尚餘 ${n} 天`}</span>
+                <span class="evt__rel mono" data-days={isoDate(e.data.date)} data-days-end={e.data.end_date && isoDate(e.data.end_date)}>{relDays(n, 'zh', e.data.end_date ? daysFromToday(e.data.end_date) : n)}</span>
               </li>
             );
           })}

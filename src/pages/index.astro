@@ -10,7 +10,7 @@ import photos from '../data/photos.json';
 import site from '../lib/site';
 import { allPang, enshrinedCount } from '../lib/pang';
 import { getCollection } from 'astro:content';
-import { thaiDate, daysFromToday, isoDate, parseDay } from '../lib/format';
+import { thaiDate, daysFromToday, isoDate, parseDay, relDays } from '../lib/format';
 
 const pang = await allPang();
 const count = enshrinedCount(pang);
@@ -100,10 +100,10 @@ const schema = preOpening
     </div>
 
     {preOpening && (
-      <a class="hero__ribbon" href="/opening">
+      <a class="hero__ribbon" href="/opening" data-days-hide-past>
         <span class="hero__ribbon-label">พิธีเปิดตำหนัก</span>
         <span class="hero__ribbon-date">{thaiDate(openingDate, 'short')}</span>
-        {daysToOpening > 0 && <span class="hero__ribbon-count mono">อีก {daysToOpening} วัน</span>}
+        <span class="hero__ribbon-count mono" data-days={opening.date}>{relDays(daysToOpening)}</span>
       </a>
     )}
   </section>

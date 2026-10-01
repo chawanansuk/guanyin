@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
 import { getCollection } from 'astro:content';
-import { daysFromToday, isoDate } from '../../lib/format';
+import { daysFromToday, isoDate, relDays } from '../../lib/format';
 import site from '../../lib/site';
 
 const lang = 'zh' as const;
@@ -73,7 +73,7 @@ const schema = upcoming.map((e) => ({
                   <span class="evt__title han">{e.data.title_zh || e.data.title}</span>
                   {e.data.lunar && <span class="evt__lunar">{lunarZh(e.data.lunar)}</span>}
                 </div>
-                <span class="evt__rel mono">{n <= 0 ? '進行中' : `尚餘 ${n} 天`}</span>
+                <span class="evt__rel mono" data-days={isoDate(e.data.date)} data-days-end={e.data.end_date && isoDate(e.data.end_date)}>{relDays(n, 'zh', e.data.end_date ? daysFromToday(e.data.end_date) : n)}</span>
               </li>
             );
           })}
