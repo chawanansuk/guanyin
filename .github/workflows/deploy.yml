@@ -17,7 +17,8 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # ล็อกรุ่นไว้ — ubuntu-latest จะย้ายเป็น Ubuntu 26 ตั้งแต่ 19 ต.ค. ซึ่งเป็นสัปดาห์ก่อนพิธีเปิด
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 

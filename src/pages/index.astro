@@ -100,13 +100,28 @@ const schema = preOpening
     </div>
 
     {preOpening && (
-      <a class="hero__ribbon" href="/opening" data-days-hide-past>
+      <a class="hero__ribbon" href="/opening" data-days-hide-past data-days-hide-on={opening.date}>
         <span class="hero__ribbon-label">พิธีเปิดตำหนัก</span>
         <span class="hero__ribbon-date">{thaiDate(openingDate, 'short')}</span>
         <span class="hero__ribbon-count mono" data-days={opening.date}>{relDays(daysToOpening)}</span>
       </a>
     )}
   </section>
+
+  {preOpening && (
+    <aside class="dayof" data-days-only={opening.date} hidden aria-label="วันนี้พิธีเปิดตำหนัก">
+      <div class="wrap dayof__inner">
+        <p class="dayof__text">
+          <span class="dayof__head">วันนี้ พิธีเปิดตำหนัก</span>
+          <span class="dayof__note">ผู้คนจะมาก ลานจอดรถอาจเต็ม · ตำหนักนี้ไม่จุดธูปเทียน กราบด้วยการพนมมือ</span>
+        </p>
+        <div class="dayof__cta">
+          <a class="btn btn--gold" href={site.maps_url} target="_blank" rel="noopener">นำทางไปตำหนัก</a>
+          <a class="btn btn--ghost" href="/opening">กำหนดการ</a>
+        </div>
+      </div>
+    </aside>
+  )}
 
   <HoursBar />
 

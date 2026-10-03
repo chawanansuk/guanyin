@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import { readdirSync, readFileSync } from 'node:fs';
 import site from './src/data/site.json' with { type: 'json' };
 
 // ต้องตรงกับ src/lib/site.ts — ไฟล์นี้เป็น config ของ Astro จึง import
@@ -12,13 +13,26 @@ const siteUrl = (
   site.url
 ).replace(/\/+$/, '');
 
+// บทสวดที่ยังไม่มีผู้รู้ตรวจ — หน้าเหล่านี้ตั้ง noindex ไว้ (ดู worship/prayers/[slug].astro)
+// อ่านจากไฟล์เนื้อหาตรง ๆ เพราะตอนอ่าน config ยังเรียก content collection ไม่ได้
+const NOINDEX_PRAYERS = readdirSync(new URL('./src/content/prayers/', import.meta.url))
+  .filter((f) => f.endsWith('.md'))
+  .filter((f) => {
+    const fm = readFileSync(new URL(`./src/content/prayers/${f}`, import.meta.url), 'utf8').split('---')[1] ?? '';
+    const v = (fm.match(/^verified_by:\s*"?(.*?)"?\s*$/m) ?? [])[1] ?? '';
+    return v.trim() === '';
+  })
+  .map((f) => f.replace(/\.md$/, ''));
+
 export default defineConfig({
   site: siteUrl,
   trailingSlash: 'never',
   build: { format: 'file' },
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/admin'),
+      // หน้าที่ตั้ง noindex ต้องไม่อยู่ใน sitemap ไม่งั้น Search Console เตือนว่าสัญญาณขัดกัน
+      // บทสวดยังรอผู้รู้ตรวจ (verified_by ว่าง) จึง noindex — ตรวจแล้วค่อยลบออกจากรายการนี้
+      filter: (page) => !page.includes('/admin') && !NOINDEX_PRAYERS.some((s) => page.includes(`/worship/prayers/${s}`)),
       i18n: undefined,
     }),
   ],

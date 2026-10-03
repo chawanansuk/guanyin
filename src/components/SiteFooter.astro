@@ -4,10 +4,14 @@ import { hoursSummary } from '../lib/hours';
 import LangSwitch from './LangSwitch.astro';
 import ShrineMark from './ShrineMark.astro';
 import { useT, withLang, type Lang } from '../i18n';
+import { getCollection } from 'astro:content';
 
 interface Props { lang?: Lang }
 const { lang = 'th' } = Astro.props;
 const t = useT(lang);
+// พูดว่า "ผู้รู้ตรวจแล้ว" ได้ก็ต่อเมื่อตรวจครบทุกปางจริง ๆ — ไม่งั้นเป็นการอ้างเกินจริงทุกหน้า
+const pangAll = await getCollection('pang');
+const allVerified = pangAll.length > 0 && pangAll.every((p) => p.data.verified_by.trim() !== '');
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const year = lang === 'zh' ? new Date().getFullYear() : new Date().getFullYear() + 543;
 
@@ -57,7 +61,7 @@ const LINKS = lang === 'zh'
     <div class="site-foot__lang">
       <LangSwitch lang={lang} path={path} />
     </div>
-    <p class="site-foot__legal">{t('foot.notice')}</p>
+    <p class="site-foot__legal">{t(allVerified ? 'foot.notice' : 'foot.noticePending')}</p>
     <p class="site-foot__legal">© {year} {lang === 'zh' ? site.name_zh : site.name_th}</p>
   </div>
 </footer>

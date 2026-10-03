@@ -7,6 +7,8 @@
  *
  *   npm run qr            → dist-qr/qr-sheet.html  แล้วเปิดในเบราว์เซอร์ › สั่งพิมพ์ › บันทึกเป็น PDF
  *   npm run qr -- --svg   → แยกเป็นไฟล์ SVG รายชิ้นสำหรับส่งโรงพิมพ์
+ *   npm run qr -- --plaque → dist-qr/qr-plaques.html ป้ายตั้งขนาด A6 หน้าละหนึ่งองค์
+ *                            ตัวใหญ่ อ่านได้จากระยะยืนไหว้ › สั่งพิมพ์ › บันทึกเป็น PDF
  */
 import { mkdir, writeFile, readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -17,6 +19,7 @@ const root = fileURLToPath(new URL('..', import.meta.url));
 const site = JSON.parse(await readFile(join(root, 'src', 'data', 'site.json'), 'utf8'));
 const OUT = join(root, 'dist-qr');
 const svgMode = process.argv.includes('--svg');
+const plaqueMode = process.argv.includes('--plaque');
 
 const THAI_DIGITS = ['๐','๑','๒','๓','๔','๕','๖','๗','๘','๙'];
 const thaiNum = (n) => String(n).replace(/\d/g, (d) => THAI_DIGITS[+d]);
@@ -37,17 +40,82 @@ for (const f of files) {
     zh: get('name_zh'),
     // ?src=qr ไว้นับว่าทราฟฟิกมาจากป้ายในตำหนักจริงเท่าไร
     url: `${site.url}/33-pang/${get('slug')}?src=qr`,
+    kind: 'pang',
   });
 }
 tags.push(
-  { label: 'ทางเข้า', th: 'วิธีไหว้', zh: '參拜方式', url: `${site.url}/worship/how-to?src=qr` },
-  { label: 'ป้ายประกาศ', th: 'ปฏิทินวันสำคัญ', zh: '節日曆', url: `${site.url}/calendar?src=qr` },
+  { label: 'ทางเข้า', th: 'วิธีไหว้', zh: '參拜方式', url: `${site.url}/worship/how-to?src=qr`, kind: 'sign',
+    lead: 'สแกนดูวิธีไหว้และลำดับจุดไหว้', leadZh: '掃描查看參拜方式與順序' },
+  { label: 'ป้ายประกาศ', th: 'ปฏิทินวันสำคัญ', zh: '節日曆', url: `${site.url}/calendar?src=qr`, kind: 'sign',
+    lead: 'สแกนดูวันสำคัญของเจ้าแม่กวนอิม', leadZh: '掃描查看觀音節日' },
 );
 
 await mkdir(OUT, { recursive: true });
 
 const svgFor = (t) =>
   QRCode.toString(t.url, { type: 'svg', margin: 0, errorCorrectionLevel: 'M', width: 256 });
+
+if (plaqueMode) {
+  // ป้ายตั้งหน้าองค์ — ผู้สูงวัยต้องอ่านชื่อปางได้จากระยะยืนไหว้ราวหนึ่งเมตร
+  // QR ใหญ่ 52 มม. สแกนได้จากระยะเอื้อมแขนแม้แสงในตำหนักไม่มาก
+  // พื้นขาว ขอบชาดขลิบทอง — QR ต้องดำบนขาวเสมอ ห้ามกลับสีหรือวางบนพื้นแดง กล้องบางรุ่นอ่านไม่ออก
+  const pages = [];
+  for (const t of tags) {
+    const isPang = t.kind === 'pang';
+    pages.push(`<section class="plaque">
+  <div class="plaque__frame">
+    <p class="plaque__no">${isPang ? `ปางที่ ${t.label}` : t.label}</p>
+    <h1 class="plaque__zh">${t.zh}</h1>
+    <p class="plaque__th">${t.th}</p>
+    <div class="plaque__qr">${await svgFor(t)}</div>
+    <p class="plaque__lead">${isPang ? 'สแกนเพื่ออ่านความหมายของปางนี้' : t.lead}</p>
+    <p class="plaque__lead plaque__lead--zh">${isPang ? '掃描閱讀本尊法相介紹' : t.leadZh}</p>
+    <p class="plaque__foot"><span>${site.name_zh}</span> · <span>${site.name_th}</span></p>
+  </div>
+</section>`);
+  }
+  const html = `<!doctype html>
+<html lang="th"><head><meta charset="utf-8">
+<title>ป้าย QR A6 — ${site.name_th}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@400;600;700&family=Noto+Serif+TC:wght@500;700&display=swap">
+<style>
+  @page { size: 105mm 148mm; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #fff; }
+  body { font-family: "Noto Serif Thai", "Loma", serif; color: #241813;
+         -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .plaque { width: 105mm; height: 148mm; padding: 5mm; page-break-after: always; break-after: page; }
+  .plaque:last-child { page-break-after: auto; break-after: auto; }
+  .plaque__frame {
+    height: 100%;
+    border: 1.6mm solid #8E1C18;
+    outline: 0.35mm solid #C9A04A; outline-offset: -2.6mm;
+    border-radius: 1.2mm;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 6mm 7mm 5mm;
+  }
+  .plaque__no { margin: 0; font-size: 11pt; font-weight: 600; color: #8A6C28; letter-spacing: .04em; }
+  .plaque__zh { margin: 2mm 0 0; font-family: "Noto Serif TC", "WenQuanYi Zen Hei", serif; font-weight: 700;
+                font-size: 30pt; line-height: 1.15; letter-spacing: .08em; padding-left: .08em; color: #8E1C18; }
+  .plaque__th { margin: 2mm 0 0; font-size: 17pt; font-weight: 700; line-height: 1.4; }
+  .plaque__qr { width: 52mm; height: 52mm; margin: 5mm 0 4mm; padding: 2.5mm; background: #fff; }
+  .plaque__qr svg { width: 100%; height: 100%; display: block; }
+  .plaque__lead { margin: 0; font-size: 11.5pt; font-weight: 600; line-height: 1.5; }
+  .plaque__lead--zh { font-family: "Noto Serif TC", "WenQuanYi Zen Hei", serif; font-weight: 500; font-size: 10pt; color: #5E4D3C; margin-top: .6mm; }
+  .plaque__foot { margin: auto 0 0; padding-top: 3mm; font-size: 8.5pt; color: #7A6650; }
+  .plaque__foot span:first-child { font-family: "Noto Serif TC", "WenQuanYi Zen Hei", serif; letter-spacing: .12em; }
+  @media screen { body { background: #e9e2d6; } .plaque { margin: 8mm auto; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,.15); } }
+</style></head>
+<body>
+${pages.join('\n')}
+</body></html>`;
+  await writeFile(join(OUT, 'qr-plaques.html'), html, 'utf8');
+  console.log(`QR: เขียน dist-qr/qr-plaques.html (${tags.length} ป้าย ขนาด A6)`);
+  console.log('เปิดในเบราว์เซอร์ › สั่งพิมพ์ › ขนาดกระดาษ A6 ไม่มีขอบ › บันทึกเป็น PDF แล้วส่งโรงพิมพ์');
+  process.exit(0);
+}
 
 if (svgMode) {
   for (const [i, t] of tags.entries()) {

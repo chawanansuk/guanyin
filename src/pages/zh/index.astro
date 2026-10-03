@@ -75,13 +75,28 @@ const hasFacade = 'shrine-exterior' in (photos.images as Record<string, unknown>
     </div>
 
     {preOpening && (
-      <a class="hero__ribbon" href="/zh/opening" data-days-hide-past>
+      <a class="hero__ribbon" href="/zh/opening" data-days-hide-past data-days-hide-on={o.date}>
         <span class="hero__ribbon-label han">開光大典</span>
         <span class="hero__ribbon-date han">{openingDate.getUTCMonth() + 1}月{openingDate.getUTCDate()}日</span>
         <span class="hero__ribbon-count mono" data-days={o.date}>{relDays(daysToOpening, 'zh')}</span>
       </a>
     )}
   </section>
+
+  {preOpening && (
+    <aside class="dayof" data-days-only={o.date} hidden aria-label="今日開光大典">
+      <div class="wrap dayof__inner">
+        <p class="dayof__text han">
+          <span class="dayof__head">今日 開光大典</span>
+          <span class="dayof__note">人潮眾多，停車場可能客滿 · 本堂不燃香燭，合掌為禮</span>
+        </p>
+        <div class="dayof__cta">
+          <a class="btn btn--gold han" href={site.maps_url} target="_blank" rel="noopener">導航前往本堂</a>
+          <a class="btn btn--ghost han" href="/zh/opening">典禮流程</a>
+        </div>
+      </div>
+    </aside>
+  )}
 
   <HoursBar lang={lang} />
 

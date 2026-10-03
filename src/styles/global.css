@@ -441,12 +441,15 @@ section.band + section.band { border-top: 1px solid var(--line); }
 .hero--home .hero__btn-caret { opacity: .7; }
 /* ปุ่มรองบนภาพ: ขอบครีมโปร่ง ขอบชาดบนภาพเข้มจะจมหายไป */
 .hero--home .hero__btn--outline {
-  background: rgba(255, 252, 244, .1);
+  /* พื้นต้องเข้ม ไม่ใช่ขาวโปร่ง — บนจอกว้างปุ่มนี้ตกบนเสาทองของอาคาร
+     พื้นขาวโปร่งเดิมทำให้ตัวหนังสือครีมเหลือคอนทราสต์ 1.8:1 ตรงนั้น */
+  background: rgba(38, 22, 12, .58);
   color: #FBF3E2;
-  border-color: rgba(251, 243, 226, .55);
-  backdrop-filter: blur(2px);
+  border-color: rgba(251, 243, 226, .6);
+  backdrop-filter: blur(3px);
 }
 .hero--home .hero__btn--outline:hover {
+  background: rgba(38, 22, 12, .72);
   background: rgba(255, 252, 244, .2);
   border-color: #FBF3E2;
 }
@@ -573,6 +576,33 @@ section.band + section.band { border-top: 1px solid var(--line); }
 .nowrap { white-space: nowrap; }
 /* hidden ต้องชนะ display:flex ของคลาสอื่น ไม่งั้นกล่องที่สคริปต์ซ่อนจะยังโผล่ */
 [hidden] { display: none !important; }
+
+/* ============================================================ แถบวันงาน
+   ซ่อนไว้ตลอด สคริปต์นับวันใน BaseLayout จะเปิดให้เห็นเฉพาะวันที่ตรงกับ data-days-only
+   ตามเวลาไทย จึงขึ้นเองเช้าวันงาน แม้เว็บจะไม่ได้สร้างใหม่ในวันนั้น */
+.dayof {
+  background: linear-gradient(175deg, var(--plaque) 0%, var(--plaque-2) 100%);
+  color: var(--plaque-ink);
+  border-block: 1px solid var(--gold-bright);
+}
+.dayof__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-6);
+  padding-block: var(--space-4);
+}
+.dayof__text { margin: 0; display: flex; flex-direction: column; gap: var(--space-1); }
+.dayof__head { font-family: var(--display); font-size: var(--fs-h4); font-weight: 600; color: #FDF2DA; line-height: 1.4; }
+.dayof__note { font-size: var(--fs-sm); color: #F0D9A8; line-height: 1.6; }
+.dayof__cta { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.dayof .btn--ghost { color: #FDF2DA; border-color: rgba(253, 242, 218, .5); }
+.dayof .btn--ghost:hover { border-color: var(--gold-bright); background: rgba(253, 242, 218, .08); }
+@media (max-width: 559px) {
+  .dayof__cta { width: 100%; }
+  .dayof__cta .btn { flex: 1 1 auto; }
+}
 
 /* ============================================================ chips */
 .chips { display: flex; flex-wrap: wrap; gap: var(--space-2); padding: 0; margin: 0; list-style: none; }
