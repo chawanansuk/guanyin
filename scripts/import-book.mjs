@@ -118,6 +118,13 @@ for (const ch of chapters) {
     has_full: true,
   };
 
+  // บทที่เรียบเรียงขยายด้วยมือแล้ว (edited: true) ห้ามเขียนทับ ไม่งั้นงานขยายหายหมด
+  // คีย์พอยท์ของปางนั้นก็แก้ให้ตรงกับบทเต็มแล้ว จึงคงของเดิมไว้ด้วย
+  const fullPath = join(FULL, `${String(ch.order).padStart(2, '0')}-${target.slug}.md`);
+  const existing = await readFile(fullPath, 'utf8').catch(() => '');
+  const edited = /^edited:\s*true\s*$/m.test(existing);
+  if (edited) delete own.keypoints;
+
   // แก้เฉพาะในบล็อก frontmatter เท่านั้น — ถ้าปล่อยให้ regex วิ่งทั้งไฟล์
   // เส้นคั่น --- ของ frontmatter กับของ Markdown ในเนื้อความจะปนกัน
   const fm = target.raw.match(/^---\n([\s\S]*?)\n---\n/);
@@ -147,15 +154,14 @@ for (const ch of chapters) {
   }
 
   // เนื้อความย่อบนหน้าปาง = สองย่อหน้าแรกของเรื่องราวความเป็นมา
-  const teaser = ch.story.split('\n\n').slice(0, 2).join('\n\n');
+  const teaser = edited
+    ? target.raw.slice(fm[0].length).trim()
+    : ch.story.split('\n\n').slice(0, 2).join('\n\n');
   const raw = `---\n${[...head.filter((l) => l.trim()), ...added].join('\n')}\n---\n\n${teaser}\n`;
   await writeFile(join(PANG, target.file), raw, 'utf8');
 
   // ----- บทเต็ม -----
-  // บทที่เรียบเรียงขยายด้วยมือแล้ว (edited: true) ห้ามเขียนทับ ไม่งั้นงานขยายหายหมด
-  const fullPath = join(FULL, `${String(ch.order).padStart(2, '0')}-${target.slug}.md`);
-  const existing = await readFile(fullPath, 'utf8').catch(() => '');
-  if (/^edited:\s*true\s*$/m.test(existing)) {
+  if (edited) {
     console.log(`ข้ามบทเต็มปางที่ ${ch.order} — เรียบเรียงขยายด้วยมือแล้ว`);
     continue;
   }
