@@ -11,7 +11,9 @@ short_prayer: "ขอให้พ้นจากพิษของสัตว�
 photo: pang-18
 photo_detail: pang-18-detail
 prayer: ""
-sources: []
+sources:
+  - "増補諸宗仏像図彙 巻二 (土佐秀信 画, ค.ศ. 1690 เพิ่มเติม ค.ศ. 1783) สำเนาหอสมุดรัฐสภาญี่ปุ่น ndljp/pid/3442142 คำกำกับใต้ภาพ: 蚖蛇及蝮蠍"
+  - "妙法蓮華經 觀世音菩薩普門品 ไทโช T0262 เล่ม 9 หน้า 58a08–09"
 verified_by: ""
 name_th_scholarly: "อวโลกิเตศวรประตูหิน"
 name_zh_variants: ["巖戶觀音"]

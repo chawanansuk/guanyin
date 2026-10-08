@@ -11,7 +11,9 @@ short_prayer: "ขอให้คลื่นลมในใจสงบ แล�
 photo: pang-19
 photo_detail: pang-19-detail
 prayer: ""
-sources: []
+sources:
+  - "増補諸宗仏像図彙 巻二 (土佐秀信 画, ค.ศ. 1690 เพิ่มเติม ค.ศ. 1783) สำเนาหอสมุดรัฐสภาญี่ปุ่น ndljp/pid/3442142 คำกำกับใต้ภาพ: 吹其船舫漂墮羅刹鬼國"
+  - "妙法蓮華經 觀世音菩薩普門品 ไทโช T0262 เล่ม 9 หน้า 56c12–15"
 verified_by: ""
 name_th_scholarly: "อวโลกิเตศวรทรงทำความสงบ"
 name_zh_variants: []
