@@ -47,6 +47,38 @@ const pang = defineCollection({
     sources: z.array(z.string()).default([]),
     /** ว่าง = ผู้รู้ของตำหนักยังไม่ได้ตรวจ → ไม่เผยแพร่เนื้อหายาว และไม่ให้ Google เก็บดัชนี */
     verified_by: z.string().default(''),
+
+    // ---------- องค์จริงในตำหนัก — ตำหนักเป็นเจ้าของ กรอกผ่าน Google Sheet (npm run import:sheet) ----------
+    // หนังสือบอกว่าปางนี้ "ควร" เป็นอย่างไร ช่องชุดนี้บอกว่าองค์ที่ตั้งอยู่จริง "เป็น" อย่างไร
+    // คนที่สแกน QR มององค์จริงอยู่ ถ้าสองอย่างไม่ตรงกัน ต้องเชื่อองค์จริง
+    /** ท่า เช่น ยืน · นั่ง · นั่งห้อยพระบาท */
+    posture: z.string().default(''),
+    /** สิ่งที่ทรงถือในแต่ละพระหัตถ์ */
+    holds: z.string().default(''),
+    /** ฐานหรือสัตว์ที่รองรับ เช่น บัว ศิลา มังกร คลื่น */
+    base: z.string().default(''),
+    material: z.string().default(''),
+    height_cm: z.number().positive().nullable().default(null),
+    /** ที่มาขององค์ — โรงงานหรือช่าง ปีที่สร้าง */
+    maker: z.string().default(''),
+    /** ผู้ถวาย — ใส่เมื่อผู้ถวายอนุญาตให้เปิดเผยเท่านั้น */
+    donor: z.string().default(''),
+    /** คำบรรยายองค์จริงเป็นร้อยแก้ว ย่อหน้าคั่นด้วยบรรทัดว่าง */
+    shrine_statue: z.string().default(''),
+    /** สิ่งที่ตำหนักอยากให้คนสังเกตบนองค์นี้ */
+    shrine_highlight: z.string().default(''),
+    /** ภาพองค์ในที่ตั้งจริง เห็นองค์ข้างเคียง — ชื่อไฟล์ เช่น pang-01-place */
+    photo_place: z.string().default(''),
+    /** คำแนะนำการขอพรกับปางนี้ ย่อหน้าคั่นด้วยบรรทัดว่าง */
+    how_to_ask: z.string().default(''),
+
+    // ---------- เรียบเรียงจากหนังสือ ----------
+    /** ปางที่หน้าตาคล้ายกันจนคนสับสน และจุดที่ใช้แยก */
+    confused_with: z.array(z.object({ slug: z.string(), note: z.string() })).default([]),
+    /** กราบปางนี้แล้ว ปางที่ควรไปกราบต่อ (slug) */
+    see_also: z.array(z.string()).default([]),
+    /** คำถามที่คนค้นจริง — ส่งเป็น FAQPage ให้ Google ด้วย */
+    faq: z.array(z.object({ q: z.string(), a: z.string() })).default([]),
   }),
 });
 
@@ -164,6 +196,8 @@ const pangFull = defineCollection({
     title: z.string(),
     source: z.string(),
     words: z.number().int(),
+    /** true = เรียบเรียงขยายด้วยมือแล้ว npm run import:book จะไม่เขียนทับไฟล์นี้ */
+    edited: z.boolean().default(false),
   }),
 });
 

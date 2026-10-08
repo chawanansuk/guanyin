@@ -152,6 +152,13 @@ for (const ch of chapters) {
   await writeFile(join(PANG, target.file), raw, 'utf8');
 
   // ----- บทเต็ม -----
+  // บทที่เรียบเรียงขยายด้วยมือแล้ว (edited: true) ห้ามเขียนทับ ไม่งั้นงานขยายหายหมด
+  const fullPath = join(FULL, `${String(ch.order).padStart(2, '0')}-${target.slug}.md`);
+  const existing = await readFile(fullPath, 'utf8').catch(() => '');
+  if (/^edited:\s*true\s*$/m.test(existing)) {
+    console.log(`ข้ามบทเต็มปางที่ ${ch.order} — เรียบเรียงขยายด้วยมือแล้ว`);
+    continue;
+  }
   // ภาษาไทยไม่เว้นวรรคระหว่างคำ นับคำด้วยการตัดช่องว่างจึงได้ตัวเลขที่ผิด
   // ใช้จำนวนอักษรแล้วหารด้วยความยาวคำไทยโดยเฉลี่ย (~5 อักษร) เป็นค่าประมาณ
   const chars = `${ch.story}\n${ch.today}`.replace(/\s+/g, '').length;
@@ -171,12 +178,9 @@ ${ch.story}
 ### ความหมายในชีวิตวันนี้
 
 ${ch.today}
-
-### คีย์พอยท์
-
-${ch.keypoints.map((k) => `- ${k}`).join('\n')}
 `;
-  await writeFile(join(FULL, `${String(ch.order).padStart(2, '0')}-${target.slug}.md`), full, 'utf8');
+  // คีย์พอยท์ไม่ลงในบทเต็ม เพราะหน้าปางแสดงจาก keypoints ใน frontmatter อยู่แล้ว
+  await writeFile(fullPath, full, 'utf8');
   wrote++;
 }
 

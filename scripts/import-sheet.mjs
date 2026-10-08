@@ -11,10 +11,18 @@
  *   npm run import:sheet -- ./pang.csv          # หรือไฟล์ CSV ในเครื่อง
  *   npm run import:sheet -- ./pang.csv --dry    # ดูว่าจะเปลี่ยนอะไรบ้าง โดยยังไม่เขียน
  *
- * คอลัมน์ที่รองรับ (แถวแรกของ Sheet ต้องเป็นชื่อคอลัมน์เหล่านี้):
- *   order, slug, name_th, name_th_shrine, name_zh, name_pinyin, name_thai_reading,
- *   name_sanskrit, enshrined, shrine_point, attributes, wishes, incense,
- *   short_prayer, prayer, sources, verified_by
+ * หัวคอลัมน์ (แถวแรก) เขียนเป็นภาษาไทยได้ ขอให้มีชื่อช่องในวงเล็บท้าย เช่น
+ *   "ความสูง เซนติเมตร (height_cm)"  — สคริปต์อ่านเฉพาะชื่อในวงเล็บ
+ * หัวคอลัมน์ที่ขึ้นต้น ref_ หรือเป็น notes / filled_by เป็นช่องอ้างอิง ไม่ถูกนำเข้า
+ *
+ * คอลัมน์ที่รองรับ:
+ *   ข้อมูลปาง   order, slug, name_th, name_th_shrine, name_zh, name_pinyin,
+ *               name_thai_reading, name_sanskrit, attributes, sources, verified_by
+ *   องค์จริง    enshrined, shrine_point, base_label, posture, holds, base, material,
+ *               height_cm, maker, donor, shrine_statue, shrine_highlight
+ *   การขอพร    wishes (ชื่อไทยหรือรหัส), short_prayer, how_to_ask, prayer (ชื่อบทสวดหรือรหัส)
+ *
+ * แบบฟอร์มสำหรับตำหนักกรอก: ดู docs/CONTENT.md หัวข้อ "แบบฟอร์มข้อมูลองค์จริง"
  */
 import { readFile, writeFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -23,6 +31,25 @@ import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('..', import.meta.url));
 const DIR = join(root, 'src', 'content', 'pang');
 const WISH_IDS = ['health','children','career','trade','love','travel','protection','peace'];
+// ตำหนักกรอกเป็นชื่อไทยตามที่เห็นบนเว็บ ไม่ต้องจำรหัส
+const WISH_TH = {
+  'สุขภาพ': 'health', 'หายป่วย': 'health',
+  'ขอบุตร': 'children', 'ครอบครัว': 'children',
+  'การงาน': 'career', 'การศึกษา': 'career',
+  'ค้าขาย': 'trade', 'โชคลาภ': 'trade',
+  'ความรัก': 'love', 'คู่ครอง': 'love',
+  'เดินทาง': 'travel', 'เดินทางปลอดภัย': 'travel',
+  'คุ้มครอง': 'protection', 'แคล้วคลาด': 'protection',
+  'คลายทุกข์': 'peace', 'จิตใจสงบ': 'peace', 'ใจสงบ': 'peace',
+};
+// บทสวดเลือกจากชื่อไทยในแบบฟอร์ม → รหัสหน้าในเว็บ
+const PRAYER_TH = {
+  'มหากรุณาธารณี': 'da-bei-zhou', '大悲咒': 'da-bei-zhou',
+  'สมันตมุขปริวรรต': 'pu-men-pin', 'ผู่เหมินผิ่น': 'pu-men-pin', '普門品': 'pu-men-pin',
+  'หกพยางค์': 'liu-zi-da-ming-zhou', 'โอม มณี ปัทเม หูม': 'liu-zi-da-ming-zhou', '六字大明咒': 'liu-zi-da-ming-zhou',
+};
+const PRAYER_IDS = new Set(Object.values(PRAYER_TH));
+const NONE = /^(ไม่มี|ไม่มีเฉพาะ|-|—)$/;
 
 const args = process.argv.slice(2);
 const dry = args.includes('--dry');
@@ -56,7 +83,11 @@ const text = /^https?:/.test(source)
   : await readFile(source, 'utf8');
 
 const rows = parseCsv(text);
-const head = rows.shift().map((h) => h.trim().toLowerCase());
+// "ความสูง เซนติเมตร (height_cm)" → height_cm · "order" → order
+const head = rows.shift().map((h) => {
+  const m = h.match(/\(([a-z_]+)\)\s*$/i);
+  return (m ? m[1] : h).trim().toLowerCase();
+});
 const idx = (k) => head.indexOf(k);
 
 const files = (await readdir(DIR)).filter((f) => f.endsWith('.md'));
@@ -94,14 +125,39 @@ for (const [n, row] of rows.entries()) {
 
   for (const key of ['slug','name_th','name_th_shrine','name_zh','name_pinyin',
                      'name_thai_reading','name_sanskrit','attributes','short_prayer',
-                     'prayer','verified_by']) {
+                     'verified_by',
+                     // องค์จริงในตำหนัก
+                     'posture','holds','base','material','maker','donor',
+                     'shrine_statue','shrine_highlight','how_to_ask']) {
     const v = get(key);
     if (v === undefined || v === '') continue;
     setLine(key, q(v));
   }
 
   const enshrined = get('enshrined');
-  if (enshrined) setLine('enshrined', /^(true|1|ใช่|y|yes)$/i.test(enshrined) ? 'true' : 'false');
+  if (enshrined) setLine('enshrined', /^(true|1|ใช่|มีแล้ว|y|yes)$/i.test(enshrined) ? 'true' : 'false');
+
+  const height = get('height_cm');
+  if (height) {
+    const v = Number(height.replace(/[^\d.]/g, ''));
+    if (!v || v > 1000) problems.push(`${file}: ความสูง "${height}" ต้องเป็นตัวเลขเซนติเมตร`);
+    else setLine('height_cm', String(v));
+  }
+
+  // อักษรจีนที่ฐานองค์จริง ถ้าต่างจากชื่อจีนในตำรา เก็บเป็นชื่ออื่นที่พบ เพื่อให้ค้นด้วยชื่อบนฐานก็เจอ
+  const label = get('base_label');
+  if (label) {
+    const zh = (fm.match(/^name_zh:\s*"?(.*?)"?\s*$/m) ?? [])[1] ?? '';
+    const cur = JSON.parse((fm.match(/^name_zh_variants:\s*(\[.*\])\s*$/m) ?? [])[1] ?? '[]');
+    if (label !== zh && !cur.includes(label)) setLine('name_zh_variants', JSON.stringify([...cur, label]));
+  }
+
+  const prayer = get('prayer');
+  if (prayer) {
+    const id = NONE.test(prayer) ? '' : (PRAYER_TH[prayer] ?? prayer);
+    if (id && !PRAYER_IDS.has(id)) problems.push(`${file}: ไม่รู้จักบทสวด "${prayer}"`);
+    else setLine('prayer', q(id));
+  }
 
   const point = get('shrine_point');
   if (point) setLine('shrine_point', Number(point) || 'null');
@@ -115,7 +171,8 @@ for (const [n, row] of rows.entries()) {
 
   const wishes = get('wishes');
   if (wishes) {
-    const list = wishes.split(/[,\s]+/).map((w) => w.trim()).filter(Boolean);
+    const list = [...new Set(wishes.split(/[,\s·、]+/).map((w) => w.trim()).filter(Boolean)
+      .map((w) => WISH_TH[w] ?? w))];
     const bad = list.filter((w) => !WISH_IDS.includes(w));
     if (bad.length) problems.push(`${file}: หมวดพรไม่รู้จัก — ${bad.join(', ')}`);
     else if (list.length < 1 || list.length > 3) problems.push(`${file}: หมวดพรต้องมี 1–3 หมวด (ได้ ${list.length})`);

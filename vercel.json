@@ -13,6 +13,11 @@
       ],
       "destination": "https://putuoguanyin.com/$1",
       "permanent": true
+    },
+    {
+      "source": "/33-pang/:slug/full",
+      "destination": "/33-pang/:slug",
+      "permanent": true
     }
   ],
   "headers": [

@@ -217,10 +217,37 @@ collections:
       - { name: short_prayer, label: คำอธิษฐานสั้น (แสดงให้คนที่สแกน QR หน้าองค์), widget: text }
       - { name: photo, label: ชื่อไฟล์ภาพองค์ เช่น pang-01, widget: string, required: false }
       - { name: photo_detail, label: ชื่อไฟล์ภาพรายละเอียด, widget: string, required: false }
-      - { name: prayer, label: บทสวดประจำปาง (รหัสบทสวด), widget: string, required: false }
+      - { name: prayer, label: บทสวดที่ใช้กับปางนี้, widget: select, required: false, options: [{ label: ไม่มีเฉพาะ, value: '' }, { label: มหากรุณาธารณี, value: da-bei-zhou }, { label: สมันตมุขปริวรรต, value: pu-men-pin }, { label: หกพยางค์ โอม มณี ปัทเม หูม, value: liu-zi-da-ming-zhou }] }
       - { name: sources, label: แหล่งอ้างอิง, widget: list, required: false }
       - { name: verified_by, label: ผู้รู้ที่ตรวจแล้ว + วันที่ (เว้นว่าง = ยังไม่เผยแพร่เนื้อหายาว), widget: string, required: false }
-      - { name: body, label: ความหมายและเรื่องเล่า (๑๕๐–๓๐๐ คำ), widget: markdown, required: false }
+      # องค์จริงในตำหนัก — ส่วนนี้ขึ้นบนหน้าปางเมื่อกรอก และติดป้าย "รอตำหนักยืนยัน" จนกว่าจะมีผู้ตรวจ
+      - { name: posture, label: 'องค์จริง: ท่า (ยืน · นั่ง · นั่งห้อยพระบาท)', widget: string, required: false }
+      - { name: holds, label: 'องค์จริง: สิ่งที่ทรงถือ', widget: string, required: false }
+      - { name: base, label: 'องค์จริง: ฐานหรือสัตว์ที่รองรับ', widget: string, required: false }
+      - { name: material, label: 'องค์จริง: วัสดุ', widget: string, required: false }
+      - { name: height_cm, label: 'องค์จริง: ความสูง (เซนติเมตร)', widget: number, value_type: int, required: false }
+      - { name: maker, label: 'องค์จริง: ที่มา (โรงงานหรือช่าง ปีที่สร้าง)', widget: string, required: false }
+      - { name: donor, label: 'องค์จริง: ผู้ถวาย (ใส่เมื่อได้รับอนุญาตเท่านั้น)', widget: string, required: false }
+      - { name: shrine_statue, label: 'องค์จริง: คำบรรยาย', widget: text, required: false }
+      - { name: shrine_highlight, label: 'องค์จริง: สิ่งที่อยากให้คนสังเกต', widget: text, required: false }
+      - { name: photo_place, label: 'ชื่อไฟล์ภาพองค์ในที่ตั้งจริง เช่น pang-01-place', widget: string, required: false }
+      - { name: how_to_ask, label: ขอพรปางนี้อย่างไร, widget: text, required: false }
+      - name: confused_with
+        label: ปางที่มักสับสนกัน
+        widget: list
+        required: false
+        fields:
+          - { name: slug, label: ชื่อใน URL ของปางนั้น เช่น sa-shui, widget: string }
+          - { name: note, label: แยกอย่างไร, widget: text }
+      - { name: see_also, label: 'กราบแล้วไปต่อที่ปางใด (ชื่อใน URL เช่น sa-shui)', widget: list, required: false }
+      - name: faq
+        label: ถามสั้น ตอบสั้น
+        widget: list
+        required: false
+        fields:
+          - { name: q, label: คำถาม, widget: string }
+          - { name: a, label: คำตอบ, widget: text }
+      - { name: body, label: ย่อหน้าสั้นสำรอง (ใช้เมื่อไม่มีบทเต็ม), widget: markdown, required: false }
 
   # ---------- บทสวด ----------
   - name: prayers

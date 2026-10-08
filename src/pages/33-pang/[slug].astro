@@ -1,27 +1,57 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PangArt from '../../components/PangArt.astro';
+import ShrinePhoto from '../../components/ShrinePhoto.astro';
 import photoMeta from '../../data/photo-meta.json';
 import ShareBar from '../../components/ShareBar.astro';
 import site from '../../lib/site';
 import { getCollection, render } from 'astro:content';
 import { allPang, displayName, altNames, isVerified, prevPang, nextPang } from '../../lib/pang';
 import { pangNo, thaiNum } from '../../lib/format';
+import photos from '../../data/photos.json';
 
 export async function getStaticPaths() {
   const list = (await getCollection('pang')).sort((a, b) => a.data.order - b.data.order);
   const wishes = await getCollection('wishes');
+  const full = await getCollection('pangFull');
   return list.map((entry, i) => ({
     params: { slug: entry.data.slug },
-    props: { entry, index: i, list, wishes },
+    props: { entry, index: i, list, wishes, chapter: full.find((f) => f.data.slug === entry.data.slug) },
   }));
 }
 
-const { entry, index, list, wishes } = Astro.props;
+const { entry, index, list, wishes, chapter } = Astro.props;
 const d = entry.data;
 const name = displayName(entry);
 const verified = isVerified(entry);
-const { Content } = await render(entry);
+// บทเต็มเคยอยู่แยกที่ /full — ยุบมาไว้หน้านี้หน้าเดียว (หน้าเดิม redirect มาที่นี่ใน vercel.json)
+// ไม่มีบทเต็มเมื่อไรค่อยใช้ย่อหน้าสั้นใต้ frontmatter ของปาง
+const { Content } = await render(chapter ?? entry);
+
+// ---------- องค์จริงในตำหนัก ----------
+// ส่วนที่ตำหนักเป็นเจ้าของ แสดงเมื่อมีข้อมูลเท่านั้น และติดป้ายรอยืนยันจนกว่าผู้รู้จะตรวจ
+const shrineConfirmed = d.verified_by.trim() !== '';
+const paras = (s: string) => s.split(/\n{2,}/).map((x) => x.trim()).filter(Boolean);
+const hasPhoto = (n: string) => !!n && n in (photos.images as Record<string, unknown>);
+const facts = [
+  ['ท่า', d.posture],
+  ['สิ่งที่ทรงถือ', d.holds],
+  ['ฐานหรือสัตว์ที่รองรับ', d.base],
+  ['วัสดุ', d.material],
+  ['ความสูง', d.height_cm ? `${d.height_cm} ซม.` : ''],
+  ['ที่มา', d.maker],
+  ['ผู้ถวาย', d.donor],
+].filter(([, v]) => v) as [string, string][];
+const shrinePhotos = [d.photo_detail, d.photo_place].filter(hasPhoto);
+const hasShrine = facts.length > 0 || !!d.shrine_statue || !!d.shrine_highlight || shrinePhotos.length > 0;
+const prayerPage = d.prayer ? (await getCollection('prayers')).find((p) => p.id === d.prayer) : undefined;
+
+// ---------- ปางที่เกี่ยวข้อง ----------
+const bySlug = (slug: string) => list.find((p: any) => p.data.slug === slug);
+const confused = d.confused_with
+  .map((c) => ({ p: bySlug(c.slug), note: c.note }))
+  .filter((c) => c.p);
+const seeAlso = d.see_also.map(bySlug).filter(Boolean);
 const prev = prevPang(list, index);
 const next = nextPang(list, index);
 const alts = altNames(entry);
@@ -39,6 +69,11 @@ const description =
   title={`${name} ${d.name_zh}`}
   description={description}
   noindex={!verified}
+  schema={d.faq.length > 0 ? [{
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: d.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+  }] : []}
   ogImage={`/og/pang-${String(d.order).padStart(2, '0')}.jpg`}
   breadcrumbs={[
     { label: 'หน้าแรก', href: '/' },
@@ -115,16 +150,61 @@ const description =
           </section>
         )}
 
+        {hasShrine && (
+          <section class="pang__sec">
+            <h2>
+              องค์ที่ตำหนักผู่โถว
+              {!shrineConfirmed && <span class="pang__tag">รอตำหนักยืนยัน</span>}
+            </h2>
+            {paras(d.shrine_statue).map((t) => <p>{t}</p>)}
+            {facts.length > 0 && (
+              <dl class="pang__facts">
+                {facts.map(([k, v]) => (<div><dt>{k}</dt><dd>{v}</dd></div>))}
+              </dl>
+            )}
+            {d.shrine_highlight && (
+              <p class="pang__look"><strong>สังเกตที่องค์นี้</strong> {d.shrine_highlight}</p>
+            )}
+            {shrinePhotos.length > 0 && (
+              <div class="pang__photos">
+                {hasPhoto(d.photo_detail) && (
+                  <ShrinePhoto name={d.photo_detail} ratio="1 / 1" sizes="(max-width: 899px) 46vw, 260px"
+                    alt={`รายละเอียดองค์${name} ${d.name_zh} ในตำหนักผู่โถว`} />
+                )}
+                {hasPhoto(d.photo_place) && (
+                  <ShrinePhoto name={d.photo_place} ratio="4 / 3" sizes="(max-width: 899px) 92vw, 520px"
+                    alt={`องค์${name} ในที่ตั้งจริงภายในตำหนักผู่โถว`} />
+                )}
+              </div>
+            )}
+          </section>
+        )}
+
+        {d.how_to_ask && (
+          <section class="pang__sec">
+            <h2>
+              ขอพรปางนี้อย่างไร
+              {!shrineConfirmed && <span class="pang__tag">รอตำหนักยืนยัน</span>}
+            </h2>
+            {paras(d.how_to_ask).map((t) => <p>{t}</p>)}
+            <blockquote class="pang__prayer">“{d.short_prayer}”</blockquote>
+            {prayerPage && (
+              <p>บทสวดที่ใช้กับปางนี้ <a href={`/worship/prayers/${prayerPage.id}`}>{prayerPage.data.title}</a></p>
+            )}
+          </section>
+        )}
+
         <section class="pang__sec">
           <h2>ความหมายและเรื่องเล่า</h2>
           {verified ? (
             <>
-              <div class="prose"><Content /></div>
-              {d.has_full && (
-                <a class="pang__more" href={`${path}/full`}>
-                  อ่านฉบับเต็มของปางนี้ ›
-                </a>
+              {chapter && (
+                <p class="pang__evidence">
+                  ส่วนนี้บอกไว้เสมอว่าเรื่องใดมาจากพระสูตรหรือเอกสารเก่า เรื่องใดเป็นตำนานที่เล่าสืบกันมา
+                  และส่วนใดเป็นข้อคิดสำหรับชีวิตวันนี้
+                </p>
               )}
+              <div class="prose pang__story"><Content /></div>
             </>
           ) : (
             <div class="note note--lacquer">
@@ -139,6 +219,51 @@ const description =
             </div>
           )}
         </section>
+
+        {confused.length > 0 && (
+          <section class="pang__sec">
+            <h2>ปางที่มักสับสนกัน</h2>
+            <ul class="pang__rel">
+              {confused.map(({ p, note }) => (
+                <li>
+                  <a href={`/33-pang/${p!.data.slug}`}>
+                    <span class="mono pang__rel-no">{pangNo(p!.data.order)}</span>
+                    <span class="pang__rel-name">{displayName(p!)}</span>
+                    <span class="han pang__rel-zh">{p!.data.name_zh}</span>
+                  </a>
+                  <p>{note}</p>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {seeAlso.length > 0 && (
+          <section class="pang__sec">
+            <h2>กราบปางนี้แล้ว ไปต่อที่ปางใด</h2>
+            <ul class="pang__rel">
+              {seeAlso.map((p: any) => (
+                <li>
+                  <a href={`/33-pang/${p.data.slug}`}>
+                    <span class="mono pang__rel-no">{pangNo(p.data.order)}</span>
+                    <span class="pang__rel-name">{displayName(p)}</span>
+                    <span class="han pang__rel-zh">{p.data.name_zh}</span>
+                    {p.data.shrine_point !== null && <span class="pang__rel-pt">จุดที่ {thaiNum(p.data.shrine_point)}</span>}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {d.faq.length > 0 && (
+          <section class="pang__sec">
+            <h2>ถามสั้น ตอบสั้น</h2>
+            <dl class="pang__faq">
+              {d.faq.map((f) => (<><dt>{f.q}</dt><dd>{f.a}</dd></>))}
+            </dl>
+          </section>
+        )}
 
         {d.shrine_point !== null && (
           <section class="pang__sec">
@@ -289,14 +414,48 @@ const description =
     margin-bottom: 4px;
   }
 
-  .pang__more {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    margin-top: 14px;
-    font-size: var(--fs-md);
-    font-weight: 500;
+  /* ป้ายบอกว่าส่วนนี้ตำหนักยังไม่ได้ยืนยัน — เล็กพอไม่แย่งหัวข้อ แต่ต้องเห็น */
+  .pang__tag {
+    display: inline-block; margin-left: 10px; padding: 1px 9px;
+    border: 1px solid var(--line-strong); border-radius: var(--radius-pill);
+    font-family: var(--sans); font-size: var(--fs-caption); font-weight: 400;
+    letter-spacing: 0; color: var(--ink-3); vertical-align: middle;
   }
+
+  /* ข้อเท็จจริงขององค์จริง: สองคอลัมน์บนจอกว้าง คอลัมน์เดียวบนมือถือ */
+  .pang__facts { margin: 14px 0 0; display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .pang__facts div { display: grid; grid-template-columns: 9.5em 1fr; gap: 12px; padding: 10px 14px; background: var(--surface); }
+  .pang__facts dt { color: var(--ink-3); font-size: var(--fs-sm); }
+  .pang__facts dd { margin: 0; font-size: var(--fs-md); }
+  @media (max-width: 559px) { .pang__facts div { grid-template-columns: 1fr; gap: 2px; } }
+  .pang__look { margin-top: 14px; padding: 10px 14px; background: var(--surface-2); border-left: 3px solid var(--gold-line); }
+  .pang__photos { margin-top: 16px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 12px; align-items: start; }
+  .pang__photos :global(img) { width: 100%; height: auto; display: block; }
+  @media (max-width: 559px) { .pang__photos { grid-template-columns: 1fr; } }
+
+  .pang__prayer {
+    margin: 16px 0 0; padding: 12px 18px; border-left: 3px solid var(--lacquer);
+    font-family: var(--serif); font-size: var(--fs-h4); line-height: 1.7; color: var(--ink);
+  }
+
+  .pang__evidence { font-size: var(--fs-sm) !important; color: var(--ink-3); margin-bottom: 6px; }
+  .pang__story :global(h3) { font-size: var(--fs-h4); margin-top: 1.6em; }
+  .pang__story :global(p) { font-size: var(--fs-md); line-height: 1.82; }
+
+  /* ปางที่เกี่ยวข้อง: แถวละหนึ่งปาง แตะได้ทั้งแถว */
+  .pang__rel { list-style: none; margin: 8px 0 0; padding: 0; }
+  .pang__rel li { border-top: 1px solid var(--line); padding: 4px 0 10px; }
+  .pang__rel li:last-child { border-bottom: 1px solid var(--line); }
+  .pang__rel a { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; min-height: 44px; padding-top: 10px; text-decoration: none; color: inherit; }
+  .pang__rel a:hover .pang__rel-name { color: var(--lacquer); }
+  .pang__rel-no, .pang__rel-pt { font-size: var(--fs-sm); color: var(--ink-3); }
+  .pang__rel-name { font-family: var(--serif); font-size: var(--fs-h4); font-weight: 600; }
+  .pang__rel-zh { color: var(--ink-3); }
+  .pang__rel p { margin: 2px 0 0; color: var(--ink-2); }
+
+  .pang__faq { margin: 0; }
+  .pang__faq dt { font-family: var(--serif); font-size: var(--fs-h4); font-weight: 600; margin-top: 18px; }
+  .pang__faq dd { margin: 6px 0 0; color: var(--ink-2); font-size: var(--fs-md); line-height: 1.78; }
 
   .pang__sec { margin-top: 34px; }
   .pang__sec h2 {
@@ -306,6 +465,7 @@ const description =
     border-bottom: 1px solid var(--line);
   }
   .pang__sec p { font-size: var(--fs-md); line-height: 1.78; }
+  .pang__sec > p + p { margin-top: .8em; }
 
   .pang__meta { padding-top: 20px; border-top: 1px solid var(--line); }
   .pang__meta p { margin: 0; color: var(--ink-2); }
