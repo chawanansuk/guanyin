@@ -52,6 +52,8 @@ const confused = d.confused_with
   .map((c) => ({ p: bySlug(c.slug), note: c.note }))
   .filter((c) => c.p);
 const seeAlso = d.see_also.map(bySlug).filter(Boolean);
+// บทที่ขยายแล้วมาจากหนังสือฉบับวิชาการ ต้องอ้างฉบับที่ใช้จริง ไม่ใช่ฉบับใน source_doc ของปาง
+const sourceDoc = chapter?.data.source || d.source_doc;
 const prev = prevPang(list, index);
 const next = nextPang(list, index);
 const alts = altNames(entry);
@@ -272,7 +274,7 @@ const description =
           </section>
         )}
 
-        {(alts.length > 0 || d.sources.length > 0 || d.source_doc) && (
+        {(alts.length > 0 || d.sources.length > 0 || sourceDoc) && (
           <section class="pang__sec pang__meta">
             {alts.length > 0 && (
               <p class="small"><span class="pang__metalabel">ชื่ออื่นที่พบ</span> {alts.join(' · ')}</p>
@@ -280,8 +282,8 @@ const description =
             {d.sources.length > 0 && (
               <p class="small"><span class="pang__metalabel">อ้างอิง</span> {d.sources.join(' · ')}</p>
             )}
-            {d.source_doc && (
-              <p class="small"><span class="pang__metalabel">เรียบเรียงจาก</span> {d.source_doc}</p>
+            {sourceDoc && (
+              <p class="small"><span class="pang__metalabel">เรียบเรียงจาก</span> {sourceDoc}</p>
             )}
             {d.verified_by && (
               <p class="small"><span class="pang__metalabel">ผู้รู้ของตำหนักตรวจแล้ว</span> {d.verified_by}</p>
