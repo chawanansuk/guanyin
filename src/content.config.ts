@@ -116,6 +116,33 @@ const news = defineCollection({
   }),
 });
 
+// บทความ — ตอบคำถามที่คนค้นหา แยกจากข่าวเพราะอายุต่างกัน (ข่าวหมดอายุใน ๖ เดือน บทความอยู่หลายปี)
+// แผนบทความทั้ง ๒๔ เรื่องอยู่ใน docs/ARTICLES.md
+const ARTICLE_CATEGORIES = ['worship', 'days', 'pang', 'shrine'] as const;
+const articles = defineCollection({
+  loader: glob({ base: './src/content/articles', pattern: '**/*.md' }),
+  schema: z.object({
+    title: z.string(),
+    /** ย่อหน้าแรก = คำตอบสั้น ใช้เป็น description และบนหน้ารวม */
+    summary: z.string(),
+    category: z.enum(ARTICLE_CATEGORIES),
+    date: z.coerce.date(),
+    updated: z.coerce.date().optional(),
+    /** slug ของปางที่เกี่ยว — แสดงเป็นลิงก์ท้ายบทความ */
+    pang: z.array(z.string()).default([]),
+    /** หมวดพรที่เกี่ยว — ลิงก์ไปหน้า /wish/{id} */
+    wishes: z.array(z.enum(WISH_IDS)).default([]),
+    /** ช่วงที่บทความนี้ควรขึ้นหน้ารวมก่อน เช่น "กินเจ" "ตรุษจีน" — ว่างคือทั้งปี */
+    season: z.string().default(''),
+    cover: z.string().default(''),
+    /** คำถามท้ายบทความ — ส่งเป็น FAQPage ให้ Google ด้วย */
+    faq: z.array(z.object({ q: z.string(), a: z.string() })).default([]),
+    sources: z.array(z.string()).default([]),
+    /** ว่าง = ผู้รู้ของตำหนักยังไม่ได้ตรวจ → แสดงป้าย "รอตรวจสอบ" และไม่ให้ Google เก็บดัชนี */
+    verified_by: z.string().default(''),
+  }),
+});
+
 const prayers = defineCollection({
   loader: glob({ base: './src/content/prayers', pattern: '**/*.md' }),
   schema: z.object({
@@ -150,4 +177,4 @@ const pangZh = defineCollection({
   }),
 });
 
-export const collections = { pang, wishes, events, news, prayers, pangFull, pangZh };
+export const collections = { pang, wishes, events, news, articles, prayers, pangFull, pangZh };

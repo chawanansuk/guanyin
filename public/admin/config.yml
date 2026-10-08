@@ -41,6 +41,36 @@ collections:
       - { name: pinned, label: ปักหมุดไว้บนสุด, widget: boolean, default: false, required: false }
       - { name: body, label: เนื้อหา, widget: markdown }
 
+  # ---------- บทความ: ตอบคำถามที่คนค้นหา อยู่ได้หลายปี ต่างจากข่าว ----------
+  - name: articles
+    label: บทความ
+    label_singular: บทความ
+    folder: src/content/articles
+    create: true
+    slug: '{{slug}}'
+    summary: '{{title}}'
+    sortable_fields: [date, title]
+    fields:
+      - { name: title, label: ชื่อเรื่อง (เป็นคำถามที่คนค้น ไม่เกิน ๖๐ ตัวอักษร), widget: string }
+      - { name: summary, label: คำตอบสั้น (๒–๓ ประโยค แสดงใต้ชื่อเรื่องและบนหน้ารวม), widget: text }
+      - { name: category, label: หมวด, widget: select, options: [{ label: ไหว้อย่างไร, value: worship }, { label: ปางและความหมาย, value: pang }, { label: วันสำคัญ, value: days }, { label: เกี่ยวกับตำหนัก, value: shrine }], default: worship }
+      - { name: date, label: วันที่เผยแพร่, widget: datetime, format: 'YYYY-MM-DD', date_format: 'D MMMM YYYY', time_format: false }
+      - { name: updated, label: วันที่ปรับปรุงล่าสุด, widget: datetime, format: 'YYYY-MM-DD', date_format: 'D MMMM YYYY', time_format: false, required: false }
+      - { name: pang, label: ปางที่กล่าวถึง (รหัสปาง เช่น yang-liu), widget: list, required: false }
+      - { name: wishes, label: หมวดพรที่เกี่ยว, widget: select, multiple: true, required: false, options: [{ label: สุขภาพ, value: health }, { label: ขอบุตร, value: children }, { label: การงาน, value: career }, { label: ค้าขาย, value: trade }, { label: ความรัก, value: love }, { label: เดินทาง, value: travel }, { label: คุ้มครอง, value: protection }, { label: จิตใจสงบ, value: peace }] }
+      - { name: season, label: ช่วงที่ควรขึ้นก่อน เช่น กินเจ ตรุษจีน, widget: string, required: false }
+      - { name: cover, label: ภาพนำ, widget: image, required: false }
+      - name: faq
+        label: ถามสั้น ตอบสั้น (ท้ายบทความ)
+        widget: list
+        required: false
+        fields:
+          - { name: q, label: คำถาม, widget: string }
+          - { name: a, label: คำตอบ, widget: text }
+      - { name: sources, label: แหล่งอ้างอิง, widget: list, required: false }
+      - { name: verified_by, label: ผู้รู้ที่ตรวจแล้ว (ว่าง = ยังไม่ขึ้นสารบบค้นหา), widget: string, required: false }
+      - { name: body, label: เนื้อหา, widget: markdown }
+
   # ---------- ปฏิทินวันสำคัญ: แก้ปีละครั้ง ----------
   - name: events
     label: ปฏิทินวันสำคัญ

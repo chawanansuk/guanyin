@@ -1,0 +1,197 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import ShareBar from '../../components/ShareBar.astro';
+import { getCollection, render } from 'astro:content';
+import { thaiDate, isoDate, pangNo } from '../../lib/format';
+import { displayName } from '../../lib/pang';
+import { ARTICLE_CATEGORY_LABEL } from '../../lib/articles';
+import site from '../../lib/site';
+
+export async function getStaticPaths() {
+  const articles = await getCollection('articles');
+  return articles.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+const path = `/articles/${entry.id}`;
+const ready = d.verified_by.trim() !== '';
+const catLabel = ARTICLE_CATEGORY_LABEL[d.category];
+
+// ปางและหมวดพรที่เกี่ยว — ลิงก์ท้ายบทความ คือทางเดินต่อของคนที่อ่านจบ
+const pangAll = await getCollection('pang');
+const pang = d.pang
+  .map((slug) => pangAll.find((p) => p.data.slug === slug))
+  .filter((p): p is NonNullable<typeof p> => !!p);
+const wishAll = await getCollection('wishes');
+const wishes = d.wishes
+  .map((id) => wishAll.find((w) => w.data.id === id))
+  .filter((w): w is NonNullable<typeof w> => !!w);
+// บทความหมวดเดียวกันมาก่อน แล้วค่อยเรียงใหม่ไปเก่า
+const same = (a: { data: { category: string } }) => (a.data.category === d.category ? 0 : 1);
+const others = (await getCollection('articles'))
+  .filter((a) => a.id !== entry.id)
+  .sort((a, b) => same(a) - same(b) || +b.data.date - +a.data.date)
+  .slice(0, 4);
+
+const schema: unknown[] = [{
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: d.title,
+  description: d.summary,
+  datePublished: isoDate(d.date),
+  dateModified: isoDate(d.updated ?? d.date),
+  inLanguage: 'th',
+  mainEntityOfPage: new URL(path, site.url).href,
+  author: { '@type': 'Organization', name: site.name_th, url: site.url },
+  publisher: { '@type': 'Organization', name: site.name_th, url: site.url },
+}];
+if (d.faq.length > 0) {
+  schema.push({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: d.faq.map((f) => ({
+      '@type': 'Question', name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  });
+}
+---
+<BaseLayout
+  title={d.title}
+  suffix={false}
+  description={d.summary}
+  noindex={!ready}
+  schema={schema}
+  breadcrumbs={[
+    { label: 'หน้าแรก', href: '/' },
+    { label: 'บทความ', href: '/articles' },
+    { label: d.title, href: path },
+  ]}
+>
+  <PageHero eyebrow={`บทความ · ${catLabel}`} title={d.title} lede={d.summary} narrow>
+    <p class="date mono">
+      <time datetime={isoDate(d.date)}>{thaiDate(d.date)}</time>
+      {d.updated && <span> · ปรับปรุง <time datetime={isoDate(d.updated)}>{thaiDate(d.updated)}</time></span>}
+    </p>
+  </PageHero>
+
+  <section class="band">
+    <div class="wrap wrap--narrow">
+      {!ready && (
+        <div class="note note--lacquer pending">
+          <p><strong>รอตรวจสอบ</strong> บทความนี้เป็นฉบับร่าง รอผู้รู้ของตำหนักยืนยันว่าตรงกับที่ปฏิบัติจริง
+          ข้อที่เกี่ยวกับธรรมเนียมของตำหนักอาจมีการแก้ไข</p>
+        </div>
+      )}
+
+      <div class="prose"><Content /></div>
+
+      {d.faq.length > 0 && (
+        <section class="faqsec">
+          <h2>ถามสั้น ตอบสั้น</h2>
+          <dl class="faq">
+            {d.faq.map((f) => (<>
+              <dt>{f.q}</dt>
+              <dd>{f.a}</dd>
+            </>))}
+          </dl>
+        </section>
+      )}
+
+      {(pang.length > 0 || wishes.length > 0) && (
+        <section class="rel">
+          {pang.length > 0 && (
+            <div>
+              <p class="eyebrow eyebrow--marked">ปางที่กล่าวถึง</p>
+              <ul class="rel__pang">
+                {pang.map((p) => (
+                  <li>
+                    <a href={`/33-pang/${p.data.slug}`}>
+                      <span class="mono rel__no">{pangNo(p.data.order)}</span>
+                      <span class="rel__name">{displayName(p)}</span>
+                      <span class="han rel__zh">{p.data.name_zh}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {wishes.length > 0 && (
+            <div>
+              <p class="eyebrow eyebrow--marked">ขอพรเรื่องนี้ ไหว้ปางใด</p>
+              <ul class="chips">
+                {wishes.map((w) => <li><a class="chip" href={`/wish/${w.data.id}`}>{w.data.short}</a></li>)}
+              </ul>
+            </div>
+          )}
+        </section>
+      )}
+
+      {d.sources.length > 0 && (
+        <section class="src">
+          <h2>แหล่งอ้างอิง</h2>
+          <ul>{d.sources.map((s) => <li>{s}</li>)}</ul>
+        </section>
+      )}
+
+      <p class="verify mono">
+        {ready
+          ? `ตรวจสอบโดย ${d.verified_by}`
+          : 'ยังไม่มีผู้รู้ของตำหนักตรวจสอบ'}
+      </p>
+
+      <div class="share"><ShareBar title={d.title} path={path} /></div>
+
+      {others.length > 0 && (
+        <section class="others">
+          <h2>บทความอื่น</h2>
+          <ul class="others__list">
+            {others.map((a) => (
+              <li><a href={`/articles/${a.id}`}>{a.data.title}</a></li>
+            ))}
+          </ul>
+          <p class="back"><a href="/articles">‹ บทความทั้งหมด</a></p>
+        </section>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .date { margin-top: 14px; font-size: var(--fs-sm); color: var(--ink-3); }
+  .pending { margin-bottom: 30px; }
+  .pending strong { color: var(--lacquer); }
+
+  .faqsec { margin-top: 48px; }
+  .faqsec h2, .src h2, .others h2 { font-size: var(--fs-h3); margin-bottom: 12px; }
+  .faq { margin: 0; }
+  .faq dt { font-family: var(--serif); font-size: var(--fs-h4); font-weight: 600; margin-top: 20px; }
+  .faq dd { margin: 6px 0 0; color: var(--ink-2); max-width: var(--measure); }
+
+  .rel { margin-top: 48px; padding-top: 28px; border-top: 1px solid var(--line); display: grid; gap: 28px; }
+  .rel__pang { list-style: none; margin: 10px 0 0; padding: 0; }
+  .rel__pang li { border-top: 1px solid var(--line); }
+  .rel__pang li:last-child { border-bottom: 1px solid var(--line); }
+  .rel__pang a { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 12px 0; min-height: 44px; text-decoration: none; color: inherit; }
+  .rel__pang a:hover .rel__name { color: var(--lacquer); }
+  .rel__no { font-size: var(--fs-sm); color: var(--ink-3); }
+  .rel__name { font-family: var(--serif); font-size: var(--fs-h4); font-weight: 600; }
+  .rel__zh { font-size: var(--fs-md); color: var(--ink-3); }
+  .rel .chips { margin-top: 10px; }
+
+  .src { margin-top: 40px; }
+  .src ul { margin: 0; padding-left: 1.2em; color: var(--ink-2); font-size: var(--fs-md); }
+  .src li + li { margin-top: 6px; }
+  .verify { margin-top: 28px; font-size: var(--fs-sm); color: var(--ink-3); }
+
+  .share { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--line); }
+  .others { margin-top: 40px; }
+  .others__list { list-style: none; margin: 0; padding: 0; }
+  .others__list li { border-top: 1px solid var(--line); }
+  .others__list li:last-child { border-bottom: 1px solid var(--line); }
+  .others__list a { display: block; padding: 14px 0; min-height: 44px; font-family: var(--serif); font-weight: 600; text-decoration: none; color: inherit; }
+  .others__list a:hover { color: var(--lacquer); }
+  .back { margin-top: 24px; }
+</style>

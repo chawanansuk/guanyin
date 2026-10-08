@@ -15,14 +15,18 @@ const siteUrl = (
 
 // บทสวดที่ยังไม่มีผู้รู้ตรวจ — หน้าเหล่านี้ตั้ง noindex ไว้ (ดู worship/prayers/[slug].astro)
 // อ่านจากไฟล์เนื้อหาตรง ๆ เพราะตอนอ่าน config ยังเรียก content collection ไม่ได้
-const NOINDEX_PRAYERS = readdirSync(new URL('./src/content/prayers/', import.meta.url))
-  .filter((f) => f.endsWith('.md'))
-  .filter((f) => {
-    const fm = readFileSync(new URL(`./src/content/prayers/${f}`, import.meta.url), 'utf8').split('---')[1] ?? '';
-    const v = (fm.match(/^verified_by:\s*"?(.*?)"?\s*$/m) ?? [])[1] ?? '';
-    return v.trim() === '';
-  })
-  .map((f) => f.replace(/\.md$/, ''));
+const unverifiedSlugs = (dir) =>
+  readdirSync(new URL(`./src/content/${dir}/`, import.meta.url))
+    .filter((f) => f.endsWith('.md'))
+    .filter((f) => {
+      const fm = readFileSync(new URL(`./src/content/${dir}/${f}`, import.meta.url), 'utf8').split('---')[1] ?? '';
+      const v = (fm.match(/^verified_by:\s*"?(.*?)"?\s*$/m) ?? [])[1] ?? '';
+      return v.trim() === '';
+    })
+    .map((f) => f.replace(/\.md$/, ''));
+const NOINDEX_PRAYERS = unverifiedSlugs('prayers');
+// บทความใช้กติกาเดียวกัน — รอผู้รู้ตรวจก่อนจึงส่งให้ Google (ดู articles/[slug].astro)
+const NOINDEX_ARTICLES = unverifiedSlugs('articles');
 
 export default defineConfig({
   site: siteUrl,
@@ -32,7 +36,10 @@ export default defineConfig({
     sitemap({
       // หน้าที่ตั้ง noindex ต้องไม่อยู่ใน sitemap ไม่งั้น Search Console เตือนว่าสัญญาณขัดกัน
       // บทสวดยังรอผู้รู้ตรวจ (verified_by ว่าง) จึง noindex — ตรวจแล้วค่อยลบออกจากรายการนี้
-      filter: (page) => !page.includes('/admin') && !NOINDEX_PRAYERS.some((s) => page.includes(`/worship/prayers/${s}`)),
+      filter: (page) =>
+        !page.includes('/admin') &&
+        !NOINDEX_PRAYERS.some((s) => page.includes(`/worship/prayers/${s}`)) &&
+        !NOINDEX_ARTICLES.some((s) => page.includes(`/articles/${s}`)),
       i18n: undefined,
     }),
   ],
