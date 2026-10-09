@@ -26,6 +26,8 @@ confused_with:
     note: "兩尊都在磐石上靜坐。德王觀音持楊柳枝，此尊持蓮華。應同時看持物與像座上的文字。"
   - slug: qing-jing
     note: "兩尊都坐於磐石。三十三觀音中的青頸觀音身旁有插楊柳的淨瓶，此尊則左手持蓮華。應同時看持物與像座上的文字。"
+  - slug: neng-jing
+    note: "能靜觀音同樣坐於水邊磐石，但沒有固定持物；此尊手持蓮華，應參照台座題名。"
 sources:
   - "丁福保《佛學大辭典》（1922）「威德觀音」條"
   - "法鼓文理學院 Buddhist Studies Authority Database「威德」條"
