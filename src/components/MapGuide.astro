@@ -4,6 +4,10 @@
  *
  * ไม่เล่นเอง: คลิปมีเสียง และคนที่เปิดหน้านี้ส่วนใหญ่อยู่บนมือถือกำลังจะออกเดินทาง
  * จึงให้กดเล่นเองทุกครั้ง พอกดแล้วเปิดแถบควบคุมของเบราว์เซอร์ให้เลื่อนดูทีละจุดได้
+ *
+ * ทำงานได้แม้สคริปต์ไม่รัน: HTML ส่งมาพร้อมแถบควบคุมของเบราว์เซอร์ และปุ่มทับภาพซ่อนอยู่
+ * สคริปต์ (ES5 แบบ inline เพื่อให้เบราว์เซอร์ในแอป LINE/Facebook รุ่นเก่ารันได้) จึงค่อยซ่อนแถบควบคุม
+ * แล้วแสดงปุ่ม ถ้าเล่นไม่ได้ ปุ่มจะหายไปให้เหลือแถบควบคุมเดิม และขึ้นลิงก์เปิดไฟล์ตรง
  * ข้อความในคลิปเป็นภาษาไทยฝังในภาพ เนื้อหาตรงกับหัวข้อ "เดินทางด้วยรถยนต์" ด้านล่าง
  * ต้นฉบับ 1080×1920 อยู่ใน print/ (ไม่ commit) ไฟล์เว็บย่อเหลือ 720×1280
  */
@@ -20,6 +24,7 @@ const mb = (BYTES / 1_048_576).toFixed(1);
       <video
         class="mapvid__el"
         playsinline
+        controls
         preload="none"
         poster="/video/map-guide-poster.jpg"
         width="720"
@@ -28,7 +33,7 @@ const mb = (BYTES / 1_048_576).toFixed(1);
       >
         <source src={FILE} type="video/mp4" />
       </video>
-      <button class="mapvid__play" type="button" data-mapvid-play>
+      <button class="mapvid__play" type="button" data-mapvid-play hidden>
         <span class="mapvid__mark"><ShrineMark title="เล่นคลิปนำทาง" /></span>
         <span class="mapvid__label">กดเพื่อเล่น</span>
       </button>
@@ -44,23 +49,50 @@ const mb = (BYTES / 1_048_576).toFixed(1);
       จนถึงประตูตำหนักด้านในสุดของลานจอดรถ
     </p>
     <p class="muted small">มีเพลงประกอบ เปิดเสียงได้ · ไฟล์ {mb} MB · แผนผังประกอบ ไม่ใช่มาตราส่วนจริง</p>
+    <p class="mapvid__fail" data-mapvid-fail hidden>
+      เครื่องนี้เล่นคลิปในหน้าเว็บไม่ได้ <a href={FILE} target="_blank" rel="noopener">เปิดคลิปในหน้าต่างใหม่</a>
+    </p>
     <p class="mapvid__links">
-      <a href={FILE} download="ตำหนักผู่โถว-คลิปนำทาง.mp4">ดาวน์โหลดคลิปไว้ส่งต่อ</a>
+      <a href={FILE} target="_blank" rel="noopener">เปิดคลิปเต็มจอ</a>
+      <span aria-hidden="true"> · </span>
+      <a href={FILE} download="putuo-guanyin-map.mp4">ดาวน์โหลดไว้ส่งต่อ</a>
     </p>
   </div>
 </section>
 
-<script>
-  for (const frame of document.querySelectorAll<HTMLElement>('.mapvid__frame')) {
-    const video = frame.querySelector('video');
-    const btn = frame.querySelector<HTMLButtonElement>('[data-mapvid-play]');
-    if (!video || !btn) continue;
-    btn.addEventListener('click', () => {
-      frame.dataset.playing = 'true';
-      video.controls = true;
-      video.play().catch(() => { delete frame.dataset.playing; });
-    });
-  }
+<script is:inline>
+  (function () {
+    var frames = document.querySelectorAll('.mapvid__frame');
+    for (var i = 0; i < frames.length; i++) (function (frame) {
+      var video = frame.querySelector('video');
+      var btn = frame.querySelector('[data-mapvid-play]');
+      var fail = frame.closest('.mapvid').querySelector('[data-mapvid-fail]');
+      if (!video || !btn) return;
+      // เล่นไม่ได้ → ทิ้งปุ่ม คืนแถบควบคุมของเบราว์เซอร์ และบอกทางออก
+      var giveUp = function () {
+        frame.setAttribute('data-playing', 'true');
+        btn.hidden = true;
+        video.controls = true;
+        if (fail) fail.hidden = false;
+      };
+      video.addEventListener('error', giveUp, true);
+      var src = video.querySelector('source');
+      if (src) src.addEventListener('error', giveUp);
+      video.controls = false;
+      btn.hidden = false;
+      btn.addEventListener('click', function () {
+        frame.setAttribute('data-playing', 'true');
+        video.controls = true;
+        var p;
+        try { p = video.play(); } catch (err) { giveUp(); return; }
+        if (p && p.catch) p.catch(function (err) {
+          // ผู้ใช้กดเองแล้ว จึงไม่ใช่เรื่องนโยบายเล่นอัตโนมัติ ให้เหลือแถบควบคุมไว้กดซ้ำได้
+          btn.hidden = true;
+          if (err && err.name === 'NotSupportedError' && fail) fail.hidden = false;
+        });
+      });
+    })(frames[i]);
+  })();
 </script>
 
 <style>
@@ -131,4 +163,6 @@ const mb = (BYTES / 1_048_576).toFixed(1);
   .mapvid__text p { color: var(--ink-2); max-width: var(--measure); }
   .mapvid__text p + p { margin-top: 10px; }
   .mapvid__links a { display: inline-block; padding: 10px 0; min-height: 44px; }
+  .mapvid__fail { color: var(--lacquer); font-weight: 500; }
+  .mapvid__play[hidden] { display: none; }
 </style>
