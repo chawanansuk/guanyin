@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import { getCollection } from 'astro:content';
+import { isoDate } from '../../../lib/format';
+import { ARTICLE_CATEGORY_LABEL_ZH, type ArticleCategory } from '../../../lib/articles';
+
+const lang = 'zh' as const;
+const ORDER: ArticleCategory[] = ['worship', 'pang', 'days', 'shrine'];
+const th = await getCollection('articles');
+// 只列出已有中文譯本的文章；分類與日期取自泰文原文
+const all = (await getCollection('articlesZh'))
+  .map((z) => ({ z, t: th.find((a) => a.id === z.id) }))
+  .filter((x): x is { z: typeof x.z; t: NonNullable<typeof x.t> } => !!x.t)
+  .sort((a, b) => +b.t.data.date - +a.t.data.date);
+const groups = ORDER
+  .map((c) => ({ c, label: ARTICLE_CATEGORY_LABEL_ZH[c], list: all.filter((a) => a.t.data.category === c) }))
+  .filter((g) => g.list.length > 0);
+const zhDate = (x: Date) => `${x.getUTCFullYear()}年${x.getUTCMonth() + 1}月${x.getUTCDate()}日`;
+---
+<BaseLayout
+  lang={lang}
+  title="文章"
+  description="來訪普陀觀音堂常見的問題，一篇回答一個：初次參拜要準備什麼、可供奉哪些素供、如何祈願與還願、三十三觀音的由來。"
+  breadcrumbs={[{ label: '首頁', href: '/zh' }, { label: '文章', href: '/zh/articles' }]}
+>
+  <PageHero
+    eyebrow="文章"
+    title="常見問題，一篇一答"
+    lede="一篇文章回答一個問題，依普陀觀音堂的實際做法撰寫；凡屬一般習俗而非本堂規定之處，皆清楚標明。中文版譯自泰文版。"
+    narrow
+  />
+  <section class="band">
+    <div class="wrap wrap--narrow">
+      {groups.length === 0 && <p class="muted">尚無文章</p>}
+      {groups.map((g) => (
+        <section class="group" id={g.c}>
+          <h2 class="group__h">{g.label}</h2>
+          <ul class="list">
+            {g.list.map(({ z, t }) => (
+              <li>
+                <a href={`/zh/articles/${z.id}`}>
+                  <span class="list__t">
+                    {z.data.title}
+                    {!t.data.verified_by && <span class="list__tag">尚待校訂</span>}
+                  </span>
+                  <span class="list__s">{z.data.summary}</span>
+                  <time class="mono list__d" datetime={isoDate(t.data.updated ?? t.data.date)}>
+                    {t.data.updated ? '更新於 ' : ''}{zhDate(t.data.updated ?? t.data.date)}
+                  </time>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+      <p class="more">找不到想要的答案？請看<a href="/zh/faq">常見問題</a>，或<a href="/zh/contact">聯絡本堂</a>。</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .group + .group { margin-top: 48px; }
+  .group__h { font-size: var(--fs-h3); margin-bottom: 10px; }
+  .list { list-style: none; margin: 0; padding: 0; }
+  .list li { border-top: 1px solid var(--line); }
+  .list li:last-child { border-bottom: 1px solid var(--line); }
+  .list a { display: flex; flex-direction: column; gap: 6px; padding: 20px 0; text-decoration: none; color: inherit; }
+  .list a:hover .list__t { color: var(--lacquer); }
+  .list__t { font-family: var(--serif); font-size: var(--fs-h4); font-weight: 600; line-height: 1.45; }
+  .list__tag { display: inline-block; margin-left: 10px; padding: 1px 9px; border: 1px solid var(--line-strong); border-radius: var(--radius-pill); font-family: var(--sans); font-size: var(--fs-caption); font-weight: 400; color: var(--ink-3); vertical-align: middle; }
+  .list__s { font-size: var(--fs-md); color: var(--ink-2); line-height: 1.65; max-width: var(--measure); }
+  .list__d { font-size: var(--fs-sm); color: var(--ink-3); }
+  .more { margin-top: 44px; padding-top: 24px; border-top: 1px solid var(--line); color: var(--ink-2); }
+</style>

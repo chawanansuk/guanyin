@@ -28,7 +28,7 @@ const tagline = lang === 'zh'
     enshrined={d.enshrined} priority={priority} lang={lang} maxWidth={480}
   />
   <span class="pang-card__body">
-    <span class="pang-card__no mono">{pangNo(d.order)}</span>
+    <span class="pang-card__no mono">{lang === 'zh' ? String(d.order).padStart(2, '0') : pangNo(d.order)}</span>
     <span class:list={['pang-card__th', lang === 'zh' && 'han']}>{primary}</span>
     {secondary && <span class="pang-card__zh han">{secondary}</span>}
     {/* วลีสั้นบอกแก่นของปาง — ตาราง ๓๓ ใบที่มีแต่ชื่อ กวาดสายตาหาไม่เจอว่า

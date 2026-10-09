@@ -9,14 +9,14 @@ const { lang = 'th' } = Astro.props;
 const t = useT(lang);
 
 /** เมนู ๕ ช่อง — ตัดเหลือเท่าที่คนใช้จริง เมนูยาวทำให้เลือกไม่ถูก
- *  ฝั่งจีนยังไม่มีหน้า /worship รวม จึงชี้ตรงไปหน้าวิธีไหว้ที่แปลแล้ว */
+ *  สองภาษามีหน้าครบเท่ากัน เมนูจึงชี้หน้าเดียวกัน */
 // short = คำสั้นสำหรับจอแคบ — จอ 390px ใส่คำเต็มแล้ว "การเดินทาง" หลุดขอบ
 // โดยไม่มีสัญญาณว่าเลื่อนได้ หน้าที่คนมาใหม่ต้องการที่สุดจึงหาไม่เจอ
 const NAV = lang === 'zh'
   ? [
       { href: '/zh/about', label: t('nav.about'), short: '本堂' },
       { href: '/zh/33-pang', label: t('nav.pang'), short: '三十三觀音' },
-      { href: '/zh/worship/how-to', label: t('nav.worship'), short: '參拜' },
+      { href: '/zh/worship', label: t('nav.worship'), short: '參拜' },
       { href: '/zh/calendar', label: t('nav.calendar'), short: '節日' },
       { href: '/zh/visit', label: t('nav.visit'), short: '交通' },
     ]

@@ -5,10 +5,17 @@
  * เอกสารวิชาการระบุว่า "ธรรมเนียมการไหว้เฉพาะปาง" ยังไม่มีใครรวบรวมว่ามีอยู่ที่ใดบ้าง
  * และตอบได้ด้วยการสอบถามผู้ดูแลศาลเจ้าโดยตรงเท่านั้น
  * การจับคู่บนเว็บนี้จึงต้องนำเสนอว่าเป็นธรรมเนียมของตำหนักผู่โถว ไม่ใช่ข้อกำหนดในพระสูตร
+ *
+ * lang = 'zh' ใช้กับหน้า /zh/... — ฝั่งไทยไม่ต้องส่ง lang ผลลัพธ์เหมือนเดิมทุกตัวอักษร
  */
 import site from '../lib/site';
+import type { Lang } from '../i18n';
+
+interface Props { lang?: Lang }
+const { lang = 'th' } = Astro.props;
 const pending = !site.content.wishes_verified;
 ---
+{lang !== 'zh' ? (
 <div class:list={['note', pending ? 'note--lacquer' : 'note--celadon']}>
   <p>
     <strong>การจับคู่ปางกับเรื่องที่ขอ เป็นธรรมเนียมของตำหนักผู่โถว ไม่ใช่ข้อกำหนดในพระสูตร</strong>
@@ -25,6 +32,22 @@ const pending = !site.content.wishes_verified;
     </p>
   )}
 </div>
+) : (
+<div class:list={['note', pending ? 'note--lacquer' : 'note--celadon']}>
+  <p>
+    <strong>法相與祈願之事的對應，此為本堂慣例，非經典規定。</strong>
+    經典所說的原則，是慈悲依各人的因緣而以不同方式接引；至於哪一尊對應哪一類祈願，是各廟堂自行訂定的慣例，各處並不一致。
+  </p>
+  <p>
+    對某一尊特別有信心的人，任何事都可以向那一尊祈願。此處的分類，只是為了方便初次前來的人入手。
+  </p>
+  {pending && (
+    <p class="wish-notice__pending">
+      這組祈願分類<strong>尚待本堂執事確認</strong>是否與本堂實際做法相符。
+    </p>
+  )}
+</div>
+)}
 
 <style>
   .wish-notice__pending { font-size: var(--fs-sm); color: var(--ink-3); }

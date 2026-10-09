@@ -1,9 +1,9 @@
 /**
  * สองภาษา: ไทย (หลัก, ไม่มี prefix) และจีนตัวเต็ม (/zh)
  *
- * ภาษาจีนแปลเฉพาะหน้าที่ผู้มาเยือนชาวจีนต้องใช้จริง — ข้อมูลตำหนัก เวลา การเดินทาง
- * ๓๓ ปาง และวิธีไหว้ ส่วนบทความฉบับเต็มและข่าวยังเป็นภาษาไทยเท่านั้น
- * หน้าจีนที่ยังไม่มีคู่แปล จะไม่หลอกผู้อ่านว่ามี แต่บอกตรง ๆ พร้อมลิงก์ไปฉบับไทย
+ * ภาษาจีนแปลครบทุกหน้า ยกเว้นตัวข่าว (หมดอายุเร็ว ลงภาษาไทยอย่างเดียว
+ * หน้า /zh/news จึงแสดงรายการพร้อมลิงก์ไปฉบับไทย)
+ * หน้าที่ยังไม่มีคู่แปล จะไม่หลอกผู้อ่านว่ามี แต่บอกตรง ๆ พร้อมลิงก์ไปฉบับไทย
  */
 export const LANGS = ['th', 'zh'] as const;
 export type Lang = (typeof LANGS)[number];
@@ -21,10 +21,27 @@ export const TRANSLATED_ROUTES = [
   '/about',
   '/visit',
   '/calendar',
+  '/worship',
   '/worship/how-to',
+  '/worship/by-wish',
+  '/worship/offerings',
+  '/worship/prayers',
+  '/about/history',
+  '/about/sacred-objects',
+  '/gallery',
+  '/articles',
+  '/news',
   '/faq',
   '/contact',
 ] as const;
+
+/** หน้าที่สร้างจากเนื้อหา ซึ่งมีคู่แปลทุกหน้า (๓๓ ปาง หมวดพร บทสวด บทความ) */
+const TRANSLATED_PATTERNS = [
+  /^\/33-pang\/[a-z0-9-]+$/,
+  /^\/wish\/[a-z]+$/,
+  /^\/worship\/prayers\/[a-z0-9-]+$/,
+  /^\/articles\/[a-z0-9-]+$/,
+];
 
 export function langFromUrl(url: URL): Lang {
   return url.pathname.startsWith('/zh') ? 'zh' : 'th';
@@ -53,8 +70,7 @@ export function basePath(pathname: string): string {
 /** path ของหน้าเดียวกันในอีกภาษา — คืน null ถ้ายังไม่มีคู่แปล */
 export function altPath(pathname: string, to: Lang): string | null {
   const base = basePath(pathname);
-  const isPang = /^\/33-pang\/[a-z0-9-]+$/.test(base);
-  const known = (TRANSLATED_ROUTES as readonly string[]).includes(base) || isPang;
+  const known = (TRANSLATED_ROUTES as readonly string[]).includes(base) || TRANSLATED_PATTERNS.some((re) => re.test(base));
   if (!known) return null;
   if (to === 'th') return base;
   return base === '/' ? '/zh' : `/zh${base}`;
@@ -137,7 +153,7 @@ const ZH: Record<keyof typeof TH, string> = {
   'pang.location': '堂內位置',
   'pang.altNames': '其他名稱',
   'pang.pending': '尚待迎請',
-  'pang.readFull': '閱讀本尊全文（泰文）›',
+  'pang.readFull': '閱讀本尊全文 ›',
   'pang.qrHead': '您正站在這尊前嗎',
 };
 

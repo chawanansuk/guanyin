@@ -92,6 +92,11 @@ const wishes = defineCollection({
     lede: z.string(),
     intro: z.string(),
     keywords: z.array(z.string()).default([]),
+    // ฉบับภาษาจีน (หน้า /zh/wish/{id}) — ว่าง = หน้าจีนใช้ชื่อจาก WISH_ZH ในโค้ดแทน
+    title_zh: z.string().default(''),
+    short_zh: z.string().default(''),
+    lede_zh: z.string().default(''),
+    intro_zh: z.string().default(''),
   }),
 });
 
@@ -223,4 +228,26 @@ const pangZh = defineCollection({
   }),
 });
 
-export const collections = { pang, wishes, events, news, articles, prayers, pangFull, pangZh };
+
+// ฉบับภาษาจีนของบทความ — ชื่อไฟล์เดียวกับฝั่งไทย (src/content/articles/<slug>.md)
+// เก็บเฉพาะส่วนที่เป็นภาษา ส่วนหมวด วันที่ ปาง หมวดพร และผู้ตรวจ อ่านจากฉบับไทย
+const articlesZh = defineCollection({
+  loader: glob({ base: './src/content/articles-zh', pattern: '**/*.md' }),
+  schema: z.object({
+    title: z.string(),
+    summary: z.string(),
+    faq: z.array(z.object({ q: z.string(), a: z.string() })).default([]),
+    sources: z.array(z.string()).default([]),
+  }),
+});
+
+// ฉบับภาษาจีนของหน้าบทสวด — ชื่อไฟล์เดียวกับ src/content/prayers/<id>.md
+const prayersZh = defineCollection({
+  loader: glob({ base: './src/content/prayers-zh', pattern: '**/*.md' }),
+  schema: z.object({
+    title: z.string(),
+    subtitle: z.string().default(''),
+  }),
+});
+
+export const collections = { pang, wishes, events, news, articles, prayers, pangFull, pangZh, articlesZh, prayersZh };

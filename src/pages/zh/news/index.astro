@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import { getCollection } from 'astro:content';
+import { isoDate } from '../../../lib/format';
+
+// 堂內公告時效短，只發泰文版；中文頁列出標題並連到泰文原文
+const lang = 'zh' as const;
+const news = (await getCollection('news')).sort((a, b) => +b.data.date - +a.data.date);
+const zhDate = (x: Date) => `${x.getUTCFullYear()}年${x.getUTCMonth() + 1}月${x.getUTCDate()}日`;
+---
+<BaseLayout
+  lang={lang}
+  title="公告與活動"
+  description="普陀觀音堂的公告、消息與活動。公告以泰文發布。"
+  breadcrumbs={[{ label: '首頁', href: '/zh' }, { label: '公告', href: '/zh/news' }]}
+>
+  <PageHero eyebrow="公告" title="公告與活動" lede="堂內公告時效較短，以泰文發布；以下列出各則公告並連到泰文原文。節日日期請看節日曆。" narrow />
+  <section class="band">
+    <div class="wrap wrap--narrow">
+      {news.length > 0 ? (
+        <ul class="list">
+          {news.map((n) => (
+            <li>
+              <a href={`/news/${n.id}`} hreflang="th" lang="th">
+                <time class="mono" datetime={isoDate(n.data.date)}>{zhDate(n.data.date)}</time>
+                <span class="list__t">{n.data.title}</span>
+                {n.data.summary && <span class="list__s">{n.data.summary}</span>}
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p class="muted">目前沒有公告。節日日期請看<a href="/zh/calendar">節日曆</a>。</p>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .list { list-style: none; margin: 0; padding: 0; }
+  .list li { border-top: 1px solid var(--line); }
+  .list li:last-child { border-bottom: 1px solid var(--line); }
+  .list a { display: grid; grid-template-columns: 116px 1fr; gap: 4px 18px; padding: 20px 0; text-decoration: none; color: inherit; }
+  .list a:hover .list__t { color: var(--lacquer); }
+  .list time { font-size: var(--fs-sm); color: var(--ink-3); }
+  .list__t { font-family: var(--serif); font-size: var(--fs-h4); font-weight: 600; line-height: 1.45; }
+  .list__s { grid-column: 2; font-size: var(--fs-md); color: var(--ink-2); line-height: 1.65; }
+  @media (max-width: 559px) { .list a { grid-template-columns: 1fr; } .list__s { grid-column: 1; } }
+</style>

@@ -7,3 +7,10 @@ export const ARTICLE_CATEGORY_LABEL: Record<ArticleCategory, string> = {
   days: 'วันสำคัญ',
   shrine: 'เกี่ยวกับตำหนัก',
 };
+
+export const ARTICLE_CATEGORY_LABEL_ZH: Record<ArticleCategory, string> = {
+  worship: '如何參拜',
+  pang: '法相與意涵',
+  days: '節日',
+  shrine: '關於本堂',
+};

@@ -33,12 +33,12 @@ const CN_NUM = ['〇','一','二','三','四','五','六','七','八','九','十
 const cn = (n: number) => (n <= 10 ? CN_NUM[n] : n < 20 ? `十${CN_NUM[n - 10]}` : n === 20 ? '二十' : n < 30 ? `二十${CN_NUM[n - 20]}` : n === 30 ? '三十' : `三十${CN_NUM[n - 30]}`);
 const paras = (s: string) => s.split(/\n{2,}/).map((x) => x.trim()).filter(Boolean);
 
-// 祈求類別的中文名稱 —— 類別頁目前只有泰文版，故只列名稱不加連結
+// 祈求類別的中文名稱，連到 /zh/wish/{id}
 const WISH_ZH: Record<string, string> = {
   health: '健康', children: '求子', career: '事業學業', trade: '生意',
   love: '姻緣', travel: '出行平安', protection: '護佑', peace: '安心',
 };
-const wishes = d.wishes.map((w) => WISH_ZH[w]).filter(Boolean);
+const wishes = d.wishes.filter((w) => WISH_ZH[w]).map((w) => ({ id: w, label: WISH_ZH[w] }));
 
 const bySlug = (slug: string) => list.find((p) => p.data.slug === slug);
 const confused = (z?.confused_with ?? [])
@@ -113,7 +113,7 @@ const description = z
         {wishes.length > 0 && (
           <p class="pang__wishes">
             <span class="pang__metalabel">常見祈求</span>
-            {wishes.map((w) => <span class="pang__wish">{w}</span>)}
+            {wishes.map((w) => <a class="pang__wish" href={`/zh/wish/${w.id}`}>{w.label}</a>)}
           </p>
         )}
 
@@ -318,7 +318,7 @@ const description = z
 
   /* ---- 與泰文頁共用的全文區塊樣式 ---- */
   .pang__wishes { margin: 16px 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
-  .pang__wish { display: inline-block; padding: 2px 11px; border: 1px solid var(--gold-line); border-radius: var(--radius-pill); font-size: var(--fs-sm); color: var(--ink-2); background: var(--surface); }
+  .pang__wish { display: inline-flex; align-items: center; min-height: 36px; text-decoration: none; padding: 2px 13px; border: 1px solid var(--gold-line); border-radius: var(--radius-pill); font-size: var(--fs-sm); color: var(--ink-2); background: var(--surface); }
   .keypoints { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
   .keypoints li { position: relative; padding-left: 26px; line-height: 1.8; font-size: var(--fs-md); }
   .keypoints li::before {
@@ -355,6 +355,7 @@ const description = z
   .pang__meta > * + * { margin-top: 10px; }
   .pang__src { margin: 6px 0 0; padding-left: 1.5em; color: var(--ink-2); overflow-wrap: anywhere; }
   .pang__src li + li { margin-top: 6px; }
+  .pang__wish:hover { border-color: var(--lacquer); color: var(--lacquer); }
   .pang__metalabel {
     font-family: var(--mono); font-size: var(--fs-caption);
     letter-spacing: .1em; color: var(--ink-3); margin-right: 8px;
