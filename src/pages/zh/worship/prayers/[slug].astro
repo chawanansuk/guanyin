@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import PageHero from '../../../../components/PageHero.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const prayers = await getCollection('prayers');
+  const zh = await getCollection('prayersZh');
+  return prayers.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry, zh: zh.find((z) => z.id === entry.id) },
+  }));
+}
+const lang = 'zh' as const;
+const { entry, zh } = Astro.props;
+// 正文取自中文版（src/content/prayers-zh，檔名相同）；缺檔時只顯示標題與提示
+const Content = zh ? (await render(zh)).Content : null;
+// 校訂狀態依泰文版的 verified_by，與泰文頁相同
+const ready = entry.data.verified_by.trim() !== '';
+const title = zh?.data.title || entry.data.title_zh || entry.data.title;
+const subtitle = zh?.data.subtitle ?? '';
+const path = `/zh/worship/prayers/${entry.id}`;
+---
+<BaseLayout
+  lang={lang}
+  title={title}
+  description={`${title}——曼谷佛城二段路普陀觀音堂所用的版本。`}
+  noindex={!ready}
+  breadcrumbs={[
+    { label: '首頁', href: '/zh' },
+    { label: '經咒', href: '/zh/worship/prayers' },
+    { label: title, href: path },
+  ]}
+>
+  <PageHero eyebrow="經咒" title={title} lede={subtitle} narrow />
+  <section class="band">
+    <div class="wrap wrap--narrow">
+      {entry.data.audio && (
+        <audio class="audio" controls preload="none" src={`/audio/${entry.data.audio}`}>
+          此瀏覽器無法播放音訊
+        </audio>
+      )}
+      {!ready && (
+        <div class="note note--lacquer">
+          <p><strong>尚未正式刊出</strong>　此經咒尚待本堂實際使用的版本，並待本堂執事校訂讀音。</p>
+        </div>
+      )}
+      {Content
+        ? <div class="prose body"><Content /></div>
+        : <p class="body muted">本頁中文內容整理中，請先參閱<a href={`/worship/prayers/${entry.id}`}>泰文版</a>。</p>}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .audio { width: 100%; margin-bottom: 26px; }
+  .body { margin-top: 26px; }
+</style>

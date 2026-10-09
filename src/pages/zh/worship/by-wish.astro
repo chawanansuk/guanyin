@@ -1,0 +1,97 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import WishNotice from '../../../components/WishNotice.astro';
+import { getCollection } from 'astro:content';
+
+const lang = 'zh' as const;
+// 類別名稱的備用值 —— wishes.yaml 的 *_zh 欄位留空時使用
+const WISH_ZH: Record<string, string> = {
+  health: '健康', children: '求子', career: '事業學業', trade: '生意',
+  love: '姻緣', travel: '出行平安', protection: '護佑', peace: '安心',
+};
+const wishes = (await getCollection('wishes')).sort((a, b) => a.data.order - b.data.order);
+const pang = (await getCollection('pang')).sort((a, b) => a.data.order - b.data.order);
+const pangZh = await getCollection('pangZh');
+const zhOf = (slug: string) => pangZh.find((z) => z.data.slug === slug)?.data;
+const no = (n: number) => String(n).padStart(2, '0');
+const byWish = wishes.map((w) => ({
+  wish: {
+    id: w.data.id,
+    title: w.data.title_zh || WISH_ZH[w.data.id],
+    short: w.data.short_zh || WISH_ZH[w.data.id],
+    lede: w.data.lede_zh,
+  },
+  list: pang.filter((p) => p.data.wishes.includes(w.data.id)),
+}));
+---
+<BaseLayout
+  lang={lang}
+  title="求什麼，拜哪一尊觀音"
+  suffix={false}
+  description="依所求之事選擇——健康、求子、事業學業、生意、姻緣、出行平安、護佑、安心，看看哪幾尊觀音是人們常為此事禮拜的。"
+  breadcrumbs={[
+    { label: '首頁', href: '/zh' },
+    { label: '參拜', href: '/zh/worship' },
+    { label: '求什麼，拜哪一尊', href: '/zh/worship/by-wish' },
+  ]}
+>
+  <PageHero
+    eyebrow="參拜"
+    title="求什麼，拜哪一尊"
+    lede="三十三觀音各有不同的持物與意涵，普陀觀音堂因此加以分類，讓初次前來的人較容易入手。請選擇下方的類別，看看哪幾尊歸於該類，以及原因。"
+  >
+    <ul class="chips jump">
+      {byWish.map(({ wish }) => (
+        <li><a class="chip" href={`#${wish.id}`}>{wish.short}</a></li>
+      ))}
+    </ul>
+  </PageHero>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="top-note"><WishNotice lang={lang} /></div>
+      {byWish.map(({ wish, list }) => (
+        <section class="wsec" id={wish.id}>
+          <div class="wsec__head">
+            <h2>{wish.title}</h2>
+            <a class="wsec__more" href={`/zh/wish/${wish.id}`}>查看此類全部 ›</a>
+          </div>
+          {wish.lede && <p class="wsec__lede">{wish.lede}</p>}
+          <ul class="wsec__list">
+            {list.map((p) => {
+              const z = zhOf(p.data.slug);
+              const why = z?.short_prayer || z?.essence || '';
+              return (
+                <li>
+                  <a href={`/zh/33-pang/${p.data.slug}`}>
+                    <span class="wsec__no mono">{no(p.data.order)}</span>
+                    <span class="wsec__name han">{p.data.name_zh}</span>
+                  </a>
+                  {why && <p class="wsec__why">{why}</p>}
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .jump { margin-top: 20px; }
+  .top-note { margin-bottom: 36px; }
+  .wsec { padding-block: 30px; border-top: 1px solid var(--line); scroll-margin-top: 70px; }
+  .wsec:first-child { border-top: 0; padding-top: 0; }
+  .wsec__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 20px; }
+  .wsec__more { font-size: var(--fs-sm); white-space: nowrap; display: inline-block; padding-block: var(--space-2); }
+  .wsec__lede { margin: 8px 0 18px; color: var(--ink-2); }
+  .wsec__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .wsec__list li { background: var(--surface); padding: 15px 17px 17px; display: flex; flex-direction: column; gap: 5px; }
+  .wsec__list a { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; text-decoration: none; color: inherit; }
+  .wsec__list a:hover .wsec__name { color: var(--lacquer); text-decoration: underline; }
+  .wsec__no { font-size: var(--fs-caption); color: var(--gold); letter-spacing: .1em; }
+  .wsec__name { font-family: var(--serif); font-size: var(--fs-h4); font-weight: 600; }
+  .wsec__why { margin: 0; font-size: var(--fs-sm); line-height: 1.6; color: var(--ink-2); }
+</style>

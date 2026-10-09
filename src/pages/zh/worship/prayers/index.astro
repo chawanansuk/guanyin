@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import PageHero from '../../../../components/PageHero.astro';
+import { getCollection } from 'astro:content';
+const lang = 'zh' as const;
+// 排序與校訂狀態依泰文版；標題與副標題取自中文版（src/content/prayers-zh，檔名相同）
+const prayers = (await getCollection('prayers')).sort((a, b) => a.data.order - b.data.order);
+const zh = await getCollection('prayersZh');
+const items = prayers.map((p) => {
+  const z = zh.find((x) => x.id === p.id);
+  return {
+    id: p.id,
+    title: z?.data.title || p.data.title_zh || p.data.title,
+    subtitle: z?.data.subtitle ?? '',
+    ready: p.data.verified_by.trim() !== '',
+  };
+});
+---
+<BaseLayout
+  lang={lang}
+  title="經咒"
+  description="曼谷普陀觀音堂所用的經咒：〈大悲咒〉、〈普門品〉與六字大明咒的來歷與用法。"
+  breadcrumbs={[
+    { label: '首頁', href: '/zh' },
+    { label: '參拜', href: '/zh/worship' },
+    { label: '經咒', href: '/zh/worship/prayers' },
+  ]}
+>
+  <PageHero
+    eyebrow="參拜"
+    title="經咒"
+    lede="各傳承的版本與讀法不盡相同，此頁只刊載普陀觀音堂實際使用的版本，並附逐句讀音。"
+    narrow
+  />
+  <section class="band">
+    <div class="wrap wrap--narrow">
+      <ul class="plist">
+        {items.map((p) => (
+          <li>
+            <a href={`/zh/worship/prayers/${p.id}`}>
+              <span class="plist__th han">{p.title}</span>
+              {p.subtitle && <span class="plist__sub">{p.subtitle}</span>}
+              {!p.ready && <span class="plist__tag">尚待校訂</span>}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .plist { list-style: none; margin: 0; padding: 0; }
+  .plist li { border-top: 1px solid var(--line); }
+  .plist li:last-child { border-bottom: 1px solid var(--line); }
+  .plist a { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 20px 0; text-decoration: none; color: inherit; min-height: 44px; }
+  .plist a:hover .plist__th { color: var(--lacquer); }
+  .plist__th { font-family: var(--serif); font-size: var(--fs-h4); font-weight: 600; }
+  .plist__sub { flex-basis: 100%; font-size: var(--fs-sm); color: var(--ink-2); }
+  .plist__tag { padding: 1px 9px; border: 1px solid var(--line-strong); border-radius: var(--radius-pill); font-size: var(--fs-caption); color: var(--ink-3); }
+</style>

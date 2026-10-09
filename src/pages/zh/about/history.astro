@@ -1,0 +1,70 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import site from '../../../lib/site';
+const lang = 'zh' as const;
+---
+<BaseLayout
+  lang={lang}
+  title="本堂沿革"
+  description="曼谷佛城二段路普陀觀音堂的沿革——堂名由來、何以安奉三十三觀音、聖像與所在位置。"
+  breadcrumbs={[
+    { label: '首頁', href: '/zh' },
+    { label: '關於本堂', href: '/zh/about' },
+    { label: '本堂沿革', href: '/zh/about/history' },
+  ]}
+>
+  <PageHero
+    eyebrow="關於本堂"
+    title="本堂沿革"
+    lede="本堂為新近創建的道場——以下是目前已知的部分，其餘尚待創辦人補充。"
+    narrow
+  />
+  <section class="band">
+    <div class="wrap wrap--narrow prose">
+      <h2>堂名由來</h2>
+      <p>
+        「普陀」取自浙江舟山的<strong class="han">普陀山</strong>。
+        普陀山相傳為觀世音菩薩的道場，也是漢傳佛教四大名山之一。
+        因此單看堂名，便知本堂專為禮敬觀音而設。
+      </p>
+
+      <h2>何以安奉三十三觀音</h2>
+      <p>
+        《妙法蓮華經》<a href="/zh/worship/prayers/pu-men-pin">〈普門品〉</a>中，
+        觀音依求度者所能領受，示現三十三種身形。本堂希望來堂禮拜的人能親眼看見這一道理，
+        因此將三十三觀音全組安奉於一處——這在泰國至今仍相當少見。
+      </p>
+
+      <h2>聖像</h2>
+      <p>
+        全組觀音聖像皆為<strong>德化白瓷</strong>。德化自明代起便以白瓷觀音聞名。
+        各尊的姿態與台座依其法相特徵而各不相同。
+        目前已迎請 29 尊，其餘 4 尊正在籌備中。
+        聖像實景請見<a href="/zh/gallery">圖集</a>。
+      </p>
+
+      <h2>位置</h2>
+      <p>
+        本堂位於{site.address.full_zh}，佛城二段路旁。
+        開放時間與交通方式，請見<a href="/zh/visit">交通與開放時間</a>。
+      </p>
+
+      <div class="note note--lacquer">
+        <p>
+          <strong>尚待創辦人補充</strong>{'　'}
+          動工年份・發起人與護持者・興建期間的重要事件・
+          聖像迎請的來歷——一旦取得資料，便會立即補上此頁。
+          本堂管理人員可由<a href="/zh/contact">聯絡頁</a>傳送資料。
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .prose h2 { font-size: var(--fs-h3); margin: 34px 0 10px; }
+  .prose h2:first-child { margin-top: 0; }
+  .prose p { color: var(--ink-2); line-height: 1.9; }
+  .note { margin-top: 36px; }
+</style>

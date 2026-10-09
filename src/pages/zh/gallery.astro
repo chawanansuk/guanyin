@@ -1,0 +1,90 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import ShrinePhoto from '../../components/ShrinePhoto.astro';
+import PangCard from '../../components/PangCard.astro';
+import photos from '../../data/photos.json';
+import photoMeta from '../../data/photo-meta.json';
+import { allPang } from '../../lib/pang';
+
+const lang = 'zh' as const;
+const images = photos.images as Record<string, { widths: number[]; w: number; h: number }>;
+const hasFacade = 'shrine-exterior' in images;
+const map = images['visit-map'];
+// 只收實拍聖像——AI 示意圖不列入圖集
+const real = (await allPang()).filter(
+  (p) => p.data.photo in images && !(photoMeta.illustrations as string[]).includes(p.data.photo),
+);
+---
+<BaseLayout
+  lang={lang}
+  title="圖集"
+  description={`普陀觀音堂所奉 ${real.length} 尊觀音聖像、堂舍外觀與交通地圖。`}
+  breadcrumbs={[{ label: '首頁', href: '/zh' }, { label: '圖集', href: '/zh/gallery' }]}
+>
+  <PageHero
+    eyebrow="圖集"
+    title="圖集"
+    lede={`本堂所奉 ${real.length} 尊觀音聖像、堂舍外觀與地圖——點選任一尊，即可閱讀該尊法相的意涵。`}
+    narrow
+  />
+  {hasFacade && (
+    <section class="band">
+      <div class="wrap wrap--narrow">
+        <figure class="shot">
+          <ShrinePhoto
+            name="shrine-exterior"
+            alt="普陀觀音堂堂舍外觀，曼谷佛城二段路"
+            ratio="1086 / 772" sizes="(max-width: 820px) 92vw, 760px" priority
+          />
+          <figcaption>本堂外觀，佛城二段路</figcaption>
+        </figure>
+      </div>
+    </section>
+  )}
+
+  <section class="band band--sunk">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow eyebrow--marked">堂內聖像</p>
+        <h2>觀音聖像 {real.length} 尊</h2>
+      </div>
+      <p class="lede-sm">
+        德化白瓷聖像，於安奉前逐尊拍攝。尚無聖像的另外 {33 - real.length} 尊，
+        完整名錄請見<a href="/zh/33-pang">三十三觀音</a>頁。
+      </p>
+      <div class="pang-grid">
+        {real.map((p, i) => <PangCard pang={p} priority={i < 4} lang={lang} />)}
+      </div>
+    </div>
+  </section>
+
+  {map && (
+    <section class="band">
+      <div class="wrap wrap--narrow">
+        <figure class="shot">
+          <a href="/zh/visit">
+            <img
+              src={`/images/pang/visit-map-${map.widths[0]}.webp`}
+              srcset={map.widths.map((w) => `/images/pang/visit-map-${w}.webp ${w}w`).join(', ')}
+              sizes="(max-width: 820px) 92vw, 760px" width={map.w} height={map.h}
+              alt="前往本堂的交通地圖，佛城二段路 11 巷與 12 巷之間" loading="lazy" decoding="async"
+            />
+          </a>
+          <figcaption>交通地圖——詳情請見<a href="/zh/visit">交通與開放時間</a></figcaption>
+        </figure>
+      </div>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  .shot { margin: 0; }
+  .shot :global(.shrine-photo), .shot img {
+    display: block; width: 100%; height: auto;
+    border-radius: var(--radius);
+    box-shadow: 0 0 0 1px var(--gold-line), var(--shadow-lift);
+  }
+  .shot figcaption { margin-top: 12px; font-size: var(--fs-sm); color: var(--ink-3); }
+  .lede-sm { margin: -8px 0 24px; color: var(--ink-2); max-width: var(--measure); }
+</style>

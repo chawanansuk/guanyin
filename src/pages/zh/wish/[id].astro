@@ -1,0 +1,116 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import PangCard from '../../../components/PangCard.astro';
+import WishNotice from '../../../components/WishNotice.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const wishes = (await getCollection('wishes')).sort((a, b) => a.data.order - b.data.order);
+  const pang = (await getCollection('pang')).sort((a, b) => a.data.order - b.data.order);
+  return wishes.map((w) => ({
+    params: { id: w.data.id },
+    props: { wish: w, pang: pang.filter((p) => p.data.wishes.includes(w.data.id)), wishes },
+  }));
+}
+
+const lang = 'zh' as const;
+// 類別名稱的備用值 —— wishes.yaml 的 *_zh 欄位留空時使用
+const WISH_ZH: Record<string, string> = {
+  health: '健康', children: '求子', career: '事業學業', trade: '生意',
+  love: '姻緣', travel: '出行平安', protection: '護佑', peace: '安心',
+};
+const { wish, pang, wishes } = Astro.props;
+const d = wish.data;
+const w = {
+  id: d.id,
+  title: d.title_zh || WISH_ZH[d.id],
+  short: d.short_zh || WISH_ZH[d.id],
+  lede: d.lede_zh,
+  intro: d.intro_zh,
+};
+const others = wishes.filter((x: any) => x.data.id !== w.id);
+// 各尊說明取自中文版（src/content/pang-zh），不顯示泰文
+const pangZh = await getCollection('pangZh');
+const zhOf = (slug: string) => pangZh.find((z) => z.data.slug === slug)?.data;
+---
+<BaseLayout
+  lang={lang}
+  title={`${w.title}：拜哪一尊觀音`}
+  suffix={false}
+  description={`${w.lede}普陀觀音堂（曼谷佛城二段路）歸入「${w.short}」一類的觀音法相，並附各尊意涵。`}
+  breadcrumbs={[
+    { label: '首頁', href: '/zh' },
+    { label: '求什麼，拜哪一尊', href: '/zh/worship/by-wish' },
+    { label: w.title, href: `/zh/wish/${w.id}` },
+  ]}
+>
+  <PageHero eyebrow="求什麼，拜哪一尊" title={w.title} lede={w.lede} />
+
+  <section class="band">
+    <div class="wrap">
+      {w.intro && <p class="intro">{w.intro}</p>}
+
+      <div class="section-head">
+        <h2>人們常為此事禮拜的法相 <span class="mono count">{pang.length} 尊</span></h2>
+      </div>
+
+      {pang.length > 0 ? (
+        <div class="grid">
+          {pang.map((p: any, i: number) => <PangCard pang={p} priority={i < 4} lang={lang} />)}
+        </div>
+      ) : (
+        <p class="muted">此類尚未歸入任何法相。</p>
+      )}
+
+      <ul class="reasons">
+        {pang.map((p: any) => {
+          const z = zhOf(p.data.slug);
+          const pray = z?.short_prayer || z?.essence || '';
+          return (
+            <li>
+              <a class="reasons__name han" href={`/zh/33-pang/${p.data.slug}`}>{p.data.name_zh}</a>
+              {z?.marks && <p class="reasons__why">{z.marks}</p>}
+              {pray && <p class="reasons__pray">「{pray}」</p>}
+            </li>
+          );
+        })}
+      </ul>
+
+      <div class="bottom-note"><WishNotice lang={lang} /></div>
+
+      <div class="others">
+        <p class="eyebrow eyebrow--marked">其他類別</p>
+        <ul class="chips">
+          {others.map((o: any) => (
+            <li><a class="chip" href={`/zh/wish/${o.data.id}`}>{o.data.short_zh || WISH_ZH[o.data.id]}</a></li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .intro { font-family: var(--serif); font-size: var(--fs-h4); line-height: 1.75; color: var(--ink-2); margin-bottom: 36px; }
+  .count { font-size: var(--fs-sm); color: var(--ink-3); font-weight: 400; margin-left: 8px; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(186px, 1fr));
+    gap: 1px;
+    background: transparent;
+  }
+  @media (max-width: 559px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+
+  .reasons { list-style: none; margin: 36px 0 0; padding: 0; }
+  .reasons li { padding: 20px 0; border-top: 1px solid var(--line); }
+  .reasons li:last-child { border-bottom: 1px solid var(--line); }
+  .reasons__name { font-family: var(--serif); font-size: var(--fs-h4); font-weight: 600; text-decoration: none; }
+  .reasons__name:hover { text-decoration: underline; }
+  .reasons__why { margin: 8px 0 0; color: var(--ink-2); }
+  .reasons__pray { margin: 6px 0 0; font-family: var(--serif); color: var(--ink-3); }
+
+  .bottom-note { margin-top: 32px; }
+  .others { margin-top: 40px; display: flex; flex-direction: column; gap: 10px; }
+</style>

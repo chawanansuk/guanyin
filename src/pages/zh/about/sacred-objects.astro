@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+import { allPang } from '../../../lib/pang';
+import photoMeta from '../../../data/photo-meta.json';
+const lang = 'zh' as const;
+// 仍用示意圖的法相：本堂尚未確認有此尊
+const illustrated = new Set(photoMeta.illustrations as string[]);
+const pang = await allPang();
+---
+<BaseLayout
+  lang={lang}
+  title="聖像與參拜位置"
+  description="普陀觀音堂堂內參拜位置圖：第1至第33位的參拜順序，以及堂內所奉聖像。"
+  breadcrumbs={[
+    { label: '首頁', href: '/zh' },
+    { label: '關於本堂', href: '/zh/about' },
+    { label: '參拜位置', href: '/zh/about/sacred-objects' },
+  ]}
+>
+  <PageHero
+    eyebrow="關於本堂"
+    title="聖像與參拜位置"
+    lede="堂內參拜順序，依第1位至第33位排列。各尊台座設有名牌，標示法相名號，並附可掃描查看意涵的條碼。"
+  />
+  <section class="band">
+    <div class="wrap">
+      <div class="note">
+        <p>
+          <strong>堂內平面圖尚待本堂提供</strong>{'　'}
+          取得線圖之後，下方清單將改為可直接點選各位置、進入該尊頁面的平面圖。
+        </p>
+      </div>
+      <ol class="points">
+        {pang.map((p) => (
+          <li>
+            <span class="points__no mono">{String(p.data.shrine_point ?? p.data.order).padStart(2, '0')}</span>
+            <a class="han" href={`/zh/33-pang/${p.data.slug}`}>{p.data.name_zh}</a>
+            {!p.data.enshrined && <span class="points__tag">尚待迎請</span>}
+            {illustrated.has(p.data.photo) && <span class="points__tag">尚待本堂確認是否有此尊</span>}
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .points { list-style: none; margin: 26px 0 0; padding: 0; columns: 2; column-gap: 40px; }
+  @media (max-width: 759px) { .points { columns: 1; } }
+  .points li {
+    break-inside: avoid;
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px;
+    padding: 9px 0; border-bottom: 1px solid var(--line);
+  }
+  .points__no { font-size: var(--fs-caption); color: var(--gold); letter-spacing: .1em; min-width: 24px; }
+  .points a { font-size: var(--fs-md); text-decoration: none; color: var(--ink); }
+  .points a:hover { color: var(--lacquer); text-decoration: underline; }
+  .points__tag { font-size: var(--fs-caption); color: var(--ink-3); border: 1px solid var(--line-strong); border-radius: var(--radius-pill); padding: 0 8px; }
+</style>

@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHero from '../../../components/PageHero.astro';
+
+const lang = 'zh' as const;
+---
+<BaseLayout
+  lang={lang}
+  title="供品與禁忌"
+  description="供奉觀世音菩薩常用的水果與鮮花，以及不宜帶來之物。普陀觀音堂位於曼谷佛城二段路，本堂不燃香燭。"
+  breadcrumbs={[
+    { label: '首頁', href: '/zh' },
+    { label: '參拜', href: '/zh/worship' },
+    { label: '供品', href: '/zh/worship/offerings' },
+  ]}
+>
+  <PageHero
+    eyebrow="參拜"
+    title="供品與禁忌"
+    lede="觀音茹素，所以供品一律不用葷腥——這是初次前來的人常不知道的一點。"
+    narrow
+  />
+
+  <section class="band">
+    <div class="wrap wrap--narrow">
+      <div class="note nosmoke">
+        <p>
+          <strong>本堂不燃香、不點燭</strong>　不必購買，也不必攜帶；合掌禮拜即已圓滿。以下供品都不需點火即可供奉。
+        </p>
+      </div>
+
+      <h2>常見供品</h2>
+      <div class="tablebox tablebox--wrap">
+        <table>
+          <thead><tr><th>供品</th><th>意涵</th></tr></thead>
+          <tbody>
+            <tr><td>蓮花，或白色、黃色的鮮花</td><td>象徵清淨；蓮花是菩薩的代表之花。</td></tr>
+            <tr><td>五色吉祥果</td><td>橘子、梨、蘋果、香蕉、葡萄——避免名稱不吉利的水果。</td></tr>
+            <tr><td>清水或清茶</td><td>象徵心地清淨。</td></tr>
+            <tr><td>素點心</td><td>中式酥餅、豆沙包、湯圓。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 class="mt">不宜供奉之物</h2>
+      <ul class="dont">
+        <li><strong>一切葷食</strong>，包括雞、豬、鴨、蛋，以及用豬油烹製的食物。</li>
+        <li><strong>酒類及其他致醉之物</strong></li>
+        <li><strong>五辛</strong>——蒜、蔥、薤、韭、菸葉（依泰國華人吃齋的習俗）。</li>
+        <li><strong>香、燭與金銀紙</strong>　本堂一概不燃火。</li>
+        <li>帶刺，或香氣過於濃烈的花。</li>
+      </ul>
+
+      <div class="note">
+        <p>
+          <strong>供畢之物可以帶回</strong>　供奉完畢的水果與點心，可以帶回與家人分食，視為吉祥，並不違反禮俗。
+        </p>
+        <p>
+          不帶供品前來禮拜也可以，並不算失敬。本堂看重的是來者的心意，而不是所帶之物的價值。
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  h2 { font-size: var(--fs-h3); margin-bottom: 14px; }
+  .mt { margin-top: 44px; }
+  .dont { margin: 0; padding-left: 1.2em; }
+  .dont li { margin-bottom: 9px; color: var(--ink-2); }
+  .dont strong { color: var(--ink); }
+  .note { margin-top: 34px; }
+  .nosmoke { margin-top: 0; margin-bottom: 30px; }
+  .nosmoke strong { color: var(--lacquer); }
+</style>
