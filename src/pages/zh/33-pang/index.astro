@@ -3,11 +3,18 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import PageHero from '../../../components/PageHero.astro';
 import PangCard from '../../../components/PangCard.astro';
 import { allPang, enshrinedCount } from '../../../lib/pang';
+import { getCollection } from 'astro:content';
+import confusable from '../../../data/pang-confusable.json';
 import site from '../../../lib/site';
 
 const lang = 'zh' as const;
 const pang = await allPang();
 const count = enshrinedCount(pang);
+const wishes = (await getCollection('wishes')).sort((a, b) => a.data.order - b.data.order);
+const WISH_ZH: Record<string, string> = {
+  health: '健康', children: '求子', career: '事業學業', trade: '生意',
+  love: '姻緣', travel: '出行平安', protection: '護佑', peace: '安心',
+};
 
 const schema = [{
   '@context': 'https://schema.org',
@@ -43,9 +50,23 @@ const schema = [{
 
   <section class="band zone-gilt">
     <div class="wrap">
-      <div class="pang-grid">
+      <!-- 篩選：沒有 JavaScript 時仍是連到各祈求類別頁的連結 -->
+      <div class="filter" data-filter>
+        <p class="filter__label eyebrow">依祈求事項</p>
+        <ul class="chips">
+          <li><a class="chip chip--filter chip--on" href="/zh/33-pang" data-wish="all" aria-current="true">全部</a></li>
+          {wishes.map((w) => (
+            <li><a class="chip chip--filter" href={`/zh/wish/${w.data.id}`} data-wish={w.data.id}>{w.data.short_zh || WISH_ZH[w.data.id]}</a></li>
+          ))}
+        </ul>
+        <p class="filter__count small muted" data-count hidden></p>
+      </div>
+
+      <div class="pang-grid" data-grid>
         {pang.map((p, i) => <PangCard pang={p} priority={i < 6} lang={lang} />)}
       </div>
+
+      <p class="filter__empty" data-empty hidden>此類別尚無法相</p>
 
       <div class="after note">
         <p>
@@ -56,13 +77,87 @@ const schema = [{
           各尊頁面皆有<strong>長篇考釋</strong>，述及名號源流、經典依據、流傳故事與造像意涵，並附引用出處。
           中文版譯自泰文版，經文引句皆依 CBETA 電子佛典核對原文，譯文尚待本堂校訂。
         </p>
+        <p>
+          <strong>不知該禮拜哪一尊？</strong>請看<a href="/zh/worship/by-wish">依祈求選擇法相</a>，
+          依所求之事分類，並說明各尊相關的原因。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow eyebrow--marked">辨認</p>
+        <h2>容易記混的法相</h2>
+        <p class="lede">{confusable.note_zh}</p>
+      </div>
+      <div class="tablebox">
+        <table>
+          <thead>
+            <tr><th scope="col">法相</th><th scope="col">相同之處</th><th scope="col">分辨方法</th></tr>
+          </thead>
+          <tbody>
+            {confusable.rows.map((r) => (
+              <tr><th scope="row" class="han">{r.pair_zh}</th><td>{r.same_zh}</td><td>{r.tell_zh}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div class="note note--celadon confuse__rule">
+        <p><strong>要點</strong> <span set:html={confusable.rule_zh} /></p>
       </div>
     </div>
   </section>
 </BaseLayout>
 
+<script is:inline>
+  (function () {
+    var box = document.querySelector('[data-filter]');
+    var grid = document.querySelector('[data-grid]');
+    if (!box || !grid) return;
+    var chips = box.querySelectorAll('[data-wish]');
+    var countEl = box.querySelector('[data-count]');
+    var emptyEl = document.querySelector('[data-empty]');
+    var cards = grid.querySelectorAll('[data-wishes]');
+    function apply(wish, push) {
+      var shown = 0;
+      for (var i = 0; i < cards.length; i++) {
+        var on = wish === 'all' || (' ' + cards[i].dataset.wishes + ' ').indexOf(' ' + wish + ' ') > -1;
+        cards[i].hidden = !on;
+        if (on) shown++;
+      }
+      for (var j = 0; j < chips.length; j++) {
+        var is = chips[j].dataset.wish === wish;
+        chips[j].classList.toggle('chip--on', is);
+        if (is) chips[j].setAttribute('aria-current', 'true');
+        else chips[j].removeAttribute('aria-current');
+      }
+      if (countEl) {
+        countEl.hidden = wish === 'all';
+        countEl.textContent = '顯示 ' + shown + ' 尊，共 ' + cards.length + ' 尊';
+      }
+      if (emptyEl) emptyEl.hidden = shown > 0;
+      if (push) history.replaceState(null, '', wish === 'all' ? '/zh/33-pang' : '/zh/33-pang#' + wish);
+    }
+    box.addEventListener('click', function (e) {
+      var a = e.target.closest('[data-wish]');
+      if (!a) return;
+      e.preventDefault();
+      apply(a.dataset.wish, true);
+    });
+    var hash = location.hash.replace('#', '');
+    if (hash) apply(hash, false);
+  })();
+</script>
+
 <style>
   .hero-status { margin-top: 16px; font-size: var(--fs-sm); color: var(--celadon); }
   .after { margin-top: 32px; }
   .after p { line-height: 1.85; }
+  .filter { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+  .filter__label { margin: 0; }
+  .filter__count { margin: 0; }
+  .filter__empty { margin: 28px 0 0; color: var(--ink-3); }
+  .confuse__rule { margin-top: 20px; }
 </style>
