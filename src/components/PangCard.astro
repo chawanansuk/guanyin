@@ -3,6 +3,7 @@ import PangArt from './PangArt.astro';
 import { pangNo } from '../lib/format';
 import { displayName, type Pang } from '../lib/pang';
 import { useT, withLang, type Lang } from '../i18n';
+import { getCollection } from 'astro:content';
 
 interface Props { pang: Pang; priority?: boolean; lang?: Lang }
 const { pang, priority = false, lang = 'th' } = Astro.props;
@@ -11,6 +12,10 @@ const t = useT(lang);
 // ฝั่งจีนให้ชื่อจีนเป็นบรรทัดหลัก เพราะเป็นชื่อที่ผู้อ่านจีนใช้จริง
 const primary = lang === 'zh' ? d.name_zh : displayName(pang);
 const secondary = lang === 'zh' ? '' : d.name_zh;
+// วลีสั้นฝั่งจีนมาจากฉบับแปล (src/content/pang-zh) ถ้ายังไม่มีไฟล์ก็ไม่แสดง
+const tagline = lang === 'zh'
+  ? (await getCollection('pangZh')).find((z) => z.data.slug === d.slug)?.data.tagline ?? ''
+  : d.tagline;
 ---
 <a
   class:list={['pang-card sheen reveal', !d.enshrined && 'pang-card--pending']}
@@ -28,7 +33,7 @@ const secondary = lang === 'zh' ? '' : d.name_zh;
     {secondary && <span class="pang-card__zh han">{secondary}</span>}
     {/* วลีสั้นบอกแก่นของปาง — ตาราง ๓๓ ใบที่มีแต่ชื่อ กวาดสายตาหาไม่เจอว่า
         ปางไหนตรงกับเรื่องที่กำลังจะขอ */}
-    {lang !== 'zh' && d.tagline && <span class="pang-card__tag-line">{d.tagline}</span>}
+    {tagline && <span class:list={['pang-card__tag-line', lang === 'zh' && 'han']}>{tagline}</span>}
     {!d.enshrined && <span class="pang-card__tag">{t('pang.pending')}</span>}
   </span>
 </a>

@@ -202,12 +202,24 @@ const pangFull = defineCollection({
 });
 
 // ข้อความภาษาจีนของแต่ละปาง — แยกไฟล์เพื่อให้ผู้แปลแก้ได้โดยไม่ชนกับ import:book
+// ฉบับภาษาจีนตัวเต็มของ ๓๓ ปาง — แปลจากฉบับไทย หนึ่งไฟล์ต่อปาง ชื่อไฟล์เดียวกับฝั่งไทย
+// เนื้อบทคือบทเต็ม ส่วน frontmatter คือช่องที่หน้าไทยแสดง (ลักษณะ แก่น สรุป วิธีขอพร ถามตอบ อ้างอิง)
 const pangZh = defineCollection({
-  loader: file('./src/content/pang-zh/pang-zh.yaml'),
+  loader: glob({ base: './src/content/pang-zh', pattern: '**/*.md' }),
   schema: z.object({
-    id: z.string(),
+    order: z.number().int().min(1).max(33),
+    slug: z.string(),
     marks: z.string(),
     essence: z.string(),
+    tagline: z.string().default(''),
+    short_prayer: z.string().default(''),
+    keypoints: z.array(z.string()).default([]),
+    how_to_ask: z.string().default(''),
+    faq: z.array(z.object({ q: z.string(), a: z.string() })).default([]),
+    confused_with: z.array(z.object({ slug: z.string(), note: z.string() })).default([]),
+    sources: z.array(z.string()).default([]),
+    /** จำนวนอักษรของเนื้อบท ไม่นับช่องว่าง */
+    words: z.number().int(),
   }),
 });
 
