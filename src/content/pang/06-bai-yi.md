@@ -13,13 +13,13 @@ photo_detail: pang-06-detail
 prayer: ""
 sources:
   - "佛學大辭典 ของติงฝูเป่า (丁福保) ฉบับ ค.ศ. 1922 รายการ 白衣觀音"
-  - "妙法蓮華經 บทที่ 25 普門品 ฉบับแปลของพระกุมารชีวะ"
-  - "Cleveland Museum of Art, White-Robed Guanyin, object 1972.160"
-  - "The Metropolitan Museum of Art, White-Robed Guanyin, object 1982.3.3"
+  - "妙法蓮華經 觀世音菩薩普門品 ฉบับแปลของพระกุมารชีวะ ไทโช T0262 เล่ม 9 หน้า 57a07–09 (設欲求男…求女) และ 57b10–15 (รูปกายที่ทรงแสดง)"
+  - "佛說觀無量壽佛經 ไทโช T0365 ฉบับจีนระบุผู้แปล 畺良耶舍 เล่ม 12 หน้า 343c11–344a10"
+  - "White-Robed Guanyin: Cleveland Museum of Art object 1972.160 และ The Metropolitan Museum of Art object 1982.3.3"
   - "増補諸宗仏像図彙 巻二 (土佐秀信 画, ค.ศ. 1690 เพิ่มเติม ค.ศ. 1783) สำเนาหอสมุดรัฐสภาญี่ปุ่น ndljp/pid/3442142 คำกำกับใต้ภาพ: 比丘比丘尼身"
-  - "妙法蓮華經 觀世音菩薩普門品 ไทโช T0262 เล่ม 9 หน้า 57b10–12"
+  - "CBETA Chinese Electronic Tripiṭaka Collection (ฉบับ XML P5)"
 verified_by: ""
-name_th_scholarly: "ปัณฑรวาสินีอวโลกิเตศวร"
+name_th_scholarly: "ปาณฑรวาสินีอวโลกิเตศวร"
 name_zh_variants: []
 name_th: "ปางอาภรณ์ขาว"
 name_zh: "白衣觀音"
