@@ -12,8 +12,8 @@ photo: pang-24
 photo_detail: pang-24-detail
 prayer: ""
 sources:
-  - "佛說大方廣曼殊室利經 ไทโช T1101 แปลโดยพระอโมฆวัชระ (不空) เล่ม 20 หน้า 450c, 452a, 453a–b"
-  - "救度佛母二十一種禮讚經 ไทโช T1108A เล่ม 20 หน้า 478b–479c"
+  - "佛說大方廣曼殊室利經 ไทโช T1101 แปลโดยพระอโมฆวัชระ (不空) เล่ม 20 หน้า 450a–c, 451c, 452a, 453a–b"
+  - "聖救度佛母二十一種禮讚經 ไทโช T1108A เล่ม 20 หน้า 478b–479c"
   - "84000: Translating the Words of the Buddha, Sūtras for Wellbeing: Praise to Tara with Twenty-One Verses of Homage"
   - "清昌寺 (Seishoji) 三十三観音"
   - "CBETA Chinese Electronic Tripiṭaka Collection (ฉบับ XML P5)"
