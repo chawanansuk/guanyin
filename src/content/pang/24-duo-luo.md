@@ -16,9 +16,9 @@ sources:
   - "聖救度佛母二十一種禮讚經 ไทโช T1108A เล่ม 20 หน้า 478b–479c"
   - "84000: Translating the Words of the Buddha, Sūtras for Wellbeing: Praise to Tara with Twenty-One Verses of Homage"
   - "清昌寺 (Seishoji) 三十三観音"
-  - "CBETA Chinese Electronic Tripiṭaka Collection (ฉบับ XML P5)"
   - "増補諸宗仏像図彙 巻二 (土佐秀信 画, ค.ศ. 1690 เพิ่มเติม ค.ศ. 1783) สำเนาหอสมุดรัฐสภาญี่ปุ่น ndljp/pid/3442142 คำกำกับใต้ภาพ: 或值怨賊繞"
   - "妙法蓮華經 觀世音菩薩普門品 ไทโช T0262 เล่ม 9 หน้า 57c25–26"
+  - "CBETA Chinese Electronic Tripiṭaka Collection (ฉบับ XML P5)"
 verified_by: ""
 name_th_scholarly: "ตาราอวโลกิเตศวร"
 name_zh_variants: []
