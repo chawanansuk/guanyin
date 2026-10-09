@@ -4,6 +4,9 @@ import PageHero from '../../components/PageHero.astro';
 import { allPang } from '../../lib/pang';
 import { displayName } from '../../lib/pang';
 import { thaiNum } from '../../lib/format';
+import photoMeta from '../../data/photo-meta.json';
+// ปางที่ยังใช้ภาพประกอบ ตำหนักยังไม่ยืนยันว่ามีองค์จริง
+const illustrated = new Set(photoMeta.illustrations as string[]);
 const pang = await allPang();
 ---
 <BaseLayout
@@ -35,6 +38,7 @@ const pang = await allPang();
             <a href={`/33-pang/${p.data.slug}`}>{displayName(p)}</a>
             <span class="points__zh han">{p.data.name_zh}</span>
             {!p.data.enshrined && <span class="points__tag">กำลังอัญเชิญ</span>}
+            {illustrated.has(p.data.photo) && <span class="points__tag">รอตำหนักยืนยันว่ามีองค์</span>}
           </li>
         ))}
       </ol>

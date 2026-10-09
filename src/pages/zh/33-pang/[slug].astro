@@ -28,6 +28,8 @@ const prev = prevPang(list, index);
 const next = nextPang(list, index);
 const marks = zh?.data.marks ?? d.attributes;
 const essence = zh?.data.essence ?? d.essence;
+// 仍用示意圖的法相：本堂尚未確認有此尊，不顯示參拜位置與掃碼提示
+const illustrated = (photoMeta.illustrations as string[]).includes(d.photo);
 const path = `/zh/33-pang/${d.slug}`;
 const thPath = `/33-pang/${d.slug}`;
 const CN_NUM = ['〇','一','二','三','四','五','六','七','八','九','十'];
@@ -43,6 +45,7 @@ const cn = (n: number) => (n <= 10 ? CN_NUM[n] : n < 20 ? `十${CN_NUM[n - 10]}`
     { label: d.name_zh, href: path },
   ]}
 >
+  {!illustrated && (
   <aside class="qr zone-gilt">
     <div class="wrap qr__inner">
       <p class="qr__head">您正站在這尊前嗎</p>
@@ -55,6 +58,7 @@ const cn = (n: number) => (n <= 10 ? CN_NUM[n] : n < 20 ? `十${CN_NUM[n - 10]}`
       <p class="qr__pray">「{essence}」</p>
     </div>
   </aside>
+  )}
 
   <article class="pang">
     <div class="wrap pang__grid">
@@ -99,7 +103,7 @@ const cn = (n: number) => (n <= 10 ? CN_NUM[n] : n < 20 ? `十${CN_NUM[n - 10]}`
           </dl>
         </section>
 
-        {d.shrine_point !== null && (
+        {d.shrine_point !== null && !illustrated && (
           <section class="pang__sec">
             <h2>堂內位置</h2>
             <p>依參拜動線為第 {cn(d.shrine_point)} 位</p>

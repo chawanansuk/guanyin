@@ -43,6 +43,8 @@ const facts = [
   ['ผู้ถวาย', d.donor],
 ].filter(([, v]) => v) as [string, string][];
 const shrinePhotos = [d.photo_detail, d.photo_place].filter(hasPhoto);
+// ปางที่ยังใช้ภาพประกอบ = ตำหนักยังไม่ยืนยันว่ามีองค์จริง จึงไม่บอกจุดไหว้และไม่แสดงแถบคนสแกน QR หน้าองค์
+const illustrated = (photoMeta.illustrations as string[]).includes(d.photo);
 const hasShrine = facts.length > 0 || !!d.shrine_statue || !!d.shrine_highlight || shrinePhotos.length > 0;
 const prayerPage = d.prayer ? (await getCollection('prayers')).find((p) => p.id === d.prayer) : undefined;
 
@@ -84,6 +86,7 @@ const description =
   ]}
 >
   <!-- บล็อกสำหรับคนที่สแกน QR จากในตำหนัก: ตอบคำถามที่ถามตอนยืนอยู่หน้าองค์ -->
+  {!illustrated && (
   <aside class="qr zone-gilt">
     <div class="wrap qr__inner">
       <p class="qr__head">ยืนอยู่หน้าองค์นี้ใช่ไหม</p>
@@ -96,6 +99,7 @@ const description =
       <p class="qr__pray">“{d.short_prayer}”</p>
     </div>
   </aside>
+  )}
 
   <article class="pang">
     <div class="wrap pang__grid">
@@ -267,7 +271,7 @@ const description =
           </section>
         )}
 
-        {d.shrine_point !== null && (
+        {d.shrine_point !== null && !illustrated && (
           <section class="pang__sec">
             <h2>ตำแหน่งในตำหนัก</h2>
             <p>จุดที่ {thaiNum(d.shrine_point)} ตามลำดับการเดินไหว้ — ดู <a href="/about/sacred-objects">ผังจุดไหว้ในตำหนัก</a></p>
@@ -280,7 +284,10 @@ const description =
               <p class="small"><span class="pang__metalabel">ชื่ออื่นที่พบ</span> {alts.join(' · ')}</p>
             )}
             {d.sources.length > 0 && (
-              <p class="small"><span class="pang__metalabel">อ้างอิง</span> {d.sources.join(' · ')}</p>
+              <div class="small">
+                <span class="pang__metalabel">อ้างอิง</span>
+                <ol class="pang__src">{d.sources.map((s) => <li>{s}</li>)}</ol>
+              </div>
             )}
             {sourceDoc && (
               <p class="small"><span class="pang__metalabel">เรียบเรียงจาก</span> {sourceDoc}</p>
@@ -472,6 +479,9 @@ const description =
   .pang__meta { padding-top: 20px; border-top: 1px solid var(--line); }
   .pang__meta p { margin: 0; color: var(--ink-2); }
   .pang__meta p + p { margin-top: 6px; }
+  .pang__meta > * + * { margin-top: 10px; }
+  .pang__src { margin: 6px 0 0; padding-left: 1.5em; color: var(--ink-2); overflow-wrap: anywhere; }
+  .pang__src li + li { margin-top: 6px; }
   .pang__metalabel {
     font-family: var(--mono); font-size: var(--fs-caption);
     letter-spacing: .1em; text-transform: uppercase;
