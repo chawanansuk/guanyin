@@ -31,6 +31,8 @@ const NOINDEX_ARTICLES = unverifiedSlugs('articles');
 export default defineConfig({
   site: siteUrl,
   trailingSlash: 'never',
+  // หน้ากำหนดการพิธีเปิดถูกถอดออก (งานจัดเป็นการภายใน) ลิงก์ที่เคยแชร์ไปให้กลับหน้าแรก
+  redirects: { '/opening': '/', '/zh/opening': '/zh' },
   build: { format: 'file' },
   integrations: [
     sitemap({

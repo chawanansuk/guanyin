@@ -173,7 +173,7 @@ const graphs = [place, ...crumbs, ...schema];
           var box = el.closest('[data-days-hide-past]');
           if (box && ne < 0) box.hidden = true;
         }
-        // กล่องที่ให้เห็นเฉพาะวันเดียว เช่น แถบ "วันนี้พิธีเปิด"
+        // กล่องที่ให้เห็นเฉพาะวันเดียว (แถบ data-days-only ของหน้าแรก)
         var only = document.querySelectorAll('[data-days-only]');
         for (var j = 0; j < only.length; j++) {
           if (days(only[j].getAttribute('data-days-only')) === 0) only[j].hidden = false;

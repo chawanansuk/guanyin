@@ -22,7 +22,6 @@ export const TRANSLATED_ROUTES = [
   '/visit',
   '/calendar',
   '/worship/how-to',
-  '/opening',
   '/faq',
   '/contact',
 ] as const;

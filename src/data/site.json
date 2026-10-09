@@ -76,7 +76,7 @@
   "opening_ceremony": {
     "date": "2026-10-25",
     "headline": "พิธีเปิดตำหนักผู่โถวเจ้าแม่กวนอิม",
-    "active": true,
+    "active": false,
     "headline_zh": "普陀觀音堂開光大典"
   },
   "video": {

@@ -2,12 +2,10 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
 import site from '../../lib/site';
-import { thaiDate, parseDay } from '../../lib/format';
-const opening = parseDay(site.opening_ceremony.date);
 ---
 <BaseLayout
   title="ประวัติความเป็นมา"
-  description="ประวัติตำหนักผู่โถวเจ้าแม่กวนอิม ถนนพุทธมณฑลสาย ๒ — ที่มาของชื่อ เหตุที่ประดิษฐานครบ ๓๓ ปาง องค์พระ และกำหนดพิธีเปิด"
+  description="ประวัติตำหนักผู่โถวเจ้าแม่กวนอิม ถนนพุทธมณฑลสาย ๒ — ที่มาของชื่อ เหตุที่ประดิษฐานครบ ๓๓ ปาง องค์พระ และที่ตั้ง"
   breadcrumbs={[
     { label: 'หน้าแรก', href: '/' },
     { label: 'เกี่ยวกับตำหนัก', href: '/about' },
@@ -45,10 +43,10 @@ const opening = parseDay(site.opening_ceremony.date);
         ดูองค์จริงได้ที่<a href="/gallery">ประมวลภาพ</a>
       </p>
 
-      <h2>ที่ตั้งและกำหนดเปิด</h2>
+      <h2>ที่ตั้ง</h2>
       <p>
         ตำหนักตั้งอยู่ที่ {site.address.full_th} ริมถนนพุทธมณฑลสาย ๒
-        และกำหนด<a href="/opening">พิธีเปิดอย่างเป็นทางการ</a>ในวันที่ {thaiDate(opening)}
+        เวลาเปิดและเส้นทางดูที่<a href="/visit">หน้าการเดินทาง</a>
       </p>
 
       <div class="note note--lacquer">

@@ -33,15 +33,6 @@
   approx: true
   kind: festival
   note: ช่วงที่คนค้นหาศาลเจ้ามากที่สุดของปี
-- id: opening-2569
-  title: พิธีเปิดตำหนักผู่โถวเจ้าแม่กวนอิม
-  title_zh: 開光大典
-  lunar: ช่วงกลางเดือน ๙ ตามจันทรคติจีน
-  date: 2026-10-25
-  approx: false
-  kind: shrine
-  featured: true
-  note: วันเปิดตำหนักอย่างเป็นทางการ — ดูกำหนดการที่หน้าพิธีเปิด
 - id: ordain-2569
   title: วันออกบวชเจ้าแม่กวนอิม
   title_zh: 觀音出家
@@ -49,4 +40,3 @@
   date: 2026-10-28
   approx: true
   kind: guanyin
-  note: ๓ วันหลังพิธีเปิดตำหนัก
