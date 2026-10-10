@@ -1,5 +1,6 @@
 # วันสำคัญ พ.ศ. ๒๕๗๐ (ค.ศ. 2027) — ร่างล่วงหน้า ต้องยืนยันก่อนตรุษจีน ๒๕๗๐
 # วันที่คำนวณด้วย scripts/lunar.mjs (npm run lunar -- 2027)
+# ๑๐ ต.ค. ๒๕๖๙: ทุกวันเทียบกับไลบรารีปฏิทินจีน lunar-javascript 1.6.12 ตรงกันทุกวัน จึงตั้ง approx: false
 - id: cny-2570
   title: ตรุษจีน
   title_zh: 春節
@@ -12,7 +13,7 @@
   title_zh: 觀音誕辰
   lunar: ๑๙ ค่ำ เดือน ๒
   date: 2027-03-26
-  approx: true
+  approx: false
   kind: guanyin
   note: งานใหญ่ครั้งแรกของตำหนักหลังเปิด
 - id: enlighten-2570
@@ -20,7 +21,7 @@
   title_zh: 觀音成道
   lunar: ๑๙ ค่ำ เดือน ๖
   date: 2027-07-22
-  approx: true
+  approx: false
   kind: guanyin
 - id: vegetarian-2570
   title: เทศกาลกินเจ
@@ -28,12 +29,12 @@
   lunar: ๑–๙ ค่ำ เดือน ๙
   date: 2027-09-30
   end_date: 2027-10-08
-  approx: true
+  approx: false
   kind: festival
 - id: ordain-2570
   title: วันออกบวชเจ้าแม่กวนอิม
   title_zh: 觀音出家
   lunar: ๑๙ ค่ำ เดือน ๙
   date: 2027-10-18
-  approx: true
+  approx: false
   kind: guanyin
