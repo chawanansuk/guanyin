@@ -94,7 +94,9 @@
   --display: "Trirong", "Noto Serif Thai", Georgia, serif;
   --serif: "Noto Serif Thai", "Noto Serif", Georgia, serif;
   --sans: "IBM Plex Sans Thai", "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  /* IBM Plex Mono ไม่มีอักษรไทย — ใส่ Plex Sans Thai ต่อท้าย ตัวเลขไทยและคำไทยในบรรทัด mono จึงเป็นตระกูลเดียวกัน
+     ไม่ตกไปฟอนต์ระบบที่หน้าตาต่างกันทุกเครื่อง */
+  --mono: "IBM Plex Mono", "IBM Plex Sans Thai", ui-monospace, "SF Mono", Menlo, monospace;
   --han: "Noto Serif TC", "Songti TC", "PingFang TC", "Microsoft JhengHei", serif;
 
   --gutter: 20px;
@@ -1144,6 +1146,7 @@ body::after {
   height: 22px;
   border: 0;
   margin: 0;
+  display: block;
   background-image: var(--fret-light);
   background-repeat: repeat-x;
   background-size: auto 66px;      /* 66 = ความสูงเต็มไฟล์ ทำให้เห็นเฉพาะแถบบน */
@@ -1195,4 +1198,55 @@ body::after {
   display: grid;
   place-items: center;
   color: var(--gold-bright);
+}
+
+
+/* ============================================================
+   ภาษาไทยไม่ถ่างช่องไฟระหว่างตัวอักษร
+   ป้ายเล็กสีทองเดิมถ่าง .1–.3em ซึ่งใช้ได้กับละตินและจีน แต่ไทยไม่มีช่องว่างระหว่างคำ
+   ถ่างแล้วอ่านเป็นตัวอักษรเรียงกัน ("ก า ร เ ดิ น ท า ง") จึงคืนเป็น 0 เฉพาะหน้าไทย
+   แล้วเพิ่มขนาด 13 → 14px ชดเชยความเด่นที่หายไป ป้ายบนหน้าจีนยังถ่างตามเดิม
+   ============================================================ */
+html:lang(th) :is(
+  .eyebrow, .site-foot__cols h2, .visit__caption, .visit__map-tag,
+  .vid__play-label, .vid__tag, .mapvid__label, .tablebox thead th,
+  .hero__ribbon-label, .qr__head, .pang__essence-label, .pang__metalabel,
+  .pang__nav-dir, .pang-figure__tag, .pang-case__hint, .ch dt, .couplet__title
+):not(.han) {
+  letter-spacing: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+html:lang(th) .eyebrow:not(.han) { font-size: 14px; }
+
+/* เส้นลาย 回紋 คั่นแถบ: วางชิดขอบบนของแถบ แทนที่จะลอยอยู่ใต้ระยะ padding
+   แล้วเว้นที่ให้หัวข้อหายใจ — เดิมหัวข้อเล็กสีทองเกือบชนลาย */
+section.band > .rule-fret:first-child {
+  margin-top: calc(-1 * clamp(40px, 7vw, 72px));
+  margin-bottom: clamp(32px, 5vw, 56px);
+}
+section.band:has(> .rule-fret:first-child) { border-top: 0; }
+
+/* ============================================================
+   ฮีโร่หน้าแรก จอกว้าง: ภาพอาคารอยู่ครึ่งขวาเต็มองค์ ป้ายจริงบนอาคารไม่ถูกบัง
+   เดิมภาพกว้างเต็มจอ ป้ายชาดวางทับป้ายจริงจนเหลือ "陀觀音堂"
+   ฝั่งซ้ายเป็นพื้นไม้เข้มที่ภาพค่อย ๆ จางเข้าไป ป้ายชาดกับปุ่มอยู่บนพื้นนี้
+   มือถือคงแบบเดิม (ภาพเต็มจอ ป้ายกลางภาพ)
+   ============================================================ */
+@media (min-width: 1100px) {
+  .hero--home.hero--photo .hero__stage {
+    background:
+      radial-gradient(120% 90% at 0% 100%, rgba(122, 22, 16, .38) 0%, rgba(122, 22, 16, 0) 60%),
+      linear-gradient(90deg, #22140C 0%, #2C1A10 46%, #3A2214 100%);
+  }
+  /* กว้างไม่เกิน 900px — จอ 1920 ภาพกว้าง 62% จะสูงเกินฮีโร่จนยอดหลังคาถูกตัด */
+  .hero--home.hero--photo .hero__photo { inset: 0 0 0 auto; width: min(62%, 900px); }
+  .hero--home .hero__photo .shrine-photo { object-position: 50% 50%; }
+  /* ม่านเงาอยู่ข้างในกรอบภาพ จึงคลุมเต็มกรอบภาพ ไม่ใช่เต็มฮีโร่ */
+  .hero--home.hero--photo .hero__scrim {
+    inset: 0;
+    background:
+      linear-gradient(90deg, #2E1B10 0%, rgba(46, 27, 16, .72) 14%, rgba(46, 27, 16, .18) 34%, rgba(46, 27, 16, 0) 52%),
+      linear-gradient(0deg, rgba(38, 22, 12, .3) 0%, rgba(38, 22, 12, 0) 30%);
+  }
 }

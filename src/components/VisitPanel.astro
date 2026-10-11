@@ -127,7 +127,7 @@ const mapAlt = lang === 'zh'
     .visit__map img { height: 100%; object-fit: cover; object-position: center 40%; }
   }
   .visit__map-tag {
-    position: absolute; right: 10px; top: 10px; padding: var(--space-1) var(--space-2);
+    position: absolute; left: 10px; bottom: 10px; padding: var(--space-1) var(--space-2);   /* เดิมมุมขวาบน ทับชื่อในภาพแผนที่ */
     font: 600 var(--fs-caption)/1.5 var(--sans); letter-spacing: .06em;
     color: var(--gold-pale); background: rgba(11, 7, 8, .72); pointer-events: none;
   }
@@ -152,4 +152,6 @@ const mapAlt = lang === 'zh'
   .visit__shut td { font-weight: 600; }
   .visit__note { margin: 0; }
   .visit__cta { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-1); }
+  /* มือถือ: ปุ่มเต็มความกว้าง กดง่ายด้วยนิ้วโป้ง ปุ่มนำทางอยู่บน */
+  @media (max-width: 559px) { .visit__cta { flex-direction: column; } .visit__cta :global(.btn) { width: 100%; justify-content: center; } }
 </style>

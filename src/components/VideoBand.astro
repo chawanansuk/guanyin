@@ -132,6 +132,7 @@ const ytTitle = (zh ? v?.youtube_title_zh : v?.youtube_title) ?? '';
   .vidband__grid {
     display: grid;
     grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
+    max-width: 860px;   /* เดิมกว้าง 1080 ข้อความสั้นสี่บรรทัดลอยอยู่กลางที่ว่างครึ่งจอ */
     gap: var(--space-8) var(--space-12);
     align-items: center;
   }
