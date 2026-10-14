@@ -22,8 +22,15 @@ const entries = list.filter((p) => p.data.slug in chants);
         เมื่อตรวจแล้วจึงแสดงบนหน้าปาง
       </p>
     </div>
+    <nav class="review__toc" aria-label="ไปที่ปาง">
+      <ul>
+        {entries.map((p) => (
+          <li><a href={`#${p.data.slug}`}><span class="mono">{pangNo(p.data.order)}</span> {displayName(p)}</a></li>
+        ))}
+      </ul>
+    </nav>
     {entries.map((p) => (
-      <article class="review__item">
+      <article class="review__item" id={p.data.slug}>
         <h2 class="review__pang">
           <span class="mono">{pangNo(p.data.order)}</span>
           <a href={`/33-pang/${p.data.slug}`}>{displayName(p)}</a>
@@ -43,7 +50,14 @@ const entries = list.filter((p) => p.data.slug in chants);
   .review { max-width: 760px; padding-block: clamp(32px, 6vw, 64px); }
   .review h1 { margin: 6px 0 16px; }
   .review .note p + p { margin-top: .6em; }
-  .review__item { margin-top: 40px; }
+  .review__item { margin-top: 48px; scroll-margin-top: 80px; }
+  .review__toc ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 8px; margin-top: 20px; }
+  .review__toc a {
+    display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px;
+    border: 1px solid var(--line); border-radius: var(--radius-pill); background: var(--surface);
+    font-size: var(--fs-sm); color: var(--ink-2); text-decoration: none;
+  }
+  .review__toc .mono { color: var(--gold); }
   .review__pang { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; font-size: var(--fs-h3); }
   .review__pang .mono { color: var(--gold); font-size: .7em; }
   .review__pang .han { color: var(--ink-3); font-size: .8em; }
