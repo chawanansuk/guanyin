@@ -1,0 +1,52 @@
+---
+// หน้าให้ผู้ดูแลตำหนักตรวจร่างบทสวดและเพลงประจำปาง ไม่ลิงก์จากเมนู และไม่ให้ Google เก็บ
+// ตรวจแล้ว: ตั้ง status เป็น approved และกรอก reviewed_by ใน src/data/pang-chant.json ส่วนนั้นจึงขึ้นบนหน้าปาง
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PangChant from '../../components/PangChant.astro';
+import chants from '../../data/pang-chant.json';
+import { allPang, displayName } from '../../lib/pang';
+import { pangNo } from '../../lib/format';
+
+const list = await allPang();
+const entries = list.filter((p) => p.data.slug in chants);
+---
+<BaseLayout title="ร่างบทสวดและเพลงประจำปาง" description="หน้าให้ผู้ดูแลตำหนักตรวจร่างบทสวดและเพลงประจำปาง" noindex>
+  <main class="wrap review">
+    <p class="eyebrow">สำหรับผู้ดูแลตำหนัก</p>
+    <h1>ร่างบทสวดและเพลงประจำปาง</h1>
+    <div class="note">
+      <p>หน้านี้ไม่อยู่ในเมนู และไม่ส่งให้ Google ใช้ตรวจร่างก่อนขึ้นหน้าปางจริง</p>
+      <p>
+        สิ่งที่ขอให้ตรวจ ๑) บทสรรเสริญภาษาไทยถูกต้องตามความหมายของปางและเหมาะจะสวดหรือไม่
+        ๒) ตำหนักใช้บทดั้งเดิมฉบับใด ๓) เพลงบรรเลงเหมาะกับบรรยากาศตำหนักหรือไม่
+        เมื่อตรวจแล้วจึงแสดงบนหน้าปาง
+      </p>
+    </div>
+    {entries.map((p) => (
+      <article class="review__item">
+        <h2 class="review__pang">
+          <span class="mono">{pangNo(p.data.order)}</span>
+          <a href={`/33-pang/${p.data.slug}`}>{displayName(p)}</a>
+          <span class="han">{p.data.name_zh}</span>
+        </h2>
+        <PangChant slug={p.data.slug} preview />
+        <details class="review__zh">
+          <summary>ดูแบบที่แสดงในโหมดภาษาจีน</summary>
+          <PangChant slug={p.data.slug} lang="zh" preview />
+        </details>
+      </article>
+    ))}
+  </main>
+</BaseLayout>
+
+<style>
+  .review { max-width: 760px; padding-block: clamp(32px, 6vw, 64px); }
+  .review h1 { margin: 6px 0 16px; }
+  .review .note p + p { margin-top: .6em; }
+  .review__item { margin-top: 40px; }
+  .review__pang { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; font-size: var(--fs-h3); }
+  .review__pang .mono { color: var(--gold); font-size: .7em; }
+  .review__pang .han { color: var(--ink-3); font-size: .8em; }
+  .review__zh { margin-top: 24px; }
+  .review__zh summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; color: var(--gold); }
+</style>

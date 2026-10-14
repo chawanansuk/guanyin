@@ -1,0 +1,143 @@
+---
+// บทสวดและเพลงประจำปาง — ข้อมูลอยู่ที่ src/data/pang-chant.json
+// หน้าปางแสดงเฉพาะรายการที่ตำหนักตรวจแล้ว (status: approved) ส่วนร่างดูได้ที่ /review/chant
+// กติกา: ไม่พิมพ์ตัวบทมนต์ ให้ชื่อบทกับที่มาเท่านั้น และบทที่แต่งใหม่ต้องบอกว่าตำหนักเรียบเรียง
+import chants from '../data/pang-chant.json';
+
+interface Props {
+  slug: string;
+  lang?: 'th' | 'zh';
+  /** true = แสดงแม้ยังเป็นร่าง (ใช้ในหน้าตรวจเท่านั้น) */
+  preview?: boolean;
+}
+const { slug, lang = 'th', preview = false } = Astro.props;
+const c = (chants as Record<string, any>)[slug];
+const show = !!c && (preview || c.status === 'approved');
+const zh = lang === 'zh';
+const m = c?.music;
+const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+const id = `chant-${slug}`;
+---
+{show && (
+  <section class="chant" aria-labelledby={id}>
+    <h2 id={id}>
+      {zh ? '讚誦與樂曲' : 'บทสวดและเพลงประจำปาง'}
+      {c.status !== 'approved' && <span class="pang__tag">{zh ? '待本堂審定' : 'ร่าง รอตำหนักตรวจ'}</span>}
+    </h2>
+
+    {c.traditional && (
+      <div class="chant__trad">
+        <p class="chant__label">{zh ? '傳統讚偈' : 'บทดั้งเดิม'}</p>
+        <p class="chant__name">
+          <span class="han" lang="zh-Hant">{c.traditional.name_zh}</span>
+          {!zh && <span class="chant__name-th">{c.traditional.name_th}</span>}
+        </p>
+        <p>{zh ? c.traditional.note_zh : c.traditional.note_th}</p>
+      </div>
+    )}
+
+    {!zh && c.zan_th && (
+      <div class="chant__zan">
+        <p class="chant__label">บทสรรเสริญภาษาไทย <span class="chant__meter">{c.zan_th.meter}</span></p>
+        <div class="chant__verse" lang="th">
+          {c.zan_th.stanzas.map((st: string[]) => (
+            <p class="chant__stanza">
+              <span>{st[0]}</span><span>{st[1]}</span>
+              <span>{st[2]}</span><span>{st[3]}</span>
+            </p>
+          ))}
+          <p class="chant__closing">{c.zan_th.closing}</p>
+        </div>
+        <p class="chant__dedic"><strong>อุทิศ</strong> {c.zan_th.dedication}</p>
+        <p class="chant__fine">
+          ตำหนักเรียบเรียงจากความหมายของปาง ไม่ใช่พระสูตร
+          ใช้สวดหน้าองค์หรือสวดในใจได้ ไม่มีจำนวนจบที่กำหนด
+        </p>
+        {c.zan_th.basis?.length > 0 && (
+          <details class="chant__basis">
+            <summary>ที่มาของแต่ละบท</summary>
+            <ul>{c.zan_th.basis.map((b: string) => <li>{b}</li>)}</ul>
+          </details>
+        )}
+      </div>
+    )}
+
+    {m && (
+      <figure class="chant__music">
+        <figcaption>
+          <span class="chant__label">{zh ? '樂曲' : 'เพลงบรรเลง'}</span>
+          <span class="chant__title">
+            {zh ? <span class="han">{m.title_zh}</span> : m.title_th}
+            <span class="chant__len mono">{mmss(m.seconds)}</span>
+          </span>
+          <span class="chant__desc">{zh ? m.desc_zh : m.desc_th}</span>
+        </figcaption>
+        <audio controls preload="none" src={m.src}>
+          <a href={m.src}>{zh ? '下載樂曲' : 'ดาวน์โหลดเพลง'}</a>
+        </audio>
+        <p class="chant__fine">
+          {zh
+            ? '此為冥想與敬禮時聆聽之樂曲，並非法會儀軌。'
+            : 'เป็นเพลงสำหรับฟังขณะสงบใจหรือระหว่างกราบ ไม่ใช่บทในพิธี'}
+          {m.kind === 'demo' && <> {zh ? m.credit_zh : m.credit_th}</>}
+        </p>
+      </figure>
+    )}
+  </section>
+)}
+
+<style>
+  /* สไตล์หน้าปางเป็น scoped จึงต้องตั้งหัวข้อกับย่อหน้าของส่วนนี้ให้เหมือนกัน */
+  .chant { margin-top: 34px; }
+  .chant h2 { font-size: var(--fs-h4); padding-bottom: 7px; margin-bottom: 12px; border-bottom: 1px solid var(--line); }
+  .chant p { font-size: var(--fs-md); line-height: 1.85; }
+  .pang__tag {
+    display: inline-block; margin-left: 10px; padding: 1px 9px;
+    border: 1px solid var(--line-strong); border-radius: var(--radius-pill);
+    font-family: var(--sans); font-size: var(--fs-caption); font-weight: 400;
+    letter-spacing: 0; color: var(--ink-3); vertical-align: middle;
+  }
+  .chant > div, .chant__music { margin-top: 18px; }
+  .chant__label {
+    display: block; font-size: var(--fs-sm); color: var(--gold); font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .chant__meter { font-weight: 400; color: var(--ink-3); margin-left: 6px; }
+  .chant__name { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; margin-bottom: 6px; }
+  .chant__name .han { font-size: 1.35em; color: var(--lacquer); }
+  .chant__name-th { color: var(--ink-2); }
+
+  .chant__verse {
+    background: var(--gold-soft); border: 1px solid var(--gold-line); border-radius: 10px;
+    padding: 18px clamp(16px, 4vw, 28px);
+    font-family: var(--serif);
+  }
+  .chant__stanza {
+    /* คอลัมน์กว้างเท่ากันทุกบท วรรคหน้าและวรรคหลังจึงตรงกันทั้งบท */
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2px clamp(18px, 5vw, 40px);
+    max-width: 26em; margin-inline: auto; line-height: 1.9 !important;
+  }
+  .chant__stanza + .chant__stanza { margin-top: 14px; }
+  .chant__closing { text-align: center; margin-top: 16px; color: var(--lacquer); font-weight: 600; }
+  @media (max-width: 420px) {
+    .chant__stanza { grid-template-columns: 1fr; text-align: center; }
+    .chant__stanza span:nth-child(even) { margin-bottom: 4px; }
+  }
+  .chant__dedic { margin-top: 12px; }
+  .chant__fine { font-size: var(--fs-sm) !important; color: var(--ink-3); margin-top: 8px; line-height: 1.7 !important; }
+  .chant__basis { margin-top: 8px; font-size: var(--fs-sm); color: var(--ink-2); }
+  .chant__basis summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; color: var(--gold); }
+  .chant__basis ul { padding-left: 1.2em; list-style: disc; }
+  .chant__basis li + li { margin-top: 4px; }
+
+  .chant__music {
+    margin-inline: 0; margin-bottom: 0;
+    border: 1px solid var(--line); border-radius: 10px; background: var(--surface);
+    padding: 16px clamp(14px, 3vw, 20px);
+  }
+  .chant__music figcaption { display: grid; gap: 2px; margin-bottom: 12px; }
+  .chant__title { font-family: var(--serif); font-size: var(--fs-lg, 1.15rem); display: flex; gap: 10px; align-items: baseline; }
+  .chant__len { font-size: var(--fs-sm); color: var(--ink-3); }
+  .chant__desc { color: var(--ink-2); font-size: var(--fs-sm); line-height: 1.7; }
+  .chant__music audio { width: 100%; height: 44px; display: block; }
+</style>

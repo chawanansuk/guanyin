@@ -4,6 +4,7 @@ import PangArt from '../../components/PangArt.astro';
 import ShrinePhoto from '../../components/ShrinePhoto.astro';
 import photoMeta from '../../data/photo-meta.json';
 import ShareBar from '../../components/ShareBar.astro';
+import PangChant from '../../components/PangChant.astro';
 import site from '../../lib/site';
 import { getCollection, render } from 'astro:content';
 import { allPang, displayName, altNames, isVerified, prevPang, nextPang } from '../../lib/pang';
@@ -199,6 +200,8 @@ const description =
             )}
           </section>
         )}
+
+        <PangChant slug={d.slug} />
 
         <section class="pang__sec">
           <h2>ความหมายและเรื่องเล่า</h2>

@@ -3,6 +3,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import PangArt from '../../../components/PangArt.astro';
 import photoMeta from '../../../data/photo-meta.json';
 import ShareBar from '../../../components/ShareBar.astro';
+import PangChant from '../../../components/PangChant.astro';
 import { getCollection, render } from 'astro:content';
 import { allPang, prevPang, nextPang } from '../../../lib/pang';
 
@@ -144,6 +145,8 @@ const description = z
             {z.short_prayer && <blockquote class="pang__prayer">「{z.short_prayer}」</blockquote>}
           </section>
         )}
+
+        <PangChant slug={d.slug} lang="zh" />
 
         {Content ? (
           <section class="pang__sec">

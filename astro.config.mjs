@@ -40,6 +40,8 @@ export default defineConfig({
       // บทสวดยังรอผู้รู้ตรวจ (verified_by ว่าง) จึง noindex — ตรวจแล้วค่อยลบออกจากรายการนี้
       filter: (page) =>
         !page.includes('/admin') &&
+        // หน้าให้ตำหนักตรวจร่างบทสวดและเพลง ไม่ใช่หน้าสำหรับผู้มาไหว้
+        !page.includes('/review/') &&
         !NOINDEX_PRAYERS.some((s) => page.includes(`/worship/prayers/${s}`)) &&
         !NOINDEX_ARTICLES.some((s) => page.includes(`/articles/${s}`)),
       i18n: undefined,
