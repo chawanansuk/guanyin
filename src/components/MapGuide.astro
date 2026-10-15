@@ -10,11 +10,19 @@
  * แล้วแสดงปุ่ม ถ้าเล่นไม่ได้ ปุ่มจะหายไปให้เหลือแถบควบคุมเดิม และขึ้นลิงก์เปิดไฟล์ตรง
  * ข้อความในคลิปเป็นภาษาไทยฝังในภาพ เนื้อหาตรงกับหัวข้อ "เดินทางด้วยรถยนต์" ด้านล่าง
  * ต้นฉบับ 1080×1920 อยู่ใน print/ (ไม่ commit) ไฟล์เว็บย่อเหลือ 720×1280
+ *
+ * มีสองไฟล์ให้เบราว์เซอร์เลือก: MP4 แบบ H.264 Main 3.1 ที่มือถือทุกรุ่นและแอป LINE/Facebook เล่นได้
+ * กับ WebM แบบ VP9 สำรองไว้สำหรับเบราว์เซอร์ที่ไม่มีตัวถอด H.264 (Chromium บางรุ่น Firefox บน Linux)
+ * ใส่ codecs ใน type ให้เบราว์เซอร์รู้ก่อนโหลดว่าเล่นไฟล์ไหนได้
  */
 import ShrineMark from './ShrineMark.astro';
 
+interface Props { lang?: 'th' | 'zh' }
+const { lang = 'th' } = Astro.props;
+const zh = lang === 'zh';
 const FILE = '/video/map-guide.mp4';
-const BYTES = 2_536_840;
+const WEBM = '/video/map-guide.webm';
+const BYTES = 2_636_886;
 const SECONDS = 37;
 const mb = (BYTES / 1_048_576).toFixed(1);
 ---
@@ -29,34 +37,56 @@ const mb = (BYTES / 1_048_576).toFixed(1);
         poster="/video/map-guide-poster.jpg"
         width="720"
         height="1280"
-        aria-label="คลิปนำทางมาตำหนักผู่โถว ๕ จุดสังเกต"
+        aria-label={zh ? '前往普陀觀音堂的導航短片，五個地標' : 'คลิปนำทางมาตำหนักผู่โถว ๕ จุดสังเกต'}
       >
-        <source src={FILE} type="video/mp4" />
+        <source src={FILE} type='video/mp4; codecs="avc1.4D401F, mp4a.40.2"' />
+        <source src={WEBM} type='video/webm; codecs="vp9, opus"' />
       </video>
       <button class="mapvid__play" type="button" data-mapvid-play hidden>
-        <span class="mapvid__mark"><ShrineMark title="เล่นคลิปนำทาง" /></span>
-        <span class="mapvid__label">กดเพื่อเล่น</span>
+        <span class="mapvid__mark"><ShrineMark title={zh ? '播放導航短片' : 'เล่นคลิปนำทาง'} /></span>
+        <span class="mapvid__label">{zh ? '點擊播放' : 'กดเพื่อเล่น'}</span>
       </button>
     </div>
   </figure>
 
   <div class="mapvid__text">
-    <p class="eyebrow eyebrow--marked">คลิปนำทาง</p>
-    <h2 id="mapvid-h">ดูทางมาก่อนออกจากบ้าน</h2>
-    <p>
-      คลิปสั้น {SECONDS} วินาที พาดูจุดสังเกตทีละจุด ตั้งแต่ถนนพุทธมณฑลสาย ๒
-      ซอย ๑๑ กับซอย ๑๒ ร้านยางสายสอง ทางกลับรถสำหรับคนที่มาจากถนนบรมราชชนนี
-      จนถึงประตูตำหนักด้านในสุดของลานจอดรถ
-    </p>
-    <p class="muted small">มีเพลงประกอบ เปิดเสียงได้ · ไฟล์ {mb} MB · แผนผังประกอบ ไม่ใช่มาตราส่วนจริง</p>
-    <p class="mapvid__fail" data-mapvid-fail hidden>
-      เครื่องนี้เล่นคลิปในหน้าเว็บไม่ได้ <a href={FILE} target="_blank" rel="noopener">เปิดคลิปในหน้าต่างใหม่</a>
-    </p>
-    <p class="mapvid__links">
-      <a href={FILE} target="_blank" rel="noopener">เปิดคลิปเต็มจอ</a>
-      <span aria-hidden="true"> · </span>
-      <a href={FILE} download="putuo-guanyin-map.mp4">ดาวน์โหลดไว้ส่งต่อ</a>
-    </p>
+    {zh ? (
+      <>
+        <p class="eyebrow eyebrow--marked">導航短片</p>
+        <h2 id="mapvid-h">出門前先看路線</h2>
+        <p>
+          {SECONDS} 秒短片，逐一介紹地標：佛城二段路 11 巷與 12 巷、Sai Song 輪胎行、從 Borommaratchachonnani 路過來時的迴轉處，直到停車場最裡側的本堂大門。
+        </p>
+        <p class="muted small">附配樂 · 片中文字為泰文 · 檔案 {mb} MB · 示意圖，非實際比例</p>
+        <p class="mapvid__fail" data-mapvid-fail hidden>
+          此裝置無法在網頁內播放短片，<a href={FILE} target="_blank" rel="noopener">請在新視窗開啟</a>
+        </p>
+        <p class="mapvid__links">
+          <a href={FILE} target="_blank" rel="noopener">全螢幕觀看</a>
+          <span aria-hidden="true"> · </span>
+          <a href={FILE} download="putuo-guanyin-map.mp4">下載轉傳</a>
+        </p>
+      </>
+    ) : (
+      <>
+        <p class="eyebrow eyebrow--marked">คลิปนำทาง</p>
+        <h2 id="mapvid-h">ดูทางมาก่อนออกจากบ้าน</h2>
+        <p>
+          คลิปสั้น {SECONDS} วินาที พาดูจุดสังเกตทีละจุด ตั้งแต่ถนนพุทธมณฑลสาย ๒
+          ซอย ๑๑ กับซอย ๑๒ ร้านยางสายสอง ทางกลับรถสำหรับคนที่มาจากถนนบรมราชชนนี
+          จนถึงประตูตำหนักด้านในสุดของลานจอดรถ
+        </p>
+        <p class="muted small">มีเพลงประกอบ เปิดเสียงได้ · ไฟล์ {mb} MB · แผนผังประกอบ ไม่ใช่มาตราส่วนจริง</p>
+        <p class="mapvid__fail" data-mapvid-fail hidden>
+          เครื่องนี้เล่นคลิปในหน้าเว็บไม่ได้ <a href={FILE} target="_blank" rel="noopener">เปิดคลิปในหน้าต่างใหม่</a>
+        </p>
+        <p class="mapvid__links">
+          <a href={FILE} target="_blank" rel="noopener">เปิดคลิปเต็มจอ</a>
+          <span aria-hidden="true"> · </span>
+          <a href={FILE} download="putuo-guanyin-map.mp4">ดาวน์โหลดไว้ส่งต่อ</a>
+        </p>
+      </>
+    )}
   </div>
 </section>
 
@@ -75,9 +105,10 @@ const mb = (BYTES / 1_048_576).toFixed(1);
         video.controls = true;
         if (fail) fail.hidden = false;
       };
-      video.addEventListener('error', giveUp, true);
-      var src = video.querySelector('source');
-      if (src) src.addEventListener('error', giveUp);
+      video.addEventListener('error', function (e) { if (e.target === video) giveUp(); }, true);
+      // มีหลาย source: เบราว์เซอร์ลองทีละไฟล์ จะยอมแพ้ก็ต่อเมื่อไฟล์สุดท้ายเล่นไม่ได้
+      var srcs = video.querySelectorAll('source');
+      if (srcs.length) srcs[srcs.length - 1].addEventListener('error', giveUp);
       video.controls = false;
       btn.hidden = false;
       btn.addEventListener('click', function () {
