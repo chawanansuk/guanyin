@@ -141,7 +141,6 @@ public/admin/           หน้าจอจัดการเนื้อห�
 - [ ] เบอร์โทร ไลน์ OA และเพจเฟซบุ๊ก ใน `src/data/site.json`
 - [ ] ให้ผู้รู้ภาษาจีนตรวจคำแปลทั้งหมด: `src/content/pang-zh/` `articles-zh/` `prayers-zh/` ช่อง `*_zh` ใน `wishes.yaml` และหน้าใน `src/pages/zh/`
 - [ ] ผู้รู้ของตำหนักตรวจบทความ ๒๒ เรื่อง แล้วใส่ชื่อใน `verified_by`
-- [ ] โดเมนจริง (ตอนนี้ตั้งเป็น `putuoguanyin.com` ใน `site.json`)
 - [ ] Google Business Profile — **ยืนยันตัวตนใช้เวลา ๑–๒ สัปดาห์ ต้องเริ่มก่อน**
 
 ## เอกสารเพิ่มเติม
