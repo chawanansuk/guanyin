@@ -1,18 +1,20 @@
 ---
 // บทสวดและเพลงประจำปาง — ข้อมูลอยู่ที่ src/data/pang-chant.json
-// หน้าปางแสดงเฉพาะรายการที่ตำหนักตรวจแล้ว (status: approved) ส่วนร่างดูได้ที่ /review/chant
+// แสดงบนหน้าปางทุกปาง ยกเว้น status: hidden — ยังไม่กรอก reviewed_by จะติดป้ายรอตำหนักยืนยัน
+// หน้า /review/chant รวมทุกปางไว้ให้ตำหนักตรวจในหน้าเดียว
 // กติกา: ไม่พิมพ์ตัวบทมนต์ ให้ชื่อบทกับที่มาเท่านั้น และบทที่แต่งใหม่ต้องบอกว่าตำหนักเรียบเรียง
 import chants from '../data/pang-chant.json';
 
 interface Props {
   slug: string;
   lang?: 'th' | 'zh';
-  /** true = แสดงแม้ยังเป็นร่าง (ใช้ในหน้าตรวจเท่านั้น) */
+  /** true = แสดงแม้ซ่อนไว้ (ใช้ในหน้าตรวจเท่านั้น) */
   preview?: boolean;
 }
 const { slug, lang = 'th', preview = false } = Astro.props;
 const c = (chants as Record<string, any>)[slug];
-const show = !!c && (preview || c.status === 'approved');
+const show = !!c && (preview || c.status !== 'hidden');
+const confirmed = !!c?.reviewed_by?.trim();
 const zh = lang === 'zh';
 const m = c?.music;
 const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
@@ -33,7 +35,7 @@ const tradHref = t?.href ? (zh ? `/zh${t.href}` : t.href) : '';
   <section class="chant" aria-labelledby={id}>
     <h2 id={id}>
       {zh ? '讚誦與樂曲' : 'บทสวดและเพลงประจำปาง'}
-      {c.status !== 'approved' && <span class="pang__tag">{zh ? '待本堂審定' : 'ร่าง รอตำหนักตรวจ'}</span>}
+      {!confirmed && <span class="pang__tag">{zh ? '尚待本堂確認' : 'รอตำหนักยืนยัน'}</span>}
     </h2>
 
     {t && (
@@ -76,6 +78,18 @@ const tradHref = t?.href ? (zh ? `/zh${t.href}` : t.href) : '';
       </div>
     )}
 
+    {zh && c.zan_zh && (
+      <div class="chant__zan">
+        <p class="chant__label">讚偈 <span class="chant__meter">{c.zan_zh.meter}</span></p>
+        <div class="chant__verse chant__verse--zh han" lang="zh-Hant">
+          {c.zan_zh.couplets.map((l: string) => <p class="chant__couplet">{l}</p>)}
+          <p class="chant__closing">{c.zan_zh.closing}</p>
+        </div>
+        <p class="chant__dedic"><strong>迴向</strong> {c.zan_zh.dedication}</p>
+        <p class="chant__fine">本堂依本相意涵新撰，非經文。可於像前或默念，不限遍數。</p>
+      </div>
+    )}
+
     {m && (
       <figure class="chant__music">
         <figcaption>
@@ -89,12 +103,7 @@ const tradHref = t?.href ? (zh ? `/zh${t.href}` : t.href) : '';
         <audio controls preload="none" src={m.src}>
           <a href={m.src}>{zh ? '下載樂曲' : 'ดาวน์โหลดเพลง'}</a>
         </audio>
-        <p class="chant__fine">
-          {zh
-            ? '此為冥想與敬禮時聆聽之樂曲，並非法會儀軌。'
-            : 'เป็นเพลงสำหรับฟังขณะสงบใจหรือระหว่างกราบ ไม่ใช่บทในพิธี'}
-          {m.kind === 'demo' && <> {zh ? m.credit_zh : m.credit_th}</>}
-        </p>
+        <p class="chant__fine">{zh ? '為靜心或禮拜時聆聽之樂曲。' : 'เป็นเพลงสำหรับฟังขณะสงบใจหรือระหว่างกราบ'}</p>
       </figure>
     )}
   </section>
@@ -132,6 +141,7 @@ const tradHref = t?.href ? (zh ? `/zh${t.href}` : t.href) : '';
     max-width: 26em; margin-inline: auto; line-height: 1.9 !important;
   }
   .chant__stanza + .chant__stanza { margin-top: 14px; }
+  .chant__couplet { text-align: center; font-size: 1.12rem !important; line-height: 2 !important; letter-spacing: .08em; }
   .chant__closing { text-align: center; margin-top: 16px; color: var(--lacquer); font-weight: 600; }
   @media (max-width: 420px) {
     .chant__stanza { grid-template-columns: 1fr; text-align: center; }
