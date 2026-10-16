@@ -3,7 +3,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import PageHero from '../../../components/PageHero.astro';
 import ShareBar from '../../../components/ShareBar.astro';
 import { getCollection, render } from 'astro:content';
-import { isoDate } from '../../../lib/format';
+import { isoDate, clampText } from '../../../lib/format';
 import { ARTICLE_CATEGORY_LABEL_ZH } from '../../../lib/articles';
 import site from '../../../lib/site';
 
@@ -77,7 +77,7 @@ if (zd.faq.length > 0) {
   lang={lang}
   title={zd.title}
   suffix={false}
-  description={zd.summary}
+  description={clampText(zd.summary, 90)}
   noindex={!ready}
   schema={schema}
   breadcrumbs={[

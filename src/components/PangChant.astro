@@ -18,7 +18,7 @@ const confirmed = !!c?.reviewed_by?.trim();
 const zh = lang === 'zh';
 const m = c?.music;
 const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-const id = `chant-${slug}`;
+const id = `chant-${slug}${zh ? '-zh' : ''}`;
 // ชนิดของบทดั้งเดิม: hymn = บทสรรเสริญที่วัดจีนใช้ · sutra = คัมภีร์ของปางนี้
 // dharani = คัมภีร์ธารณี (ไม่พิมพ์ตัวบท) · pumen = ไม่มีคัมภีร์ของตัวเอง ใช้บทผู่เหมินผิ่นที่ตำราจับคู่ไว้
 const TRAD_LABEL: Record<string, [string, string]> = {

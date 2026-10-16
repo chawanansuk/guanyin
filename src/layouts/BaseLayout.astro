@@ -5,6 +5,8 @@ import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import { schemaOpeningHours } from '../lib/hours';
 import { LANG_META, LANGS, altPath, cleanPath, useT, type Lang } from '../i18n';
+import fonts from '../data/fonts.json';
+import og from '../data/og.json';
 
 interface Props {
   title: string;
@@ -21,13 +23,17 @@ interface Props {
 }
 const {
   title, description, suffix = true,
-  ogImage = '/og/default.jpg', noindex = false,
+  ogImage: ogImageProp, noindex = false,
   schema = [], breadcrumbs = [], bodyClass, lang = 'th',
 } = Astro.props;
 
 const t = useT(lang);
 const meta = LANG_META[lang];
 const here = cleanPath(Astro.url.pathname);
+// ภาพพรีวิวตอนแชร์: หน้าที่มีภาพเฉพาะ (npm run og สร้างไว้ใน src/data/og.json) ใช้ภาพนั้น หน้าไทยกับหน้าจีนใช้ภาพเดียวกัน
+const pageKey = here.replace(/^\/zh(?=\/|$)/, '') || '/';
+const ogImage = ogImageProp ?? (og.pages as Record<string, string>)[pageKey] ?? '/og/default.jpg';
+const pageFonts = (fonts.pages as Record<string, { w: number; url: string; range: string }[]>)[here] ?? [];
 // hreflang ให้ Google รู้ว่าหน้านี้มีอีกภาษาอยู่ที่ไหน และหน้าไหนเป็นค่าตั้งต้น
 const alternates = LANGS
   .map((l) => ({ l, p: altPath(here, l) }))
@@ -119,12 +125,14 @@ const graphs = [place, ...crumbs, ...schema];
       <link rel="alternate" hreflang="x-default" href={new URL(alternates.find((a) => a.l === 'th')!.p, site.url).href} />
     )}
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Trirong:wght@300;400;500;600&family=Noto+Serif+Thai:wght@400;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+TC:wght@400;500;700&display=swap"
-    />
+    {/* ฟอนต์อยู่ในเว็บเอง (public/fonts สร้างด้วย npm run fonts) โหลดล่วงหน้าเฉพาะสองตัวที่ทุกหน้าใช้ */}
+    {fonts.preload.map((href) => <link rel="preload" as="font" type="font/woff2" href={href} crossorigin />)}
+    {/* ตัวอักษรจีนเฉพาะหน้านี้ (ที่ไม่อยู่ในชุดกลางของ fonts.css) */}
+    {pageFonts.length > 0 && (
+      <style set:html={pageFonts.map((f) =>
+        `@font-face{font-family:'Noto Serif TC';font-style:normal;font-weight:${f.w};font-display:swap;src:url(${f.url}) format('woff2');unicode-range:${f.range}}`
+      ).join('')} />
+    )}
 
     {graphs.map((g) => (
       <script type="application/ld+json" set:html={JSON.stringify(g)} />

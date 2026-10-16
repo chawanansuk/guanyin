@@ -2,6 +2,8 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import PageHero from '../../../components/PageHero.astro';
 import site from '../../../lib/site';
+import { allPang, enshrinedCount } from '../../../lib/pang';
+const count = enshrinedCount(await allPang());
 const lang = 'zh' as const;
 ---
 <BaseLayout
@@ -40,7 +42,7 @@ const lang = 'zh' as const;
       <p>
         全組觀音聖像皆為<strong>德化白瓷</strong>。德化自明代起便以白瓷觀音聞名。
         各尊的姿態與台座依其法相特徵而各不相同。
-        目前已迎請 29 尊，其餘 4 尊正在籌備中。
+        目前已迎請 {count.enshrined} 尊{count.pending > 0 && `，其餘 ${count.pending} 尊正在籌備中`}。
         聖像實景請見<a href="/zh/gallery">圖集</a>。
       </p>
 

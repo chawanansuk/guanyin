@@ -81,3 +81,10 @@ export function daysFromToday(d: Date, today = todayBangkok()): number {
   const a = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
   return Math.round((a - today.getTime()) / 86_400_000);
 }
+
+/** ตัดข้อความที่ช่องว่างใกล้ความยาวที่ต้องการ ใช้กับ meta description ที่ Google ตัดที่ราว ๑๖๐ ตัวอักษร */
+export function clampText(s: string, max = 160): string {
+  if (s.length <= max) return s;
+  const cut = s.lastIndexOf(' ', max - 1);
+  return s.slice(0, cut > max * 0.6 ? cut : max - 1).replace(/[\s,;:—–-]+$/, '') + '…';
+}

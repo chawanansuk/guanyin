@@ -79,6 +79,19 @@ const advance = (ch) => {
   if (c >= 0x3000) return 1.05;                   // จีน
   return 0.5;                                     // ละติน
 };
+/** แบ่งข้อความเป็นสองบรรทัดที่ช่องว่าง เมื่อบรรทัดเดียวต้องย่อตัวอักษรเล็กกว่า ๕๐ */
+const wrap2 = (text, maxW, base) => {
+  const t = String(text);
+  if (fitSize(t, maxW, base) >= 50 || !t.includes(' ')) return [t];
+  const words = t.split(' ');
+  let best = null;
+  for (let i = 1; i < words.length; i++) {
+    const a = words.slice(0, i).join(' '), b = words.slice(i).join(' ');
+    const size = Math.min(fitSize(a, maxW, 58), fitSize(b, maxW, 58));
+    if (!best || size > best.size) best = { size, lines: [a, b] };
+  }
+  return best.lines;
+};
 const fitSize = (text, maxW, base) => {
   const units = [...String(text)].reduce((a, ch) => a + advance(ch), 0) || 1;
   return Math.min(base, Math.floor((maxW / units) * 10) / 10);
@@ -94,7 +107,9 @@ function card({ no, th, zh, py, footer, accent = C.gold, photo = null, photoNote
   const textRight = photo ? PX - 40 : W - IN - 24;
   const PADX = 74;
   const textW = textRight - PADX;
-  const thSize = fitSize(th, textW, 74);
+  // ชื่อยาว (บทความ) ตัดเป็นสองบรรทัดที่ช่องว่าง ดีกว่าย่อตัวอักษรจนอ่านไม่ออก
+  const thLines = wrap2(th, textW, 74);
+  const thSize = thLines.length > 1 ? Math.min(...thLines.map((l) => fitSize(l, textW, 58))) : fitSize(th, textW, 74);
   const zhSize = fitSize(zh, textW, 58);
   const pySize = fitSize(py, textW, 28);
   // ข้อความท้ายการ์ดเริ่มหลังป้ายชาด จึงเหลือที่น้อยกว่าบรรทัดอื่น
@@ -150,9 +165,12 @@ function card({ no, th, zh, py, footer, accent = C.gold, photo = null, photoNote
   <rect x="22" y="22" width="${W - 44}" height="${H - 44}" fill="none" stroke="${C.line}" stroke-width="1.2"/>
   <rect x="${24 + FRET_UNIT}" y="${24 + FRET_UNIT}" width="${W - 48 - FRET_UNIT * 2}" height="${H - 48 - FRET_UNIT * 2}" fill="none" stroke="${C.rule}" stroke-width="1"/>
   ${no ? `<text x="${PADX}" y="136" font-family="${TH}" font-size="26" letter-spacing="7" fill="${C.gold}">${esc(no)}</text>` : ''}
-  <text x="${PADX}" y="${no ? 278 : 262}" font-family="${TH}" font-size="${thSize}" font-weight="600" fill="${C.ink}">${esc(th)}</text>
+  ${thLines.length > 1
+    ? `<text x="${PADX}" y="${(no ? 278 : 262) - thSize * 0.95}" font-family="${TH}" font-size="${thSize}" font-weight="600" fill="${C.ink}">${esc(thLines[0])}</text>
+  <text x="${PADX}" y="${(no ? 278 : 262) + thSize * 0.35}" font-family="${TH}" font-size="${thSize}" font-weight="600" fill="${C.ink}">${esc(thLines[1])}</text>`
+    : `<text x="${PADX}" y="${no ? 278 : 262}" font-family="${TH}" font-size="${thSize}" font-weight="600" fill="${C.ink}">${esc(th)}</text>`}
   ${zh ? `<text x="${PADX}" y="${no ? 372 : 356}" font-family="${ZH}" font-size="${zhSize}" font-weight="700" fill="${C.plaque}">${esc(zh)}</text>` : ''}
-  ${py ? `<text x="${PADX}" y="${no ? 424 : 408}" font-family="serif" font-size="${pySize}" font-style="italic" fill="${C.ink2}">${esc(py)}</text>` : ''}
+  ${py ? `<text x="${PADX}" y="${no ? 424 : 408}" font-family="${/[\u3000-\u9fff]/.test(py) ? ZH : 'serif'}" font-size="${pySize}" ${/[\u3000-\u9fff]/.test(py) ? '' : 'font-style="italic"'} fill="${C.ink2}">${esc(py)}</text>` : ''}
   <!-- ชื่อตำหนักอยู่บนป้ายชาดเล็ก ๆ แทนตัวหนังสือลอย
        เป็นที่เดียวในการ์ดที่ทองอ่านออก และซ้ำรูปป้ายจริงบนอาคาร -->
   <rect x="${PADX}" y="${H - 132}" width="248" height="60" rx="2" fill="url(#plaque)" stroke="${C.goldBright}" stroke-width="1.5"/>
@@ -246,6 +264,54 @@ if (existsSync(favicon)) {
     .png({ compressionLevel: 9 })
     .toFile(join(root, 'public', 'apple-touch-icon.png'));
 }
+
+// หมวดพร หน้าหลัก และบทความ — ไลน์แสดงภาพพรีวิวใหญ่ ถ้าทุกหน้าใช้ภาพเดียวกัน คนรับไม่รู้ว่าลิงก์นี้เรื่องอะไร
+const yaml = (await import('js-yaml')).default;
+const og = { pages: {} };
+const FOOT = 'ตำหนักผู่โถวเจ้าแม่กวนอิม · พุทธมณฑลสาย ๒';
+const wishes = yaml.load(await readFile(join(root, 'src', 'content', 'wishes', 'wishes.yaml'), 'utf8'));
+for (const w of wishes) {
+  await render(card({ no: 'ขอพรเรื่อง', th: w.title, zh: w.title_zh, py: '', footer: FOOT, photo: facadeUri }), `wish-${w.id}.jpg`);
+  og.pages[`/wish/${w.id}`] = `/og/wish-${w.id}.jpg`;
+  made++;
+}
+const PAGES = {
+  '/33-pang': ['เจ้าแม่กวนอิม ๓๓ ปาง', '三十三觀音'],
+  '/worship': ['วิธีไหว้เจ้าแม่กวนอิม', '參拜'],
+  '/worship/how-to': ['ขั้นตอนการไหว้', '參拜方法'],
+  '/worship/offerings': ['เครื่องบูชา', '供品'],
+  '/worship/by-wish': ['เลือกปางตามเรื่องที่ขอ', '依祈求選擇法相'],
+  '/worship/prayers': ['บทสวดเจ้าแม่กวนอิม', '經咒'],
+  '/visit': ['การเดินทางและเวลาเปิด', '交通與開放時間'],
+  '/calendar': ['ปฏิทินวันสำคัญ', '節日曆'],
+  '/articles': ['บทความ', '文章'],
+  '/faq': ['คำถามที่พบบ่อย', '常見問題'],
+  '/about': ['เกี่ยวกับตำหนัก', '關於本堂'],
+  '/about/history': ['ประวัติตำหนัก', '沿革'],
+  '/about/sacred-objects': ['ผังจุดไหว้ในตำหนัก', '堂內參拜位置'],
+  '/gallery': ['ประมวลภาพ', '圖集'],
+  '/contact': ['ติดต่อตำหนัก', '聯絡本堂'],
+};
+for (const [path, [th, zh]] of Object.entries(PAGES)) {
+  const file = `page-${path.slice(1).replace(/\//g, '-')}.jpg`;
+  await render(card({ th, zh, py: '', footer: FOOT, photo: facadeUri }), file);
+  og.pages[path] = `/og/${file}`;
+  made++;
+}
+const artDir = join(root, 'src', 'content', 'articles');
+for (const f of existsSync(artDir) ? (await readdir(artDir)).filter((x) => x.endsWith('.md')).sort() : []) {
+  const fm = (await readFile(join(artDir, f), 'utf8')).split('---')[1] ?? '';
+  const title = (fm.match(/^title:\s*"?(.*?)"?\s*$/m) ?? [])[1] ?? '';
+  if (!title) continue;
+  const zhFile = join(root, 'src', 'content', 'articles-zh', f);
+  const zhFm = existsSync(zhFile) ? (await readFile(zhFile, 'utf8')).split('---')[1] ?? '' : '';
+  const zhTitle = (zhFm.match(/^title:\s*"?(.*?)"?\s*$/m) ?? [])[1] ?? '';
+  const slug = f.replace(/\.md$/, '');
+  await render(card({ no: 'บทความ', th: title, zh: '', py: zhTitle, footer: FOOT, photo: facadeUri }), `article-${slug}.jpg`);
+  og.pages[`/articles/${slug}`] = `/og/article-${slug}.jpg`;
+  made++;
+}
+await writeFile(join(root, 'src', 'data', 'og.json'), JSON.stringify(og, null, 1) + '\n', 'utf8');
 
 await writeFile(join(OUT, '.gitkeep'), '', 'utf8');
 console.log(`ภาพแชร์: สร้าง ${made + 1} ไฟล์ที่ public/og/`);

@@ -26,7 +26,8 @@ npm run build        # สร้างเว็บลง dist/
 | `npm run build` | สร้างเว็บ HTML คงที่ลง `dist/` |
 | `npm run preview` | ดูผลลัพธ์ที่สร้างแล้ว |
 | `npm run images` | `photos-src/` → WebP ๓ ขนาด ลง `public/images/` |
-| `npm run og` | สร้างภาพพรีวิวตอนแชร์ ๓๔ ไฟล์ ลง `public/og/` |
+| `npm run og` | สร้างภาพพรีวิวตอนแชร์ ๗๙ ไฟล์ ลง `public/og/` (ปาง หมวดพร หน้าหลัก บทความ) และ `src/data/og.json` ที่ BaseLayout ใช้เลือกภาพตามหน้า |
+| `npm run fonts` | ตัดฟอนต์ให้เหลือเฉพาะตัวอักษรที่เว็บใช้ ลง `public/fonts/` (ต้อง `npm run build` ก่อน และต้องมี `pip install fonttools brotli`) — เพิ่มเนื้อหาจีนใหม่แล้วรันซ้ำ ไม่งั้นตัวอักษรใหม่จะใช้ฟอนต์จีนของเครื่องแทน |
 | `npm run qr` | แผ่นพิมพ์ป้าย QR ๓๕ ชิ้น ลง `dist-qr/qr-sheet.html` |
 | `npm run lunar -- 2027` | ร่างวันสำคัญจันทรคติของปีนั้น |
 | `npm run import:sheet -- <url>` | Google Sheet → ไฟล์ข้อมูล ๓๓ ปาง |

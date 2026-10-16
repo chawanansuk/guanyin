@@ -2,6 +2,10 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
 import site from '../../lib/site';
+import { allPang, enshrinedCount } from '../../lib/pang';
+import { thaiNum } from '../../lib/format';
+// ตัวเลขเดียวกับหน้าเกี่ยวกับตำหนัก ไม่พิมพ์ตายตัว จะได้ไม่ขัดกันเมื่อข้อมูลเปลี่ยน
+const count = enshrinedCount(await allPang());
 ---
 <BaseLayout
   title="ประวัติความเป็นมา"
@@ -39,7 +43,7 @@ import site from '../../lib/site';
       <p>
         องค์เจ้าแม่กวนอิมทั้งชุดเป็น<strong>พระขาวเนื้อกระเบื้อง</strong>ตามแบบเต๋อฮั่ว (德化)
         เมืองที่มีชื่อเรื่องพระกวนอิมกระเบื้องขาวมาตั้งแต่ราชวงศ์หมิง แต่ละองค์มีท่าและฐานต่างกัน
-        ตามลักษณะเฉพาะของปาง ปัจจุบันอัญเชิญมาแล้ว ๒๙ องค์ อีก ๔ ปางอยู่ระหว่างดำเนินการ
+        ตามลักษณะเฉพาะของปาง ปัจจุบันอัญเชิญมาแล้ว {thaiNum(count.enshrined)} องค์{count.pending > 0 && ` อีก ${thaiNum(count.pending)} ปางอยู่ระหว่างดำเนินการ`}{' '}
         ดูองค์จริงได้ที่<a href="/gallery">ประมวลภาพ</a>
       </p>
 

@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
 import site from '../../lib/site';
 import { allPang, enshrinedCount } from '../../lib/pang';
+import { thaiNum } from '../../lib/format';
 const count = enshrinedCount(await allPang());
 ---
 <BaseLayout
@@ -28,8 +29,8 @@ const count = enshrinedCount(await allPang());
           จึงตั้งใจประดิษฐานองค์เจ้าแม่กวนอิมให้ครบทั้ง ๓๓ ปาง ตามที่ปรากฏในสัทธรรมปุณฑรีกสูตร
         </p>
         <p>
-          ปัจจุบันตำหนักประดิษฐานแล้ว {count.enshrined} องค์
-          {count.pending > 0 && <> และอยู่ระหว่างอัญเชิญอีก {count.pending} องค์</>}
+          ปัจจุบันตำหนักประดิษฐานแล้ว {thaiNum(count.enshrined)} องค์
+          {count.pending > 0 && <> และอยู่ระหว่างอัญเชิญอีก {thaiNum(count.pending)} องค์</>}{' '}
           ตั้งอยู่ริม{site.address.street} {site.address.locality} {site.address.region}
         </p>
       </div>

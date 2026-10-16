@@ -47,9 +47,10 @@ const confused = (z?.confused_with ?? [])
   .filter((c) => c.p);
 const shrineConfirmed = d.verified_by.trim() !== '';
 
-const description = z
-  ? `${d.name_zh}，三十三觀音第${cn(d.order)}尊。${marks}${essence ? `要旨：${essence}` : ''}曼谷普陀觀音堂。`
-  : `${d.name_zh}，三十三觀音第${cn(d.order)}尊。曼谷普陀觀音堂。`;
+// ภาษาจีนอ่านได้ราว ๙๐ ตัวอักษรก่อน Google ตัด: ชื่อ ลำดับ แก่น มาก่อน ลักษณะเด่นใส่เมื่อยังมีที่
+const stop = (s: string) => (s && !/[。！？」』]$/.test(s) ? `${s}。` : s);
+const descCore = `${d.name_zh}，三十三觀音第${cn(d.order)}尊。${essence ? `要旨：${stop(essence)}` : ''}曼谷普陀觀音堂。`;
+const description = z && marks && descCore.length + marks.length <= 90 ? descCore.replace('曼谷普陀觀音堂。', `${stop(marks)}曼谷普陀觀音堂。`) : descCore;
 ---
 <BaseLayout
   lang={lang}

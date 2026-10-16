@@ -4,8 +4,9 @@ import { groupedHours, closedDays } from '../lib/hours';
 import { dayNameShort } from '../lib/format';
 import { useT, withLang, type Lang } from '../i18n';
 
-interface Props { lang?: Lang }
-const { lang = 'th' } = Astro.props;
+/** lazy=false เฉพาะหน้าการเดินทางที่แผนที่อยู่บนสุด หน้าอื่นแผนที่อยู่ล่าง ให้โหลดเมื่อเลื่อนถึง */
+interface Props { lang?: Lang; lazy?: boolean }
+const { lang = 'th', lazy = true } = Astro.props;
 const t = useT(lang);
 const groups = groupedHours();
 const shut = closedDays();
@@ -29,7 +30,7 @@ const mapAlt = lang === 'zh'
       <a class="visit__map-link" href={site.maps_url} target="_blank" rel="noopener">
         <img src={`/images/pang/visit-map-${map.widths[0]}.webp`} srcset={mapSrcset}
              sizes="(max-width: 760px) 100vw, 60vw" width={map.w} height={map.h}
-             alt={mapAlt} decoding="async" />
+             alt={mapAlt} decoding="async" loading={lazy ? 'lazy' : 'eager'} />
         <span class="visit__map-tag">{lang === 'zh' ? '示意圖，非實際比例' : 'แผนผังประกอบ ไม่ใช่มาตราส่วนจริง'}</span>
       </a>
     ) : (

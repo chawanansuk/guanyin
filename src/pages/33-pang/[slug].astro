@@ -8,7 +8,7 @@ import PangChant from '../../components/PangChant.astro';
 import site from '../../lib/site';
 import { getCollection, render } from 'astro:content';
 import { allPang, displayName, altNames, isVerified, prevPang, nextPang } from '../../lib/pang';
-import { pangNo, thaiNum } from '../../lib/format';
+import { pangNo, thaiNum, clampText } from '../../lib/format';
 import photos from '../../data/photos.json';
 
 export async function getStaticPaths() {
@@ -65,10 +65,11 @@ const myWishes = wishes
   .sort((a: any, b: any) => a.data.order - b.data.order);
 
 const path = `/33-pang/${d.slug}`;
-const description =
-  `${name} (${d.name_zh}) ปางที่ ${d.order} ใน ๓๓ ปางของเจ้าแม่กวนอิม — ` +
-  `${d.attributes} นิยมขอพรเรื่อง${myWishes.map((w: any) => w.data.short).join(' ')} ` +
-  `ที่ตำหนักผู่โถว พุทธมณฑลสาย ๒`;
+// Google แสดงราว ๑๖๐ ตัวอักษร: ชื่อ ลำดับ แก่น และเรื่องที่นิยมขอ ต้องอยู่ครบ ส่วนประโยคแก่นใส่เมื่อยังมีที่
+const descCore =
+  `${name} (${d.name_zh}) ปางที่ ${thaiNum(d.order)} ใน ๓๓ ปางเจ้าแม่กวนอิม${d.tagline ? ` — ${d.tagline}` : ''} ` +
+  `นิยมขอพรเรื่อง${myWishes.map((w: any) => w.data.short).join(' ')} ตำหนักผู่โถว พุทธมณฑลสาย ๒`;
+const description = d.essence && descCore.length + d.essence.length + 1 <= 160 ? `${descCore} ${d.essence}` : clampText(descCore, 160);
 ---
 <BaseLayout
   title={`${name} ${d.name_zh}`}

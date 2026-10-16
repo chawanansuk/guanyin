@@ -19,7 +19,8 @@
     "import:sheet": "node scripts/import-sheet.mjs",
     "qr": "node scripts/build-qr.mjs",
     "import:book": "node scripts/import-book.mjs",
-    "video": "node scripts/build-video.mjs"
+    "video": "node scripts/build-video.mjs",
+    "fonts": "python3 scripts/build-fonts.py"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",

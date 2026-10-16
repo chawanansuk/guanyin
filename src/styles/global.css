@@ -1,3 +1,5 @@
+@import './fonts.css';
+
 /* ============================================================
    ระบบสีและตัวอักษร — ตำหนักผู่โถวเจ้าแม่กวนอิม
    สีและสัดส่วนถอดมาจากอาคารจริง
@@ -1249,4 +1251,21 @@ section.band:has(> .rule-fret:first-child) { border-top: 0; }
       linear-gradient(90deg, #2E1B10 0%, rgba(46, 27, 16, .72) 14%, rgba(46, 27, 16, .18) 34%, rgba(46, 27, 16, 0) 52%),
       linear-gradient(0deg, rgba(38, 22, 12, .3) 0%, rgba(38, 22, 12, 0) 30%);
   }
+}
+
+/* ============================================================
+   พิมพ์ — คนในตำหนักพิมพ์หน้าปางหรือวิธีไหว้ติดไว้ได้ เอาส่วนที่ใช้บนจอเท่านั้นออก
+   ============================================================ */
+@media print {
+  :root { --ground: #fff; --surface: #fff; --surface-2: #fff; --surface-sunk: #fff; }
+  body { background: #fff; color: #000; }
+  .site-head, .site-foot, .skip, .share, .pang__share, .pang__nav, .qr, .lang, nav, audio, video,
+  .mapvid__play, .mapvid__links, .mapvid__fail, .chant__music, .hero__photo, .hero__scrim, [data-share-url] { display: none !important; }
+  .band, section, article, .wrap { padding-block: 0; }
+  .band + .band { margin-top: 18px; }
+  a { color: inherit; text-decoration: none; }
+  .prose a[href^="/"]::after { content: " (putuoguanyin.com" attr(href) ")"; font-size: .85em; color: #555; }
+  img { max-width: 60mm; height: auto; page-break-inside: avoid; }
+  h1, h2, h3 { page-break-after: avoid; }
+  p, li, blockquote { page-break-inside: avoid; orphans: 3; widows: 3; }
 }

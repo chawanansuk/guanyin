@@ -1,5 +1,6 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import site from './site';
+import photoMeta from '../data/photo-meta.json';
 
 export type Pang = CollectionEntry<'pang'>;
 
@@ -43,7 +44,12 @@ export const prevPang = (list: Pang[], i: number) => list[(i - 1 + list.length) 
 export const nextPang = (list: Pang[], i: number) => list[(i + 1) % list.length]!;
 
 /** นับองค์ที่ประดิษฐานแล้ว / ที่ยังรออัญเชิญ */
+/** ประดิษฐานแล้วจริง = ตั้ง enshrined และมีภาพถ่ายองค์จริง (ปางที่ยังใช้ภาพประกอบนับเป็นรอ จนกว่าตำหนักจะยืนยัน) */
+export function isEnshrined(p: Pang) {
+  return p.data.enshrined && !(photoMeta.illustrations as string[]).includes(p.data.photo);
+}
+
 export function enshrinedCount(list: Pang[]) {
-  const yes = list.filter((p) => p.data.enshrined).length;
+  const yes = list.filter(isEnshrined).length;
   return { enshrined: yes, pending: list.length - yes, total: list.length };
 }

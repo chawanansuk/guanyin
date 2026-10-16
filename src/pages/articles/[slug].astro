@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHero from '../../components/PageHero.astro';
 import ShareBar from '../../components/ShareBar.astro';
 import { getCollection, render } from 'astro:content';
-import { thaiDate, isoDate, pangNo } from '../../lib/format';
+import { thaiDate, isoDate, pangNo, clampText } from '../../lib/format';
 import { displayName } from '../../lib/pang';
 import { ARTICLE_CATEGORY_LABEL } from '../../lib/articles';
 import site from '../../lib/site';
@@ -61,7 +61,7 @@ if (d.faq.length > 0) {
 <BaseLayout
   title={d.title}
   suffix={false}
-  description={d.summary}
+  description={clampText(d.summary, 160)}
   noindex={!ready}
   schema={schema}
   breadcrumbs={[
