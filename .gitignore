@@ -40,3 +40,4 @@ video-src/**
 # แต่ commit ไว้ เพราะเครื่องที่ deploy ไม่มี ffmpeg และไม่มีต้นฉบับ
 print/
 .fonts-src/
+music-src/
