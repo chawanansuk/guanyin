@@ -15,6 +15,16 @@
       "permanent": true
     },
     {
+      "source": "/opening",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/zh/opening",
+      "destination": "/zh",
+      "permanent": true
+    },
+    {
       "source": "/33-pang/:slug/full",
       "destination": "/33-pang/:slug",
       "permanent": true

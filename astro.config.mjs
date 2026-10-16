@@ -31,8 +31,8 @@ const NOINDEX_ARTICLES = unverifiedSlugs('articles');
 export default defineConfig({
   site: siteUrl,
   trailingSlash: 'never',
-  // หน้ากำหนดการพิธีเปิดถูกถอดออก (งานจัดเป็นการภายใน) ลิงก์ที่เคยแชร์ไปให้กลับหน้าแรก
-  redirects: { '/opening': '/', '/zh/opening': '/zh' },
+  // หน้ากำหนดการพิธีเปิด (/opening) ถูกถอดออก — redirect อยู่ใน vercel.json เป็น 301 จริง
+  // ไม่ใช้ redirects ของ Astro เพราะเว็บแบบ static จะได้หน้า meta refresh ที่ตอบ 200 แทน
   build: { format: 'file' },
   integrations: [
     sitemap({
