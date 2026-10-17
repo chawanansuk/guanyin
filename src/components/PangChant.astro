@@ -3,6 +3,9 @@
 // แสดงบนหน้าปางทุกปาง ยกเว้น status: hidden — ยังไม่กรอก reviewed_by จะติดป้ายรอตำหนักยืนยัน
 // หน้า /review/chant รวมทุกปางไว้ให้ตำหนักตรวจในหน้าเดียว
 // กติกา: ไม่พิมพ์ตัวบทมนต์ ให้ชื่อบทกับที่มาเท่านั้น และบทที่แต่งใหม่ต้องบอกว่าตำหนักเรียบเรียง
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import chants from '../data/pang-chant.json';
 
 interface Props {
@@ -17,6 +20,10 @@ const show = !!c && (preview || c.status !== 'hidden');
 const confirmed = !!c?.reviewed_by?.trim();
 const zh = lang === 'zh';
 const m = c?.music;
+// ต่อท้ายรหัสจากเนื้อไฟล์ — ทำเพลงใหม่ทับชื่อเดิมแล้ว เบราว์เซอร์ที่เคยโหลดไว้ (เก็บ ๑ สัปดาห์) จะโหลดใหม่ทันที
+const audioSrc = m?.src
+  ? `${m.src}?v=${createHash('sha1').update(readFileSync(join(process.cwd(), 'public', m.src))).digest('hex').slice(0, 8)}`
+  : '';
 const mmss = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 const id = `chant-${slug}${zh ? '-zh' : ''}`;
 // ชนิดของบทดั้งเดิม: hymn = บทสรรเสริญที่วัดจีนใช้ · sutra = คัมภีร์ของปางนี้
@@ -100,8 +107,8 @@ const tradHref = t?.href ? (zh ? `/zh${t.href}` : t.href) : '';
           </span>
           <span class="chant__desc">{zh ? m.desc_zh : m.desc_th}</span>
         </figcaption>
-        <audio controls preload="none" src={m.src}>
-          <a href={m.src}>{zh ? '下載樂曲' : 'ดาวน์โหลดเพลง'}</a>
+        <audio controls preload="none" src={audioSrc}>
+          <a href={audioSrc}>{zh ? '下載樂曲' : 'ดาวน์โหลดเพลง'}</a>
         </audio>
         <p class="chant__fine">{zh ? '為靜心或禮拜時聆聽之樂曲。' : 'เป็นเพลงสำหรับฟังขณะสงบใจหรือระหว่างกราบ'}</p>
       </figure>

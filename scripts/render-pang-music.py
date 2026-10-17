@@ -9,7 +9,9 @@
 #     · รัวสาย (摇指) บนโน้ตสูงสุดของเพลง — ทำด้วย pitch bend และโน้ตถี่
 #   · ความเป็นคนเล่น: เลื่อนจังหวะสุ่มเล็กน้อย ความดังโค้งตามวรรค ช้าลงตอนจบวรรค (ritardando) ขลุ่ยมีช่วงหายใจ
 #   · ขลุ่ยตอบวรรคของพิณ (ถาม–ตอบ) ในวรรคหลัง ๆ เบสเป็นคู่ห้าเปล่า ไม่ใช้คอร์ด
+#   · เสียงประกอบ: หยดน้ำ (โน้ตสูงห่าง ๆ) กระดิ่งลม (กลุ่มโน้ตเร็ว) คลื่น ลม น้ำไหล ตามสูตรของแต่ละปาง · คงโหวกระจายคอร์ดไล่ขึ้น
 #   · มิกซ์: แยกแต่ละเครื่องแล้ววางซ้ายขวา ห้องก้องแบบ convolution ปรับความดังสุดท้ายที่ -18 LUFS (เบากว่าเพลงทั่วไป เหมาะฟังระหว่างไหว้)
+#     แล้วจำกัดยอดเสียงไม่ให้แตกหลังแปลงเป็น AAC
 #
 # ใช้: pip install numpy && pip install --no-deps tinysoundfont
 #      soundfont: apt-get download fluid-soundfont-gm แล้ว dpkg-deb -x ... วาง FluidR3_GM.sf2 ไว้ที่ .soundfonts/ (ไม่ commit)
@@ -34,7 +36,7 @@ synth = importlib.util.module_from_spec(spec); spec.loader.exec_module(synth)
 RECIPES = [(1, 'yang-liu', 'gong', 293.66, 60, 'zheng', ['drops'])] + list(synth.R)
 MODES = synth.MODES
 
-GM = {'koto': 107, 'shakuhachi': 77, 'harp': 46, 'celesta': 8, 'bells': 14, 'pad': 89, 'nylon': 24}
+GM = {'koto': 107, 'shakuhachi': 77, 'harp': 46, 'celesta': 8, 'glock': 9, 'bells': 14, 'pad': 89, 'tinkle': 112}
 # เครื่องนำ / เครื่องตอบ / เบส / ช่วงเสียงของทำนอง (เลื่อนออกเทฟ)
 ORCH = {
     'zheng': dict(lead='koto', answer='shakuhachi', bass='koto', lead_oct=0, legato=False),
@@ -43,7 +45,7 @@ ORCH = {
     'bell':  dict(lead='celesta', answer='shakuhachi', bass='pad', lead_oct=0, legato=False),
     'harp':  dict(lead='harp', answer='shakuhachi', bass='harp', lead_oct=0, legato=False),
 }
-PAN = {'lead': 54, 'answer': 84, 'bass': 44, 'bells': 64, 'grace': 54}  # 0 ซ้าย 64 กลาง 127 ขวา
+PAN = {'lead': 54, 'answer': 84, 'bass': 44, 'bells': 64, 'grace': 54, 'drops': 88, 'chimes': 30}  # 0 ซ้าย 64 กลาง 127 ขวา
 
 
 def midi_of(hz):
@@ -177,6 +179,11 @@ def compose(order, slug, mode, base, bpm, inst, orn):
             v = 46 if o['bass'] != 'pad' else 34
             if o['bass'] == 'pad':
                 S.note(bass, tt, low, bar * 0.98, v, 0); S.note(bass, tt, low + 7, bar * 0.98, v - 8, 0)
+            elif o['bass'] == 'harp':
+                # กระจายคอร์ดไล่ขึ้น (คงโหว): ราก ห้า แปด และขั้นถัดไปในบันไดเสียง ครึ่งจังหวะต่อโน้ต
+                for j, k in enumerate([low, low + 7, low + 12, key(r + 2) - 12]):
+                    S.note(bass, tt + j * 0.5 * beat, k, bar - j * 0.5 * beat, v - 4 * j)
+                S.note(bass, tt + 2.5 * beat, low + 7, 1.5 * beat, v - 14)
             else:
                 S.note(bass, tt, low, 3 * beat, v); S.note(bass, tt + 2 * beat, low + 7, 2 * beat, v - 10)
             tt += bar; i += 1
@@ -203,6 +210,22 @@ def compose(order, slug, mode, base, bpm, inst, orn):
     if o['bass']: S.note(bass, t, key(0) - 24, 6 * beat, 40, 0)
     S.note('bells', t + 1.2 * beat, root - 12 if root > 60 else root, 7.0, 60, 0)
     end = t + 9.0
+
+    if 'drops' in orn:
+        # หยดน้ำ: โน้ตสูงเบา ๆ ห่าง ๆ บางทีหยดซ้ำเป็นคู่ ไม่ตรงจังหวะเพลง
+        tt = 5.0 + 3 * rng.random()
+        while tt < end - 10:
+            d = int(rng.integers(10, 15))
+            S.note('drops', tt, key(d), 1.2, int(rng.integers(30, 46)), 0)
+            if rng.random() < 0.4: S.note('drops', tt + 0.16 + 0.06 * rng.random(), key(d - 1), 1.0, 26, 0)
+            tt += 5 + 6 * rng.random()
+    if 'chimes' in orn:
+        # กระดิ่งลม: กลุ่มโน้ตเร็ว ๔–๗ ตัว นาน ๆ ครั้ง
+        tt = 8.0 + 4 * rng.random()
+        while tt < end - 10:
+            for j in range(int(rng.integers(4, 8))):
+                S.note('chimes', tt + j * (0.07 + 0.12 * rng.random()), key(int(rng.integers(10, 16))), 1.8, int(rng.integers(22, 38)), 0)
+            tt += 13 + 8 * rng.random()
     return S, end, o
 
 
@@ -225,7 +248,7 @@ def render_part(sf_path, events, program, pan, end, gain=0.0):
     return out
 
 
-def reverb(x, rng, seconds=2.8, pre=0.022):
+def reverb(x, rng, seconds=3.4, pre=0.022):
     n = int(SR * seconds); t = np.arange(n) / SR
     ir = np.zeros((n, 2))
     for c in range(2):
@@ -243,9 +266,11 @@ def mix(order, slug, mode, base, bpm, inst, orn):
     S, end, o = compose(order, slug, mode, base, bpm, inst, orn)
     rng = np.random.default_rng(9000 + order)
     prog = {'lead': GM[o['lead']], 'grace': GM[o['lead']], 'answer': GM[o['answer']] if o['answer'] else None,
-            'bass': GM[o['bass']] if o['bass'] else None, 'bells': GM['bells']}
-    level = {'lead': 1.0, 'grace': 0.55, 'answer': 0.5, 'bass': 0.55 if o['bass'] != 'pad' else 0.4, 'bells': 0.55}
-    send = {'lead': 0.4, 'grace': 0.4, 'answer': 0.45, 'bass': 0.25, 'bells': 0.6}
+            'bass': GM[o['bass']] if o['bass'] else None, 'bells': GM['bells'],
+            'drops': GM['glock' if o['lead'] == 'celesta' else 'celesta'], 'chimes': GM['tinkle']}
+    level = {'lead': 1.0, 'grace': 0.55, 'answer': 0.5, 'bass': 0.55 if o['bass'] != 'pad' else 0.4, 'bells': 0.55,
+             'drops': 1.0, 'chimes': 0.8}
+    send = {'lead': 0.4, 'grace': 0.4, 'answer': 0.45, 'bass': 0.25, 'bells': 0.6, 'drops': 0.7, 'chimes': 0.6}
     dry = np.zeros((int(end * SR), 2)); bus = np.zeros_like(dry)
     for part, evs in S.parts.items():
         if prog.get(part) is None: continue
@@ -271,11 +296,22 @@ def write(order, slug, out):
     with wave.open(tmp, 'wb') as w:
         w.setnchannels(2); w.setsampwidth(2); w.setframerate(SR)
         w.writeframes((np.clip(out, -1, 1) * 32767).astype('<i2').tobytes())
-    subprocess.run(['ffmpeg', '-y', '-hide_banner', '-loglevel', 'error', '-i', tmp,
-                    '-af', 'highpass=f=45,loudnorm=I=-18:TP=-1.5:LRA=11', '-ar', '44100',
-                    '-c:a', 'aac', '-b:a', '96k', '-movflags', '+faststart', str(dst)], check=True)
+    trim = 0.0
+    for _ in range(3):
+        af = f'highpass=f=45,loudnorm=I=-18:TP=-2:LRA=11,alimiter=limit=0.75:level=0,volume={trim:.1f}dB'
+        subprocess.run(['ffmpeg', '-y', '-hide_banner', '-loglevel', 'error', '-i', tmp, '-af', af, '-ar', '44100',
+                        '-c:a', 'aac', '-b:a', '96k', '-movflags', '+faststart', str(dst)], check=True)
+        peak = true_peak(dst)
+        if peak <= -1.0: break
+        trim -= peak + 1.5          # AAC ยังทำยอดเสียงเกินได้ ลดทั้งเพลงแล้วแปลงใหม่
     os.unlink(tmp)
     return dst
+
+
+def true_peak(path):
+    r = subprocess.run(['ffmpeg', '-hide_banner', '-i', str(path), '-af', 'ebur128=peak=true', '-f', 'null', '-'],
+                       capture_output=True, text=True)
+    return float(r.stderr.rsplit('Peak:', 1)[1].split()[0])
 
 
 if __name__ == '__main__':
