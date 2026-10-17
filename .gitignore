@@ -42,3 +42,4 @@ print/
 .fonts-src/
 music-src/
 .soundfonts/
+__pycache__/
