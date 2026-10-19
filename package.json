@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "astro dev",
     "prebuild": "node scripts/build-og.mjs",
-    "build": "astro build && node scripts/lazy-images.mjs",
+    "build": "astro build && node scripts/postbuild-html.mjs",
     "preview": "astro preview",
     "check": "astro check",
     "images": "node scripts/build-images.mjs",
