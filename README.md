@@ -23,7 +23,7 @@ npm run build        # สร้างเว็บลง dist/
 | คำสั่ง | ทำอะไร |
 |---|---|
 | `npm run dev` | เซิร์ฟเวอร์สำหรับพัฒนา |
-| `npm run build` | สร้างเว็บ HTML คงที่ลง `dist/` |
+| `npm run build` | สร้างเว็บ HTML คงที่ลง `dist/` แล้วใส่ lazy และขนาดภาพให้ภาพในบทความ (`scripts/lazy-images.mjs`) |
 | `npm run preview` | ดูผลลัพธ์ที่สร้างแล้ว |
 | `npm run images` | `photos-src/` → WebP ๓ ขนาด ลง `public/images/` |
 | `npm run og` | สร้างภาพพรีวิวตอนแชร์ ๗๙ ไฟล์ ลง `public/og/` (ปาง หมวดพร หน้าหลัก บทความ) และ `src/data/og.json` ที่ BaseLayout ใช้เลือกภาพตามหน้า |
