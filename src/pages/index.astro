@@ -10,7 +10,7 @@ import photos from '../data/photos.json';
 import site from '../lib/site';
 import { allPang, enshrinedCount } from '../lib/pang';
 import { getCollection } from 'astro:content';
-import { thaiDate, daysFromToday, isoDate, parseDay, relDays } from '../lib/format';
+import { thaiDate, daysFromToday, isoDate, thaiNum } from '../lib/format';
 
 const pang = await allPang();
 const count = enshrinedCount(pang);
@@ -25,48 +25,28 @@ for (const w of wishes) {
 }
 
 const events = (await getCollection('events')).sort((a, b) => +a.data.date - +b.data.date);
-const upcoming = events.filter((e) => daysFromToday(e.data.end_date ?? e.data.date) >= 0).slice(0, 3);
+// ส่งแถวเผื่อไว้ ๖ แถว แสดง ๓ — เบราว์เซอร์ข้ามแถวที่ผ่านไปแล้วหลังวันที่สร้างเว็บ
+const upcoming = events.filter((e) => daysFromToday(e.data.end_date ?? e.data.date) >= 0).slice(0, 6);
 
 const news = (await getCollection('news')).sort((a, b) => +b.data.date - +a.data.date);
 const staleMs = site.content.news_stale_months * 30 * 86_400_000;
 // ถ้าไม่มีใครลงข่าวนาน ๆ ให้ซ่อนส่วนข่าวไปเลย ดีกว่าโชว์ข่าวเก่าค้างปี
 const freshNews = news.filter((n) => Date.now() - +n.data.date < staleMs).slice(0, 3);
 
-const opening = site.opening_ceremony;
-const openingDate = parseDay(opening.date);
-const daysToOpening = daysFromToday(openingDate);
-// ก่อนวันงาน หน้าแรกพูดเรื่องพิธีเปิดเป็นอย่างแรก — หลังวันงานสลับกลับเองตอน rebuild รายวัน
-const preOpening = opening.active && daysToOpening >= 0;
 
 // มีภาพหน้าอาคารแล้วหรือยัง — ถ้ามี ฮีโร่จะเป็นภาพจริง ถ้ายังไม่มีก็เป็นป้ายแดงทองแทน
 const hasFacade = 'shrine-exterior' in (photos.images as Record<string, unknown>);
 
-const schema = preOpening
-  ? [{
-      '@context': 'https://schema.org',
-      '@type': 'Event',
-      name: opening.headline,
-      startDate: opening.date,
-      eventStatus: 'https://schema.org/EventScheduled',
-      eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-      location: { '@id': `${site.url}/#shrine` },
-      url: `${site.url}/opening`,
-      organizer: { '@type': 'Organization', name: site.name_th, url: site.url },
-    }]
-  : [];
 ---
 <BaseLayout
   title={`${site.name_th} ๓๓ ปาง พุทธมณฑลสาย ๒`}
   suffix={false}
   description={`${site.tagline} — ดูครบทั้ง ๓๓ ปาง พร้อมความหมาย วิธีไหว้ เวลาเปิด–ปิด และการเดินทาง`}
-  schema={schema}
 >
   <!-- ฮีโร่ V2 ตามแบบที่อนุมัติ: ภาพหน้าอาคารเต็มจอเป็นฉากหลังของทั้งจอแรก
        ป้ายชาด ประโยคนำ และปุ่มวางทับอยู่บนภาพ ไม่ได้ไหลลงมาอยู่บนพื้นครีม
        ปุ่มหลักมีปุ่มเดียวคือ "นำทางไปตำหนัก" — คนที่เปิดหน้านี้จากมือถือ
-       ส่วนใหญ่อยากรู้ว่าไปยังไง ไม่ใช่อยากอ่านต่อ
-       นับถอยหลังพิธีเปิดเป็นป้ายมุมขวาบนบนจอกว้าง และเป็นแถบเต็มความกว้าง
-       ใต้ภาพบนมือถือ ไม่แย่งน้ำหนักกับปุ่มหลักทั้งสองแบบ -->
+       ส่วนใหญ่อยากรู้ว่าไปยังไง ไม่ใช่อยากอ่านต่อ -->
   <section class:list={['hero hero--home zone-gilt', hasFacade && 'hero--photo']}>
     <div class="hero__stage">
       {hasFacade && (
@@ -99,29 +79,8 @@ const schema = preOpening
       </div>
     </div>
 
-    {preOpening && (
-      <a class="hero__ribbon" href="/opening" data-days-hide-past data-days-hide-on={opening.date}>
-        <span class="hero__ribbon-label">พิธีเปิดตำหนัก</span>
-        <span class="hero__ribbon-date">{thaiDate(openingDate, 'short')}</span>
-        <span class="hero__ribbon-count mono" data-days={opening.date}>{relDays(daysToOpening)}</span>
-      </a>
-    )}
   </section>
 
-  {preOpening && (
-    <aside class="dayof" data-days-only={opening.date} hidden aria-label="วันนี้พิธีเปิดตำหนัก">
-      <div class="wrap dayof__inner">
-        <p class="dayof__text">
-          <span class="dayof__head">วันนี้ พิธีเปิดตำหนัก</span>
-          <span class="dayof__note">ผู้คนจะมาก ลานจอดรถอาจเต็ม · ตำหนักนี้ไม่จุดธูปเทียน กราบด้วยการพนมมือ</span>
-        </p>
-        <div class="dayof__cta">
-          <a class="btn btn--gold" href={site.maps_url} target="_blank" rel="noopener">นำทางไปตำหนัก</a>
-          <a class="btn btn--ghost" href="/opening">กำหนดการ</a>
-        </div>
-      </div>
-    </aside>
-  )}
 
   <HoursBar />
 
@@ -142,8 +101,8 @@ const schema = preOpening
             และตั้งใจประดิษฐานให้ครบทั้ง ๓๓ ปาง
           </p>
           <p class="intro__status mono">
-            ประดิษฐานแล้ว {count.enshrined} องค์
-            {count.pending > 0 && <> · กำลังอัญเชิญอีก {count.pending} องค์</>}
+            ประดิษฐานแล้ว {thaiNum(count.enshrined)} องค์
+            {count.pending > 0 && <> · กำลังอัญเชิญอีก {thaiNum(count.pending)} องค์</>}
           </p>
           <p><a class="btn btn--ghost" href="/33-pang">ดูครบทั้ง ๓๓ ปาง</a></p>
         </div>
@@ -173,7 +132,7 @@ const schema = preOpening
         <p class="eyebrow eyebrow--marked">๐๑ — ๓๓</p>
         <h2>องค์เจ้าแม่กวนอิมในตำหนัก</h2>
         <p class="featured__lede">
-          เลือกมาหมวดพรละหนึ่งองค์ จากทั้งหมด {count.total} องค์
+          เลือกมาหมวดพรละหนึ่งปาง จากทั้งหมด {thaiNum(count.total)} ปาง
         </p>
       </div>
       <a class="btn btn--ghost featured__more" href="/33-pang">
@@ -204,7 +163,7 @@ const schema = preOpening
                 </div>
                 <a class="link-gold" href="/calendar">ปฏิทินทั้งปี ›</a>
               </div>
-              <EventList events={upcoming} compact />
+              <EventList events={upcoming} compact limit={3} />
             </div>
           )}
 

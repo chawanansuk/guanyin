@@ -51,6 +51,9 @@ FONTS = [
 ]
 PRELOAD = {('IBM Plex Sans Thai', 400), ('Trirong', 600)}  # ตัวเนื้อความกับหัวข้อ ทุกหน้าใช้แน่
 TC_FAMILY, TC_SRC = 'Noto Serif TC', 'notoseriftc/NotoSerifTC[wght].ttf'
+# คันจิแบบญี่ปุ่น (仏 図 増 巻 観 …) ในชื่อตำราญี่ปุ่นที่อ้างถึง ไม่มีใน Noto Serif TC — ตัดจาก Noto Serif JP
+# ประกาศใต้ชื่อครอบครัวเดียวกัน แยกด้วย unicode-range จึงไม่ต้องแก้ font-family ที่ไหนในเว็บ
+JP_SRC = 'notoserifjp/NotoSerifJP[wght].ttf'
 COMMON_MIN = 60       # ตัวอักษรที่อยู่ในหน้าอย่างน้อยเท่านี้ → ชุดกลาง
 COMMON_BOLD_MIN = 30
 
@@ -196,12 +199,18 @@ def main():
     pages, bold = read_pages()
     df = collections.Counter(c for s in pages.values() for c in s)
     dfb = collections.Counter(c for s in bold.values() for c in s)
-    common = {c for c, n in df.items() if n >= COMMON_MIN}
-    common_bold = {c for c, n in dfb.items() if n >= COMMON_BOLD_MIN}
 
     # ตัดฟอนต์แปรผัน 17 MB ให้เหลือตัวที่ใช้ก่อน แล้วค่อยแยกน้ำหนัก จะเร็วกว่ามาก
-    all_codes = sorted({ord(c) for c in df})
     base = TTFont(fetch(TC_SRC))
+    tc_has = set(base.getBestCmap())
+    ja = {c for c in df if ord(c) not in tc_has}
+    for d in (df, dfb):
+        for c in ja: d.pop(c, None)
+    for route in pages:
+        pages[route] = pages[route] - ja; bold[route] = bold[route] - ja
+    common = {c for c, n in df.items() if n >= COMMON_MIN}
+    common_bold = {c for c, n in dfb.items() if n >= COMMON_BOLD_MIN}
+    all_codes = sorted({ord(c) for c in df})
     opts = subset.Options(); opts.layout_features = TC_FEATURES; opts.hinting = False; opts.name_IDs = ['*']; opts.notdef_outline = True
     s = subset.Subsetter(opts); s.populate(unicodes=all_codes); s.subset(base)
     inst_path = {}
@@ -219,6 +228,18 @@ def main():
     print(f'{TC_FAMILY} 400 ชุดกลาง: {len(common)} ตัวอักษร {n // 1024} KB')
     url, rng, n = tc(700, common_bold, 'noto-serif-tc-700-common'); css.append(face(TC_FAMILY, 700, url, rng)); total += n
     print(f'{TC_FAMILY} 700 ชุดกลาง: {len(common_bold)} ตัวอักษร {n // 1024} KB')
+
+    if ja:  # ชุดเดียวใช้ทุกหน้า ตัวอักษรน้อย ไฟล์เล็ก
+        ja_codes = sorted(ord(c) for c in ja)
+        jbase = TTFont(fetch(JP_SRC))
+        js = subset.Subsetter(opts); js.populate(unicodes=ja_codes); js.subset(jbase)
+        for weight in (400, 700):
+            buf = io.BytesIO(); jbase.save(buf); buf.seek(0)
+            inst = instancer.instantiateVariableFont(TTFont(buf), {'wght': weight}, inplace=False, updateFontNames=False)
+            tmp = SRC / f'_inst-jp-{weight}.ttf'; inst.save(tmp)
+            data = subset_woff2(tmp, ja_codes, TC_FEATURES)
+            url = write(data, f'noto-serif-jp-{weight}-kanji'); css.append(face(TC_FAMILY, weight, url, to_range(ja_codes))); total += len(data)
+            print(f'Noto Serif JP {weight} (คันจิที่ TC ไม่มี): {len(ja)} ตัวอักษร {len(data) // 1024} KB')
 
     per_page = {route: {'all': chars - common, 'bold': bold[route] - common_bold} for route, chars in pages.items()}
     cache = {}

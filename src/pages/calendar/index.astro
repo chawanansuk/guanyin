@@ -39,15 +39,14 @@ const schema = upcoming.map((e) => ({
     <div class="wrap">
       <h2>กำลังจะถึง</h2>
       {upcoming.length > 0
-        ? <EventList events={upcoming} />
+        ? <EventList events={upcoming} pastInto="#past-list" />
         : <p class="muted">ยังไม่มีวันสำคัญที่บันทึกไว้สำหรับช่วงถัดไป</p>}
 
-      {past.length > 0 && (
-        <details class="past">
-          <summary>วันที่ผ่านไปแล้วในปีนี้ ({past.length} รายการ)</summary>
-          <EventList events={past} compact />
-        </details>
-      )}
+      {/* แสดงกล่องไว้เสมอ แต่ซ่อนถ้ายังว่าง — วันที่ผ่านไปหลังสร้างเว็บจะถูกย้ายมาใส่ในเบราว์เซอร์ */}
+      <details class="past" data-days-past-box hidden={past.length === 0}>
+        <summary>วันที่ผ่านไปแล้ว (<span data-days-past-count>{past.length}</span> รายการ)</summary>
+        <EventList events={past} compact id="past-list" />
+      </details>
 
       <h2 class="mt">วันพระจีนประจำเดือน</h2>
       <p>

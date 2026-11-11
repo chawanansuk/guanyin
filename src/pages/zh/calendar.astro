@@ -60,11 +60,11 @@ const schema = upcoming.map((e) => ({
     <div class="wrap">
       <h2>近期</h2>
       {upcoming.length > 0 ? (
-        <ol class="evt">
+        <ol class="evt" data-days-list data-days-past-into="#past-list">
           {upcoming.map((e) => {
             const n = daysFromToday(e.data.date);
             return (
-              <li class:list={['evt__row', e.data.featured && 'evt__row--hi']}>
+              <li class:list={['evt__row', e.data.featured && 'evt__row--hi']} data-days-row={isoDate(e.data.end_date ?? e.data.date)}>
                 <time class="evt__date mono" datetime={isoDate(e.data.date)}>
                   {zhRange(e.data.date, e.data.end_date)}
                   {e.data.approx && <abbr class="evt__approx" title="依農曆推算，尚待堂方核對">≈</abbr>}
@@ -80,10 +80,9 @@ const schema = upcoming.map((e) => ({
         </ol>
       ) : <p class="muted">暫無登錄的近期日子</p>}
 
-      {past.length > 0 && (
-        <details class="past">
-          <summary>本年已過的日子（{past.length} 項）</summary>
-          <ol class="evt">
+      <details class="past" data-days-past-box hidden={past.length === 0}>
+          <summary>已過的日子（<span data-days-past-count>{past.length}</span> 項）</summary>
+          <ol class="evt" id="past-list">
             {past.map((e) => (
               <li class="evt__row evt__row--past">
                 <time class="evt__date mono" datetime={isoDate(e.data.date)}>{zhRange(e.data.date, e.data.end_date)}</time>
@@ -93,7 +92,6 @@ const schema = upcoming.map((e) => ({
             ))}
           </ol>
         </details>
-      )}
 
       <h2 class="mt">每月齋日</h2>
       <p>農曆初一與十五，全年共二十四次，是信眾固定前來禮拜的日子。本堂按平日時間開放。</p>
@@ -113,9 +111,8 @@ const schema = upcoming.map((e) => ({
 <style>
   h2 { font-size: var(--fs-h3); margin-bottom: 14px; }
   .mt { margin-top: 48px; }
-  .evt { list-style: none; margin: 0; padding: 0; }
+  .evt { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--line); }
   .evt__row { display: grid; grid-template-columns: 220px 1fr auto; gap: 6px 20px; align-items: baseline; padding: 15px 0; border-top: 1px solid var(--line); }
-  .evt__row:last-child { border-bottom: 1px solid var(--line); }
   .evt__row--hi { border-top: 2px solid var(--lacquer); }
   .evt__row--hi .evt__title { color: var(--lacquer); font-weight: 600; }
   .evt__row--past, .evt__row--past .evt__title { color: var(--ink-3); }

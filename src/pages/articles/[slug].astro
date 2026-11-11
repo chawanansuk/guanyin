@@ -64,6 +64,7 @@ if (d.faq.length > 0) {
   description={clampText(d.summary, 160)}
   noindex={!ready}
   schema={schema}
+  article={{ published: d.date, modified: d.updated }}
   breadcrumbs={[
     { label: 'หน้าแรก', href: '/' },
     { label: 'บทความ', href: '/articles' },

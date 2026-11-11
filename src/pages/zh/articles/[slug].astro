@@ -80,6 +80,7 @@ if (zd.faq.length > 0) {
   description={clampText(zd.summary, 90)}
   noindex={!ready}
   schema={schema}
+  article={{ published: d.date, modified: d.updated }}
   breadcrumbs={[
     { label: '首頁', href: '/zh' },
     { label: '文章', href: '/zh/articles' },

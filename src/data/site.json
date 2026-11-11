@@ -73,12 +73,6 @@
     "closed_dates": [],
     "note_zh": "每週一休堂；平日開放時間，法會期間可能延長，請見節日曆公告"
   },
-  "opening_ceremony": {
-    "date": "2026-10-25",
-    "headline": "พิธีเปิดตำหนักผู่โถวเจ้าแม่กวนอิม",
-    "active": false,
-    "headline_zh": "普陀觀音堂開光大典"
-  },
   "video": {
     "file": "shrine.mp4",
     "title": "ตำหนักผู่โถวเจ้าแม่กวนอิม",
@@ -102,7 +96,7 @@
     "news_stale_months": 6
   },
   "analytics": {
-    "provider": "",
+    "provider": "vercel",
     "domain": ""
   },
   "name_th_zh_note": "普陀觀音堂",

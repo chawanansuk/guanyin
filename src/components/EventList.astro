@@ -6,15 +6,21 @@ interface Props {
   events: CollectionEntry<'events'>[];
   showPast?: boolean;
   compact?: boolean;
+  /** แสดงไม่เกินกี่แถว — ส่งแถวมาเกินไว้ให้เบราว์เซอร์ใช้แทนแถวที่ผ่านไปแล้ว */
+  limit?: number;
+  /** selector ของรายการ "ผ่านไปแล้ว" ที่แถวจะย้ายไปเมื่อวันนั้นผ่านไป (ไม่ใส่ = ซ่อนแถว) */
+  pastInto?: string;
+  id?: string;
 }
-const { events, compact = false } = Astro.props;
+const { events, compact = false, limit, pastInto, id } = Astro.props;
 ---
-<ol class:list={['evt', compact && 'evt--compact']}>
-  {events.map((e) => {
+{/* เว็บเป็น HTML คงที่ แถวที่ผ่านไปหลังวันที่สร้างเว็บจะถูกจัดใหม่ในเบราว์เซอร์ (สคริปต์ใน BaseLayout) */}
+<ol class:list={['evt', compact && 'evt--compact']} id={id} data-days-list={limit || pastInto ? '' : undefined} data-days-limit={limit} data-days-past-into={pastInto}>
+  {events.map((e, i) => {
     const d = e.data;
     const n = daysFromToday(d.date);
     return (
-      <li class:list={['evt__row', d.featured && 'evt__row--featured', n < 0 && 'evt__row--past']}>
+      <li class:list={['evt__row', d.featured && 'evt__row--featured', n < 0 && 'evt__row--past']} data-days-row={isoDate(d.end_date ?? d.date)} hidden={limit !== undefined && i >= limit}>
         <time class="evt__date mono" datetime={isoDate(d.date)}>
           {thaiDateRange(d.date, d.end_date)}
           {d.approx && <abbr class="evt__approx" title="คำนวณจากรอบจันทรคติ รอตำหนักยืนยัน">≈</abbr>}
@@ -34,7 +40,7 @@ const { events, compact = false } = Astro.props;
 </ol>
 
 <style>
-  .evt { list-style: none; margin: 0; padding: 0; }
+  .evt { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--line); }
   .evt__row {
     display: grid;
     grid-template-columns: 190px 1fr auto;
@@ -43,7 +49,6 @@ const { events, compact = false } = Astro.props;
     padding: var(--space-4) 0;
     border-top: 1px solid var(--line);
   }
-  .evt__row:last-child { border-bottom: 1px solid var(--line); }
   .evt__row--featured { border-top: 2px solid var(--lacquer); }
   .evt__row--featured .evt__title { color: var(--lacquer); font-weight: 600; }
   .evt__row--past { color: var(--ink-3); }

@@ -35,7 +35,7 @@ const isOn = (href: string) => path === href || path.startsWith(href + '/');
   <div class="site-head__bar">
     <div class="wrap site-head__bar-inner">
       <a href={withLang('/', lang)} class="brand">
-        <ShrineMark class="brand__mark" title={site.name_th} />
+        <ShrineMark class="brand__mark" title={lang === 'zh' ? site.name_zh : site.name_th} />
         <span class="brand__text">
           <span class="brand__zh han foil">{site.name_zh}</span>
           <span class="brand__th">{lang === 'zh' ? '佛城二段' : site.name_th}</span>

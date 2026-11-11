@@ -4,9 +4,11 @@ import { groupedHours, closedDays } from '../lib/hours';
 import { dayNameShort } from '../lib/format';
 import { useT, withLang, type Lang } from '../i18n';
 
-/** lazy=false เฉพาะหน้าการเดินทางที่แผนที่อยู่บนสุด หน้าอื่นแผนที่อยู่ล่าง ให้โหลดเมื่อเลื่อนถึง */
-interface Props { lang?: Lang; lazy?: boolean }
-const { lang = 'th', lazy = true } = Astro.props;
+/** lazy=false เฉพาะหน้าการเดินทางที่แผนที่อยู่บนสุด หน้าอื่นแผนที่อยู่ล่าง ให้โหลดเมื่อเลื่อนถึง
+ *  level = ระดับหัวข้อชื่อตำหนัก: หน้าที่วางกล่องนี้ใต้ h1 ตรง ๆ ใช้ 2 ไม่ให้ลำดับหัวข้อข้ามขั้น */
+interface Props { lang?: Lang; lazy?: boolean; level?: 2 | 3 }
+const { lang = 'th', lazy = true, level = 3 } = Astro.props;
+const Heading = `h${level}` as 'h2' | 'h3';
 const t = useT(lang);
 const groups = groupedHours();
 const shut = closedDays();
@@ -72,7 +74,7 @@ const mapAlt = lang === 'zh'
   </div>
 
   <div class="visit__info panel">
-    <h3>{lang === 'zh' ? site.name_zh : site.name_th}</h3>
+    <Heading class="visit__name">{lang === 'zh' ? site.name_zh : site.name_th}</Heading>
     <p class="visit__addr">{lang === 'zh' ? site.address.full_zh : site.address.full_th}</p>
 
     <table class="visit__hours">
@@ -135,7 +137,7 @@ const mapAlt = lang === 'zh'
 
   .visit__info { border: 0; border-radius: 0; padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-4); border-left: 1px solid var(--line); }
   @media (max-width: 759px) { .visit__info { border-left: 0; border-top: 1px solid var(--line); } }
-  .visit__info h3 { font-size: var(--fs-h4); }
+  .visit__info .visit__name { font-size: var(--fs-h4); }
   .visit__addr { font-size: var(--fs-md); color: var(--ink-2); margin: 0; }
 
   .visit__hours { border-collapse: collapse; width: 100%; }

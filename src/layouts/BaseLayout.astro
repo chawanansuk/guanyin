@@ -20,11 +20,13 @@ interface Props {
   breadcrumbs?: { label: string; href: string }[];
   bodyClass?: string;
   lang?: Lang;
+  /** หน้าบทความ: แชร์ในเฟซบุ๊ก/ไลน์เป็น "บทความ" พร้อมวันที่ แทน "เว็บไซต์" */
+  article?: { published: Date; modified?: Date };
 }
 const {
   title, description, suffix = true,
   ogImage: ogImageProp, noindex = false,
-  schema = [], breadcrumbs = [], bodyClass, lang = 'th',
+  schema = [], breadcrumbs = [], bodyClass, lang = 'th', article,
 } = Astro.props;
 
 const t = useT(lang);
@@ -47,9 +49,10 @@ const place = {
   '@context': 'https://schema.org',
   '@type': 'PlaceOfWorship',
   '@id': `${site.url}/#shrine`,
-  name: site.name_th,
-  alternateName: [site.name_zh, site.name_en],
-  description: site.tagline,
+  // หน้าจีนส่งชื่อและคำอธิบายภาษาจีน ชื่ออีกสองภาษาอยู่ใน alternateName
+  name: lang === 'zh' ? site.name_zh : site.name_th,
+  alternateName: lang === 'zh' ? [site.name_th, site.name_en] : [site.name_zh, site.name_en],
+  description: lang === 'zh' ? site.tagline_zh : site.tagline,
   url: site.url,
   image: ogUrl,
   address: {
@@ -104,7 +107,9 @@ const graphs = [place, ...crumbs, ...schema];
       ? <meta name="robots" content="noindex, nofollow" />
       : noindex && <meta name="robots" content="noindex, follow" />}
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={article ? 'article' : 'website'} />
+    {article && <meta property="article:published_time" content={article.published.toISOString().slice(0, 10)} />}
+    {article?.modified && <meta property="article:modified_time" content={article.modified.toISOString().slice(0, 10)} />}
     <meta property="og:site_name" content={lang === "zh" ? site.name_zh : site.name_th} />
     <meta property="og:locale" content={meta.ogLocale} />
     <meta property="og:title" content={title} />
@@ -145,6 +150,10 @@ const graphs = [place, ...crumbs, ...schema];
     {site.analytics.provider === 'umami' && site.analytics.domain && (
       <script defer data-website-id={site.analytics.domain} src="https://cloud.umami.is/script.js"></script>
     )}
+    {/* Vercel Web Analytics: ต้องกดเปิดที่แดชบอร์ด Vercel → โปรเจกต์ → Analytics ด้วย ก่อนเปิดสคริปต์ตอบ 404 ไม่มีผลกับหน้าเว็บ */}
+    {site.analytics.provider === 'vercel' && import.meta.env.PROD && (
+      <script defer src="/_vercel/insights/script.js"></script>
+    )}
     <slot name="head" />
   </head>
   <body class={bodyClass}>
@@ -181,15 +190,30 @@ const graphs = [place, ...crumbs, ...schema];
           var box = el.closest('[data-days-hide-past]');
           if (box && ne < 0) box.hidden = true;
         }
-        // กล่องที่ให้เห็นเฉพาะวันเดียว (แถบ data-days-only ของหน้าแรก)
-        var only = document.querySelectorAll('[data-days-only]');
-        for (var j = 0; j < only.length; j++) {
-          if (days(only[j].getAttribute('data-days-only')) === 0) only[j].hidden = false;
-        }
-        // กลับกัน: ซ่อนเฉพาะวันนั้น — ป้ายนับถอยหลังไม่ต้องซ้อนกับแถบวันงาน
-        var off = document.querySelectorAll('[data-days-hide-on]');
-        for (var k = 0; k < off.length; k++) {
-          if (days(off[k].getAttribute('data-days-hide-on')) === 0) off[k].hidden = true;
+        // รายการวันสำคัญ: แถวที่ผ่านไปแล้วย้ายไปกลุ่ม "ผ่านไปแล้ว" (ถ้ามี) หรือซ่อน แล้วแสดงไม่เกินจำนวนที่กำหนด
+        var lists = document.querySelectorAll('[data-days-list]');
+        for (var a = 0; a < lists.length; a++) {
+          var list = lists[a];
+          var into = list.getAttribute('data-days-past-into');
+          var dest = into && document.querySelector(into);
+          var rows = list.querySelectorAll('[data-days-row]');
+          for (var b = 0; b < rows.length; b++) {
+            if (days(rows[b].getAttribute('data-days-row')) >= 0) continue;
+            if (dest) { rows[b].classList.add(dest.getAttribute('data-days-past-class') || 'evt__row--past'); dest.insertBefore(rows[b], dest.firstChild); }
+            else rows[b].hidden = true;
+          }
+          var lim = +list.getAttribute('data-days-limit');
+          if (lim) {
+            var left = list.querySelectorAll('[data-days-row]'), shown = 0;
+            for (var c = 0; c < left.length; c++) { if (days(left[c].getAttribute('data-days-row')) < 0) continue; shown++; left[c].hidden = shown > lim; }
+          }
+          if (dest) {
+            var box = dest.closest('[data-days-past-box]');
+            var cnt = box && box.querySelector('[data-days-past-count]');
+            var total = dest.querySelectorAll('[data-days-row], li').length;
+            if (box && total) box.hidden = false;
+            if (cnt) cnt.textContent = total;
+          }
         }
       })();
     </script>

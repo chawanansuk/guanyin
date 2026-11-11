@@ -28,6 +28,19 @@ const NOINDEX_PRAYERS = unverifiedSlugs('prayers');
 // บทความใช้กติกาเดียวกัน — รอผู้รู้ตรวจก่อนจึงส่งให้ Google (ดู articles/[slug].astro)
 const NOINDEX_ARTICLES = unverifiedSlugs('articles');
 
+// วันที่แก้ล่าสุดของบทความ (updated หรือ date ในไฟล์) ใส่เป็น lastmod ใน sitemap
+// หน้าอื่นไม่มีวันที่ในเนื้อหา จึงไม่ใส่ — lastmod ที่ไม่จริง Google จะเลิกเชื่อทั้งไฟล์
+const articleDates = Object.fromEntries(
+  readdirSync(new URL('./src/content/articles/', import.meta.url))
+    .filter((f) => f.endsWith('.md'))
+    .map((f) => {
+      const fm = readFileSync(new URL(`./src/content/articles/${f}`, import.meta.url), 'utf8').split('---')[1] ?? '';
+      const pick = (k) => (fm.match(new RegExp(`^${k}:\\s*"?(\\d{4}-\\d{2}-\\d{2})`, 'm')) ?? [])[1];
+      return [f.replace(/\.md$/, ''), pick('updated') ?? pick('date')];
+    })
+    .filter(([, d]) => d),
+);
+
 export default defineConfig({
   site: siteUrl,
   trailingSlash: 'never',
@@ -45,6 +58,11 @@ export default defineConfig({
         !NOINDEX_PRAYERS.some((s) => page.includes(`/worship/prayers/${s}`)) &&
         !NOINDEX_ARTICLES.some((s) => page.includes(`/articles/${s}`)),
       i18n: undefined,
+      serialize(item) {
+        const slug = (item.url.match(/\/articles\/([^/]+)$/) ?? [])[1];
+        if (slug && articleDates[slug]) item.lastmod = articleDates[slug];
+        return item;
+      },
     }),
   ],
   image: { responsiveStyles: true },

@@ -38,7 +38,7 @@ const LINKS = lang === 'zh'
 <footer class="site-foot zone-plaque">
   <div class="wrap site-foot__inner">
     <div class="site-foot__brand">
-      <ShrineMark class="site-foot__mark" title={site.name_th} />
+      <ShrineMark class="site-foot__mark" title={lang === 'zh' ? site.name_zh : site.name_th} />
       <div class="site-foot__zh han foil">{site.name_zh}</div>
       <div class="site-foot__th">{lang === 'zh' ? '佛城二段' : site.name_th}</div>
       <p class="site-foot__couplet han">

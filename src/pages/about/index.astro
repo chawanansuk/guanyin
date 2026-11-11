@@ -31,7 +31,7 @@ const count = enshrinedCount(await allPang());
         <p>
           ปัจจุบันตำหนักประดิษฐานแล้ว {thaiNum(count.enshrined)} องค์
           {count.pending > 0 && <> และอยู่ระหว่างอัญเชิญอีก {thaiNum(count.pending)} องค์</>}{' '}
-          ตั้งอยู่ริม{site.address.street} {site.address.locality} {site.address.region}
+          ตั้งอยู่ที่ {site.address.street} {site.address.locality} {site.address.region}
         </p>
       </div>
 
